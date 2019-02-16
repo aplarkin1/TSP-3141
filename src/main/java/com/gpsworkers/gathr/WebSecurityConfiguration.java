@@ -2,6 +2,7 @@ package com.gpsworkers.gathr;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -27,7 +28,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     }
     
     
-    //TYhis is commented out because we haven't created our Mongo Connection yet/User Details Service
+    //TYhis is commented out because we haven't created our Mongo Conn
     /*
     @Bean
     @Override
