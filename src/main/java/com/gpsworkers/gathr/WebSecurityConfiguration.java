@@ -13,34 +13,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/", "/home", "/css/**", "/js/**").permitAll().anyRequest().anonymous()
+                .antMatchers("/", "/home", "/css/**", "/js/**", "/login").permitAll().anyRequest().anonymous()
                 .antMatchers("/secured", "/info").permitAll().anyRequest().authenticated()                
-                .and().formLogin();
-
-        // Commented out because we don't have a non-default login page as of yet
-
-                /*.loginPage("/login")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll();
-                */
+                .and().oauth2Login().loginPage("/login").defaultSuccessUrl("/secured", true);
     }
-    
-    
-    //TYhis is commented out because we haven't created our Mongo Conn
-    /*
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-             User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }
-    */
 }
