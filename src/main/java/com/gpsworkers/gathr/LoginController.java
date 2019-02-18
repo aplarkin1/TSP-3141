@@ -31,7 +31,7 @@ public class LoginController {
 	    }
 	 
 	    clientRegistrations.forEach(registration -> oAuth2AuthenticationUrls.put(registration.getClientName(), "oauth2/authorization/" + registration.getRegistrationId()));
-	    System.out.println("THIS IS THE AMOUNT OF OAUTHS BOI: " + oAuth2AuthenticationUrls.size());
+	    //System.out.println("THIS IS THE AMOUNT OF OAUTHS BOI: " + oAuth2AuthenticationUrls.size());
 	    model.addAttribute("urls", oAuth2AuthenticationUrls);
 	    
 		return "login";
