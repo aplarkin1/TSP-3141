@@ -37,7 +37,7 @@ public class SecureController {
 	    HttpHeaders webRequestHeaders = new HttpHeaders();
 	    webRequestHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken().getTokenValue());
 	    
-	    HttpEntity<String> webRequest = new HttpEntity<String>("", );
+	    HttpEntity<String> webRequest = new HttpEntity<String>("", webRequestHeaders);
 	    return "loginSuccess";
 	}
 }
