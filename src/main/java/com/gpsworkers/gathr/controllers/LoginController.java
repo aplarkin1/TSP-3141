@@ -1,4 +1,4 @@
-package com.gpsworkers.gathr;
+package com.gpsworkers.gathr.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
