@@ -34,7 +34,6 @@ public class LoginController {
 	    //System.out.println("THIS IS THE AMOUNT OF OAUTHS BOI: " + oAuth2AuthenticationUrls.size());
 	    model.addAttribute("urls", oAuth2AuthenticationUrls);
 	    
-		return "login";
-		
+		return "login";	
 	}
 }

@@ -6,23 +6,17 @@ import org.springframework.data.annotation.Id;
 public class User {
 
     @Id
-    public String id;
-
-    public String firstName;
-    public String lastName;
-
-    public User() {}
-
-    public User(String firstName, String lastName) {
+    public String email;
+    
+    public String firstName, lastName;
+    
+    public double x,y,z;
+    
+    public User(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
     }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Customer[id=%s, firstName='%s', lastName='%s']",
-                id, firstName, lastName);
-    }
-
+    
+    
 }

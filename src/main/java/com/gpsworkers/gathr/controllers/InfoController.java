@@ -12,13 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class InfoController {
 	@GetMapping("/info")
 	public String getLoginPage(Model model) {
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		
-        Map<String, String> details = new LinkedHashMap<>();
-        details = (Map<String, String>) auth.getDetails();
-		
-		System.out.println(details.get("email") + "-USERNAME");
 		return "info";
 	}
 }
