@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoginSuccessController {
@@ -26,14 +27,13 @@ public class LoginSuccessController {
 	private OAuth2AuthorizedClientService authorizedClientService;
 	 
 	@GetMapping("/loginSuccess")
-	public String getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
+	public ModelAndView getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(), 
 	          authentication.getName());
 	    
 	    String userCredsUrl = client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
-	    
 	    
 	    RestTemplate restTemp = new  RestTemplate();
 	    HttpHeaders webRequestHeaders = new HttpHeaders();
@@ -57,6 +57,11 @@ public class LoginSuccessController {
 	    // IF USER IS IN DATABASE, SEND THEM TO HOME OR SOMETHING
 	    // IF A USER IS NOT IN THE DATABSE, TAKE THEM THROUGH A USER CREATION TOOL.....?
 	    
-	    return "loginSuccess";
+        ModelAndView mav = new ModelAndView("loginSuccess");
+        mav.addObject("email", email);
+        mav.addObject("fname", firstName);
+        mav.addObject("lname", lastName);
+	    
+	    return mav;
 	}
 }
