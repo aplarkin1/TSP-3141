@@ -13,15 +13,12 @@ import com.gpsworkers.gathr.mongo.groups.Group;
 @Document(collection="users")
 public class User {
 
-    @Id
-    private String email;
-    
     private ObjectId apiToken;
     
     private String firstName, lastName, username;
     private Location currentLocation = new Location();
     private Date dateOfLastInteraction;
-    
+    private String email;
     
     @DBRef
     public ArrayList<Group> groups;
