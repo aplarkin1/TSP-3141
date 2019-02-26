@@ -3,6 +3,7 @@ package com.gpsworkers.gathr.mongo.users;
 import java.util.ArrayList;
 import java.util.Date;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +19,7 @@ public class User {
     private Location currentLocation;;
     private Date dateOfLastInteraction;
     
-    @Indexed()
+    @Id
     private String email;
 
     @DBRef
@@ -91,4 +92,11 @@ public class User {
     public void removeToken() {
     	apiToken = null;;
     }
+
+	public void setApiToken(ObjectId apiToken) {
+		this.apiToken = apiToken;
+	}
+    
+    
+    
 }
