@@ -2,6 +2,7 @@ package com.gpsworkers.gathr;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -16,5 +17,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
                 .antMatchers("/", "/home", "/css/**", "/js/**", "/images/**", "/login", "/info", "/api/**").permitAll().anyRequest().anonymous()
                 .antMatchers("/loginSuccess", "/info").permitAll().anyRequest().authenticated()                
                 .and().oauth2Login().loginPage("/login").defaultSuccessUrl("/loginSuccess", true);
+    }
+    
+    public void configure(WebSecurity webSec) throws Exception {
+        webSec.ignoring().antMatchers("/api/*");
     }
 }

@@ -2,8 +2,10 @@ package com.gpsworkers.gathr.controllers;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
@@ -38,6 +40,7 @@ public class APIController {
 	 */
 	@PostMapping("/api/updateLocation")
 	public String updateLocation(@RequestBody UpdateLocationAPIRequestBody request) {
+		System.out.println("HELLO WORLD!!!");
 		try {
 			validateAPIRequest(request);
 			User validUser = users.findByApiToken(new ObjectId(request.apiToken));
@@ -75,7 +78,7 @@ public class APIController {
 			//Check user API Token validity
 			ObjectId apiToken = new ObjectId(request.getApiToken());
 			User user = users.findByApiToken(apiToken);
-
+			
 			// If user not found in user repo, based on token.  Then send back bad token error message
 			if(user == null) {
 				throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_EXP_OR_FAKE_TOKEN, "Forged or fake token sent"))); 
