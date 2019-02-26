@@ -12,15 +12,15 @@ import com.gpsworkers.gathr.mongo.groups.Group;
 public class User {
 
     private ObjectId apiToken;
-    
+
     private String firstName, lastName, username;
     private Location currentLocation;;
     private Date dateOfLastInteraction;
     private String email;
-    
+
     @DBRef
     public ArrayList<Group> groups;
-    
+
     public User(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -60,34 +60,32 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-    
+
     public void updateLocation(double longitude, double latitude, double elevation, String region, String state, String city) {
     	currentLocation.update(longitude, latitude, elevation, region, state, city);
     }
-    
+
     public static final ObjectId generateToken() {
     	return new ObjectId();
     }
-    
+
     public String getAPIToken() {
     	if(apiToken != null) {
     		return apiToken.toHexString();
     	} else {
     		return "0";
     	}
-    	
     }
-    
+
     public void updateLastInteraction() {
     	dateOfLastInteraction = new Date();
     }
-    
+
     public Date getDateOfLastInteraction() {
     	return dateOfLastInteraction;
     }
-    
+
     public void removeToken() {
     	apiToken = null;;
     }
-    
 }
