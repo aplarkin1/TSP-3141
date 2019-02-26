@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
 /**
  *
  * @author Alexander Larkin
@@ -80,12 +78,12 @@ public class LoginSuccessController {
 
 				User user = userRepo.findByEmail(email);
 				if ( user == null ) {
-					userRepo.save( new User(firstName, lastName, email));
+					user = userRepo.save( new User(firstName, lastName, email));
 				}
 
         //If user exists, then check to see if the user has a valid token
 
-				if (user.getAPIToken() == "0" ) {
+				if (user.getAPIToken().equals( "0")) {
 					//Generate new token if user is valid and has no token
 					user.generateToken();
 				}
