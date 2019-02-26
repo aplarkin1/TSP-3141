@@ -89,8 +89,7 @@ public class LoginSuccessController {
 				}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
-
-
+		
 	    return "";
 	}
 }
