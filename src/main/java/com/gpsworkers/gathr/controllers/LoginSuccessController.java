@@ -2,6 +2,10 @@ package com.gpsworkers.gathr.controllers;
 
 
 import java.util.Optional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gpsworkers.gathr.controllers.responsebodys.UserLoginResponseBody;
+import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import com.gpsworkers.gathr.mongo.users.User;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -39,9 +43,10 @@ public class LoginSuccessController {
 	 * @param model is a Spring construct that allows a program to pass info back to the web page
 	 * @param authentication contains a token for the server to retrieve further information about the user
 	 * @return the login.html page with the email and name posted on the page.
+	 * @throws JsonProcessingException 
 	 */
 	@GetMapping("/loginSuccess")
-	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
+	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) throws JsonProcessingException {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(),
@@ -71,26 +76,22 @@ public class LoginSuccessController {
 	    // IF USER IS IN DATABASE, SEND THEM TO HOME OR SOMETHING
 	    // IF A USER IS NOT IN THE DATABASE, TAKE THEM THROUGH A USER CREATION TOOL.....?
 
-        ModelAndView mav = new ModelAndView("loginSuccess");
-        mav.addObject("email", email);
-        mav.addObject("fname", firstName);
-        mav.addObject("lname", lastName);
-
         //Check if user exists, if not then create a new user and generate a new token for the user User.generateToken() will return an ObjectID()...token
-				User user = userRepo.findByEmail( email );
-				if ( user == null ) {
-					user = userRepo.save( new User(firstName, lastName, email));
-				}
+		User user = userRepo.findByEmail( email );
+		if ( user == null ) {
+			user = userRepo.insert( new User(firstName, lastName, email));
+		}
 
         //If user exists, then check to see if the user has a valid token
 
-				if (user.getAPIToken().equals( "0")) {
-					//Generate new token if user is valid and has no token
-					user.generateToken();
-				}
+		if (user.getAPIToken().equals("0")) {
+				//Generate new token if user is valid and has no token
+				user.setApiToken(User.generateToken());
+				userRepo.save(user);
+		}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
 
-	    return "";
+	    return GathrJSONUtils.write(new UserLoginResponseBody(user.getAPIToken()));
 	}
 }
