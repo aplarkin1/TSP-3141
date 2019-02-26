@@ -85,7 +85,10 @@ public class LoginSuccessController {
 
         //If user exists, then check to see if the user has a valid token
 
-        //Generate new token if user is valid and has no token
+				if (user.getAPIToken() == "0" ) {
+					//Generate new token if user is valid and has no token
+					user.generateToken();
+				}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
 
