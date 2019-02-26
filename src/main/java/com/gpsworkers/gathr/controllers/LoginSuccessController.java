@@ -41,7 +41,7 @@ public class LoginSuccessController {
 	 * @return the login.html page with the email and name posted on the page.
 	 */
 	@GetMapping("/loginSuccess")
-	public ModelAndView loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
+	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(),
@@ -93,6 +93,6 @@ public class LoginSuccessController {
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
 
 
-	    return mav;
+	    return "";
 	}
 }
