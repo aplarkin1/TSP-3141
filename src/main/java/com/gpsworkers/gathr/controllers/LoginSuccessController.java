@@ -16,15 +16,28 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 
+/**
+ * 
+ * @author Alexander Larkin
+ * This class is used for the OAuth2.0 callback if the login through OAuth2.0 was successful.
+ */
 @Controller
 public class LoginSuccessController {
 	
 	@Autowired
 	private OAuth2AuthorizedClientService authorizedClientService;
 	
+	//User storage repo of our own...not OAuth related...is our own personal MongoDB user storage
 	@Autowired
 	UserRepository userRepo;
 	
+	/**
+	 * This method is called whenever a GET request is sent for the url of /loginSuccess
+	 * This method is called if a web client successfully authenticates with OAuth2.0
+	 * @param model is a Spring construct that allows a program to pass info back to the web page
+	 * @param authentication contains a token for the server to retrieve further information about the user
+	 * @return the login.html page with the email and name posted on the page.
+	 */
 	@GetMapping("/loginSuccess")
 	public ModelAndView loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
 	    OAuth2AuthorizedClient client = authorizedClientService

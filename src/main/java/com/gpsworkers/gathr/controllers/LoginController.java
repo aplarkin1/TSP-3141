@@ -13,14 +13,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 //Credit: https://www.baeldung.com/spring-security-5-oauth2-login.  This tutorial showed me how to setup OAuth2.0 correctly with a custom login page
 
+/**
+ * 
+ * @author Alexander Larkin
+ * This class is used to handle login requests
+ */
 @Controller
 public class LoginController {
 	
+	//Authentication URLs google, facebook,...etc
 	Map<String, String> oAuth2AuthenticationUrls = new HashMap<>();
 	
 	@Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
 	
+	/**
+	 * This method is called whenever a GET request is sent for the page /login
+	 * @param model is a Spring construct that allows a program to pass info back to the web page
+	 * @return the login.html file
+	 */
 	@GetMapping("/login")
 	public String getLoginPage(Model model) {
 	    Iterable<ClientRegistration> clientRegistrations = null;
