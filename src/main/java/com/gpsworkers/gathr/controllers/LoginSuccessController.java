@@ -75,8 +75,8 @@ public class LoginSuccessController {
         mav.addObject("lname", lastName);
 
         //Check if user exists, if not then create a new user and generate a new token for the user User.generateToken() will return an ObjectID()...token
-
-				User user = userRepo.findByEmail(email);
+				User user = null;
+				user = userRepo.findByEmail(email);
 				if ( user == null ) {
 					user = userRepo.save( new User(firstName, lastName, email));
 				}
@@ -89,7 +89,7 @@ public class LoginSuccessController {
 				}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
-		
+
 	    return "";
 	}
 }
