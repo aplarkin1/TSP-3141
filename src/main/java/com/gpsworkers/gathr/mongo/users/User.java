@@ -3,6 +3,7 @@ package com.gpsworkers.gathr.mongo.users;
 import java.util.ArrayList;
 import java.util.Date;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,6 +17,8 @@ public class User {
     private String firstName, lastName, username;
     private Location currentLocation;;
     private Date dateOfLastInteraction;
+    
+    @Indexed()
     private String email;
 
     @DBRef

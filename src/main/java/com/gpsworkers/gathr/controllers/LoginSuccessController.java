@@ -1,5 +1,8 @@
 package com.gpsworkers.gathr.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
+import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import com.gpsworkers.gathr.mongo.users.User;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -37,9 +40,10 @@ public class LoginSuccessController {
 	 * @param model is a Spring construct that allows a program to pass info back to the web page
 	 * @param authentication contains a token for the server to retrieve further information about the user
 	 * @return the login.html page with the email and name posted on the page.
+	 * @throws JsonProcessingException 
 	 */
 	@GetMapping("/loginSuccess")
-	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
+	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) throws JsonProcessingException {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(),
@@ -78,7 +82,7 @@ public class LoginSuccessController {
 
 				User user = userRepo.findByEmail(email);
 				if ( user == null ) {
-					user = userRepo.save( new User(firstName, lastName, email));
+					user = userRepo.insert( new User(firstName, lastName, email));
 				}
 
         //If user exists, then check to see if the user has a valid token
@@ -86,10 +90,11 @@ public class LoginSuccessController {
 				if (user.getAPIToken().equals( "0")) {
 					//Generate new token if user is valid and has no token
 					user.generateToken();
+					userRepo.save(user);
 				}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
 		
-	    return "";
+	    return GathrJSONUtils.write(new UpdateLocationAPIResponseBody(user.getAPIToken()));
 	}
 }
