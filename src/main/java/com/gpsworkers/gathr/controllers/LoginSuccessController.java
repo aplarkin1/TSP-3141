@@ -4,30 +4,29 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
-import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+import com.gpsworkers.gathr.mongo.users.UserRepository;
 
 @Controller
 public class LoginSuccessController {
 	
 	@Autowired
 	private OAuth2AuthorizedClientService authorizedClientService;
-	 
+	
+	@Autowired
+	UserRepository userRepo;
+	
 	@GetMapping("/loginSuccess")
-	public ModelAndView getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
+	public ModelAndView loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(), 
@@ -55,12 +54,21 @@ public class LoginSuccessController {
 	    
 	    // CODE TO CHECK IF USER IS ALREADY IN DATABASE OR NOT
 	    // IF USER IS IN DATABASE, SEND THEM TO HOME OR SOMETHING
-	    // IF A USER IS NOT IN THE DATABSE, TAKE THEM THROUGH A USER CREATION TOOL.....?
+	    // IF A USER IS NOT IN THE DATABASE, TAKE THEM THROUGH A USER CREATION TOOL.....?
 	    
         ModelAndView mav = new ModelAndView("loginSuccess");
         mav.addObject("email", email);
         mav.addObject("fname", firstName);
         mav.addObject("lname", lastName);
+
+        //Check if user exists, if not then create a new user and generate a new token for the user User.generateToken() will return an ObjectID()...token
+        
+        //If user exists, then check to see if the user has a valid token
+        
+        //Generate new token if user is valid and has no token
+        
+        //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
+        
 	    
 	    return mav;
 	}

@@ -18,13 +18,13 @@ public class Group {
 	@DBRef
 	private ArrayList<User> users;
 	
-	@DBRef
-	private CommunicationNetwork commsNetwork;
+	//@DBRef
+	//private CommunicationNetwork commsNetwork;
 
 	public Group(String name) {
 		this.name = name;
 		users = new ArrayList<User>();
-		commsNetwork = new CommunicationNetwork();
+		//commsNetwork = new CommunicationNetwork();
 	}
 
 }
