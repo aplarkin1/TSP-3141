@@ -1,0 +1,10 @@
+com.gpsworkers.gathr
+com.gpsworkers.gathr.controllers
+com.gpsworkers.gathr.controllers.requestbodys
+com.gpsworkers.gathr.controllers.responsebodys
+com.gpsworkers.gathr.exceptions
+com.gpsworkers.gathr.gathrutils
+com.gpsworkers.gathr.mongo.groups
+com.gpsworkers.gathr.mongo.message
+com.gpsworkers.gathr.mongo.users
+com.gpsworkers.gathr.tasks
