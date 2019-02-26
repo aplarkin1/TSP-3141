@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * 
+ *
  * @author Alexander Larkin
  * This is the MongoRepository where users can be saved and retrieved from.
  */
@@ -18,11 +18,18 @@ public interface UserRepository extends MongoRepository<User, String> {
 	 * @return
 	 */
 	public List<User> findAllByDateOfLastInteractionLessThanEqual(Date dateOfLastInteraction);
-	
+
 	/**
 	 * This method allows for the retrieval of a user given an API Token
-	 * @param token is the ObjectID that can be used to retrieve User 
+	 * @param token is the ObjectID that can be used to retrieve User
 	 * @return User that the token belongs to.
 	 */
 	public User findByApiToken(ObjectId token);
+
+	/**
+		* This method allows for the retrieval of a user given an email address
+		* @param email string used to retieve user
+		* @return user the email belongs to
+	*/
+	public User findByEmail( String email );
 }
