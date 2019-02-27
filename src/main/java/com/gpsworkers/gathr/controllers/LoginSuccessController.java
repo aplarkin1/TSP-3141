@@ -11,6 +11,10 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +24,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 /**
  *
@@ -45,8 +51,7 @@ public class LoginSuccessController {
 	 * @throws JsonProcessingException 
 	 */
 	@GetMapping("/loginSuccess")
-	@ResponseBody
-	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) throws JsonProcessingException {
+	public ModelAndView loginSuccess(HttpServletResponse response, OAuth2AuthenticationToken authentication) throws JsonProcessingException {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
 	        authentication.getAuthorizedClientRegistrationId(),
@@ -91,7 +96,10 @@ public class LoginSuccessController {
 		}
 
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
-
-	    return GathrJSONUtils.write(new UserLoginResponseBody(user.getAPIToken()));
+		
+	    ModelAndView modelAndView = new ModelAndView("loginSuccess");
+	    //modelAndView.addObject("apiToken", user.getAPIToken());
+	    response.addCookie(new Cookie("apiToken", user.getAPIToken()));
+	    return modelAndView;
 	}
 }

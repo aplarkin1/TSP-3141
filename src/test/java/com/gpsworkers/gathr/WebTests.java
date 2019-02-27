@@ -31,7 +31,7 @@ public class WebTests {
 		String url = "/info";
 		String loginContents = this.restTemplate.getForObject("http://localhost:" + port + "/login", String.class);
 		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Login</title>");
-		//System.out.println();
+		System.out.println();
 	}
 	
 }

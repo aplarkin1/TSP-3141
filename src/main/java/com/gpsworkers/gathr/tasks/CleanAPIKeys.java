@@ -33,8 +33,8 @@ public class CleanAPIKeys {
 		List<User> usersWithExpiredTokens = userRepo.findAllByDateOfLastInteractionLessThanEqual(new DateTime().minusMinutes(1).toDate());
 		for(User user : usersWithExpiredTokens) {
 			user.removeToken();
-			userRepo.save(user);
-			System.out.println("Cleaning expired token for: " + user.getEmail());
+			//userRepo.save(user);
+			//System.out.println("Cleaning expired token for: " + user.getEmail());
 		}
 	}
 }
