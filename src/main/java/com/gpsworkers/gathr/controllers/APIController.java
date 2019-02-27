@@ -2,10 +2,8 @@ package com.gpsworkers.gathr.controllers;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
@@ -20,6 +18,11 @@ import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 
+/**
+ * 
+ * @author Alexander Larkin
+ * This class is used to control API access
+ */
 @RestController
 public class APIController {
 	
