@@ -30,6 +30,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         currentLocation = new Location();
+        updateLastInteraction();
         generateToken();
     }
 

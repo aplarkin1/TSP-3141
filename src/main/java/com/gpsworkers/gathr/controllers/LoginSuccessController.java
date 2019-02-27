@@ -19,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
@@ -46,6 +47,7 @@ public class LoginSuccessController {
 	 * @throws JsonProcessingException 
 	 */
 	@GetMapping("/loginSuccess")
+	@ResponseBody
 	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) throws JsonProcessingException {
 	    OAuth2AuthorizedClient client = authorizedClientService
 	      .loadAuthorizedClient(
