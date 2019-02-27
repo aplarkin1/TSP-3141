@@ -27,11 +27,20 @@ public class WebTests {
 	UserRepository userRepo;
 	
 	@Test
-	public void testInfoRedirectToLoginPageWithout() throws Exception {
+	public void testInfoRedirectToLoginPageWithoutAuth() throws Exception {
 		String url = "/info";
-		String loginContents = this.restTemplate.getForObject("http://localhost:" + port + "/login", String.class);
+		String loginContents = this.restTemplate.getForObject("http://localhost:" + port + "/login", String.class).toString();
+		System.out.println(loginContents);
+		
 		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Login</title>");
-		System.out.println();
+		
+	}
+	
+	@Test
+	public void getRootReturnsSuccessfullyToHomePage() throws Exception {
+		String url = "/";
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Home</title>");
+		
 	}
 	
 }

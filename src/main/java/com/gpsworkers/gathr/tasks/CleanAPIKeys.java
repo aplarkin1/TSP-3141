@@ -30,11 +30,12 @@ public class CleanAPIKeys {
 	@Scheduled(fixedDelay=600000)
 	public void run() {
 		System.out.println("Token cleaning commencing");
-		List<User> usersWithExpiredTokens = userRepo.findAllByDateOfLastInteractionLessThanEqual(new DateTime().minusMinutes(1).toDate());
+		List<User> usersWithExpiredTokens = userRepo.findAllByDateOfLastInteractionLessThanEqualAndApiTokenNotNull(new DateTime().minusMinutes(30).toDate());
 		for(User user : usersWithExpiredTokens) {
 			user.removeToken();
-			//userRepo.save(user);
-			//System.out.println("Cleaning expired token for: " + user.getEmail());
+			userRepo.save(user);
+			System.out.println("Cleaning expired token for: " + user.getEmail());
 		}
+		
 	}
 }
