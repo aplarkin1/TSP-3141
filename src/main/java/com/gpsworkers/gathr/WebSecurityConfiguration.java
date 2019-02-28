@@ -20,6 +20,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     }
     
     public void configure(WebSecurity webSec) throws Exception {
-        webSec.ignoring().antMatchers("/api/*");
+        webSec.ignoring().antMatchers("/api/**");
     }
 }

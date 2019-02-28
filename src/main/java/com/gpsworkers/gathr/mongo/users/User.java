@@ -7,8 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.gpsworkers.gathr.mongo.groups.Group;
-
 /**
  * 
  * @author Alexander Larkin
@@ -30,8 +28,8 @@ public class User {
     @Id
     private String email;
 
-    @DBRef
-    public ArrayList<Group> groups;
+    //@DBRef
+    //public ArrayList<Group> groups;
 
     /**
      * This constructor allows for the construction of User if and only if a first name, last name, and email are given. 

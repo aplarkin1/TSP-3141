@@ -11,6 +11,14 @@ public class UpdateLocationAPIRequestBody implements BasicRequestBody {
 	public String apiToken;
 	public double lon, lat, elev;
 	
+	public UpdateLocationAPIRequestBody(String apiToken, double lon, double lat, double elev) {
+		super();
+		this.apiToken = apiToken;
+		this.lon = lon;
+		this.lat = lat;
+		this.elev = elev;
+	}
+
 	@Override
 	public String getApiToken() {
 		return apiToken;
