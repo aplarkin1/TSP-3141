@@ -16,6 +16,7 @@ import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBod
 import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
 import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 
 @RunWith(SpringRunner.class)
@@ -84,6 +85,26 @@ public class WebTests {
 		System.out.println(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody());
 		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody())
 		.isEqualTo(GathrJSONUtils.write(new ErrorResponseBody(APIController.ERR_INVALID_TOKEN, "Invalid token sent")));
+	}
+	
+	@Test
+	public void updateLocationValidTest() throws Exception {
+		String url = "/api/updateLocation";
+		System.out.println(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody());
+		
+		User user = new User("Alex", "Larkin", "me@newemail.com");
+		userRepo.delete(user);
+		
+		user.setApiToken(User.generateToken());
+		System.out.println(user.getAPIToken());
+		userRepo.save(user);
+		
+		
+		
+		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody(user.getAPIToken(), 25.0, 43.0, 0), String.class).getBody())
+		.isEqualTo("1");
+		
+		userRepo.delete(user);
 	}
 	
 	
