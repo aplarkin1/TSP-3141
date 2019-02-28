@@ -1,7 +1,9 @@
 $("document").ready(function() {
 	var long = 0;
 	var lat = 0;
-	var token = document.cookie;
+	var cookie = (document.cookie).split("apiToken=");
+	console.log(cookie[1]);
+	var token = cookie[1];
 	var logCheck = document.cookie.indexOf('apiToken=');
 
 	function getGeo() {
