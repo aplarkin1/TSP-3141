@@ -23,7 +23,7 @@ public class User {
     //Helps determine if a user API Tokn should be expired.
     private Date dateOfLastInteraction;
     
-    @Id
+	@Id
     private String email;
 
     //@DBRef
@@ -43,7 +43,16 @@ public class User {
         updateLastInteraction();
         generateToken();
     }
+    
+    /**
+     * Getter for Location
+     * @return location of user
+     */
+    public Location getCurrentLocation() {
+		return currentLocation;
+	}
 
+    
     /**
      * This method gets the stored email
      * @return String representation of the users email
@@ -118,8 +127,8 @@ public class User {
 	 * @param region is the region(state) name where the user is currently located 
 	 * @param city is the city name where the user is currently located
 	 */
-    public void updateLocation(double longitude, double latitude, double elevation, String country, String region, String city) {
-    	currentLocation.update(longitude, latitude, elevation, country, region, city);
+    public void updateLocation(double longitude, double latitude, double elevation, String country, String state, String city) {
+    	currentLocation.update(longitude, latitude, elevation, country, state, city);
     }
     
     /**

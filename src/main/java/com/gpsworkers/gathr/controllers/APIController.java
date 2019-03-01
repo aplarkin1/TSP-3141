@@ -55,7 +55,10 @@ public class APIController {
 				String cityName = results[0].addressComponents[1].longName;
 				String stateName = results[0].addressComponents[2].longName;
 				String countryName = results[0].addressComponents[3].longName;
-				validUser.updateLocation(request.lon, request.lon, request.elev, countryName, stateName, cityName);
+				System.out.println("Latitude: " + request.lat);
+				System.out.println("Longitude: " + request.lon);
+				validUser.updateLocation(request.lat, request.lon, request.elev, countryName, stateName, cityName);
+				users.save(validUser);
 			} catch (Exception e) {
 				System.out.println("Geocoding Connection Failed!");
 				e.printStackTrace();
