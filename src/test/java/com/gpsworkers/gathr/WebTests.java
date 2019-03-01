@@ -111,7 +111,7 @@ public class WebTests {
 				updatedUser.getCurrentLocation().getLongitude() + ", " + 
 				updatedUser.getCurrentLocation().getElevation()).isEqualTo("25.0, 43.0, 0.0");
 		
-		userRepo.delete(user);
+		//userRepo.delete(user);
 	}
 	
 	
