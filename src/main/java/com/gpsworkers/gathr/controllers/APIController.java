@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
@@ -26,10 +27,10 @@ import com.gpsworkers.gathr.mongo.users.UserRepository;
 @RestController
 public class APIController {
 	
-	private static int ERR_EXP_OR_FAKE_TOKEN = -9;
-	private static int ERR_INVALID_TOKEN = -2;
-	private static int ERR_INVALID_REQUEST_SENT = -1;
-	private static int ERR_MISSING_FIELD_IN_REQUEST = -3;
+	public static int ERR_EXP_OR_FAKE_TOKEN = -9;
+	public static int ERR_INVALID_TOKEN = -2;
+	public static int ERR_INVALID_REQUEST_SENT = -1;
+	public static int ERR_MISSING_FIELD_IN_REQUEST = -3;
 	
 	@Autowired
 	UserRepository users;
@@ -42,6 +43,7 @@ public class APIController {
 	 * @return a "1" if successful or a JSON string containing an error message
 	 */
 	@PostMapping("/api/updateLocation")
+	@ResponseBody
 	public String updateLocation(@RequestBody UpdateLocationAPIRequestBody request) {
 		System.out.println("HELLO WORLD!!!");
 		try {
@@ -72,22 +74,27 @@ public class APIController {
 	 * @throws WebApiErrorResponseException if the token is found to be forged or has a bad format
 	 */
 	private void validateAPIRequest(BasicRequestBody request) throws WebApiErrorResponseException{
+		//System.out.println(new ObjectId().toHexString());
 		try {
-			if(request.getApiToken() == null || request.getApiToken().isEmpty()) {
-				System.out.println("Bad Token Format for Update Location");
+			//Check user API Token validity
+			try {
+				ObjectId apiToken = new ObjectId(request.getApiToken());
+				System.out.print(apiToken);
+				User user = users.findByApiToken(apiToken);
+				
+				// If user not found in user repo, based on token.  Then send back bad token error message
+				if(user == null) {
+					throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_EXP_OR_FAKE_TOKEN, "Expired or fake token sent"))); 
+				}
+				
+			} catch(IllegalArgumentException e) {
+				//e.printStackTrace();
 				throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_INVALID_TOKEN, "Invalid token sent")));
 			}
 			
-			//Check user API Token validity
-			ObjectId apiToken = new ObjectId(request.getApiToken());
-			User user = users.findByApiToken(apiToken);
-			
-			// If user not found in user repo, based on token.  Then send back bad token error message
-			if(user == null) {
-				throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_EXP_OR_FAKE_TOKEN, "Forged or fake token sent"))); 
-			}
 		} catch(JsonProcessingException jsErr) {
-			throw new WebApiErrorResponseException("{ error: " + ERR_INVALID_REQUEST_SENT + ", desc: 'Invalid Request Sent'}");
+			//jsErr.printStackTrace();
+			throw new WebApiErrorResponseException("{ 'error': " + ERR_INVALID_REQUEST_SENT + ", 'desc': 'Invalid Request Sent'}");
 		}
 	}
 	

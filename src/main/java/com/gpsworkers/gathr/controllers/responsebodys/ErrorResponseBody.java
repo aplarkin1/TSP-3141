@@ -7,8 +7,8 @@ package com.gpsworkers.gathr.controllers.responsebodys;
  * This class specifies a generic error response format for GathR.
  */
 public class ErrorResponseBody {
-	int error;
-	String desc;
+	public int error;
+	public String desc;
 	
 	/**
 	 * This constructor allows for a user to set an error code and description for the error that is to be generated.

@@ -3,26 +3,20 @@ package com.gpsworkers.gathr.controllers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gpsworkers.gathr.controllers.responsebodys.UserLoginResponseBody;
-import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import com.gpsworkers.gathr.mongo.users.User;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import java.util.Map;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -62,7 +56,7 @@ public class LoginSuccessController {
 	    RestTemplate restTemp = new  RestTemplate();
 	    HttpHeaders webRequestHeaders = new HttpHeaders();
 	    webRequestHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken().getTokenValue());
-
+	    
 	    HttpEntity<String> webRequest = new HttpEntity<String>("", webRequestHeaders);
 
 	    ResponseEntity<Map> webResponse = restTemp.exchange(userCredsUrl, HttpMethod.GET, webRequest, Map.class);

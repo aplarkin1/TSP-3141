@@ -14,12 +14,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/", "/home", "/css/**", "/js/**", "/images/**", "/login", "/info", "/api/**").permitAll().anyRequest().anonymous()
+                .antMatchers("/", "/home", "/css/**", "/js/**", "/images/**", "/login", "/api/**").permitAll().anyRequest().anonymous()
                 .antMatchers("/loginSuccess", "/info").permitAll().anyRequest().authenticated()                
                 .and().oauth2Login().loginPage("/login").defaultSuccessUrl("/loginSuccess", true);
     }
     
     public void configure(WebSecurity webSec) throws Exception {
-        webSec.ignoring().antMatchers("/api/*");
+        webSec.ignoring().antMatchers("/api/**");
     }
 }

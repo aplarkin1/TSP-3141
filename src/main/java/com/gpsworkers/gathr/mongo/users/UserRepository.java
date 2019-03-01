@@ -17,7 +17,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 	 * @param dateOfLastInteraction is the threshold date
 	 * @return
 	 */
-	public List<User> findAllByDateOfLastInteractionLessThanEqual(Date dateOfLastInteraction);
+	public List<User> findAllByDateOfLastInteractionLessThanEqualAndApiTokenNotNull(Date dateOfLastInteraction);
 
 	/**
 	 * This method allows for the retrieval of a user given an API Token
