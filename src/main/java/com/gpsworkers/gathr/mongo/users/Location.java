@@ -8,23 +8,23 @@ package com.gpsworkers.gathr.mongo.users;
  * in a user document
  */
 public class Location {
-	private String region, state, city;
+	private String country, state, city;
 	private double longitude, latitude, elevation;
 	
 	/**
-	 * This method returns the current region
-	 * @return the String representation of the user's current region
+	 * This method returns the current country
+	 * @return the String representation of the user's current country
 	 */
-	public String getRegion() {
-		return region;
+	public String getCountry() {
+		return country;
 	}
 	
 	/**
-	 * This method sets the user's current region(state)
-	 * @param region is the new region(state) String to be set
+	 * This method sets the user's current country
+	 * @param region is the new country String to be set
 	 */
-	public void setRegion(String region) {
-		this.region = region;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 	
 	/**
@@ -85,11 +85,11 @@ public class Location {
 	 * @param region is the region(state) name where the user is currently located 
 	 * @param city is the city name where the user is currently located
 	 */
-	public void update(double longitude, double latitude, double elevation, String region, String state, String city) {
+	public void update(double longitude, double latitude, double elevation, String country, String state, String city) {
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.elevation = elevation;
-		this.region = region;
+		this.country = country;
 		this.state = state;
 		this.city = city;
 	}

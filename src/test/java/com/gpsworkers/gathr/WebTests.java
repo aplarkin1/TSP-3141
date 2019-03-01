@@ -90,7 +90,6 @@ public class WebTests {
 	@Test
 	public void updateLocationValidTest() throws Exception {
 		String url = "/api/updateLocation";
-		System.out.println(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody());
 		
 		User user = new User("Alex", "Larkin", "me@newemail.com");
 		userRepo.delete(user);
@@ -99,10 +98,18 @@ public class WebTests {
 		System.out.println(user.getAPIToken());
 		userRepo.save(user);
 		
-		
-		
 		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody(user.getAPIToken(), 25.0, 43.0, 0), String.class).getBody())
 		.isEqualTo("1");
+		
+		User updatedUser = userRepo.findByEmail("me@newemail.com");
+		
+		System.out.println("Lat: " + updatedUser.getCurrentLocation().getLatitude() + ", Lon: " + updatedUser.getCurrentLocation().getLongitude());
+		System.out.println("Country: " + updatedUser.getCurrentLocation().getCountry() + ", State: " + updatedUser.getCurrentLocation().getState() + "City: " + updatedUser.getCurrentLocation().getCity());
+		
+		assertThat(
+				updatedUser.getCurrentLocation().getLatitude() + ", " + 
+				updatedUser.getCurrentLocation().getLongitude() + ", " + 
+				updatedUser.getCurrentLocation().getElevation()).isEqualTo("25.0, 43.0, 0.0");
 		
 		userRepo.delete(user);
 	}

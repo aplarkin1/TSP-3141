@@ -4,6 +4,7 @@ $("document").ready(function() {
 	var cookie = (document.cookie).split("apiToken=");
 	console.log(cookie[1]);
 	var token = cookie[1];
+	
 	var logCheck = document.cookie.indexOf('apiToken=');
 
 	function getGeo() {
