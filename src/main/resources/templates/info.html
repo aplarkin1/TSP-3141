@@ -8,6 +8,12 @@
 		<script type="text/javascript" th:src="@{/js/example.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/css/example.css}">
 		<title>Info</title>
+		<style>
+			#map {
+				height: 400px;
+				width: 100%;
+			}
+		</style>
 	</head>
 	<body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -33,6 +39,14 @@
           <div class="my-2 my-lg-0">
           	<a class="nav-link" href="/login">Log-in</a>
           </div>
+          
       </nav>
+      
+      <div id="map"></div>
+      
+      <script async defer
+    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO1F_FVQT42wzr2cTWB0hWW0z0p4Yh8f4
+    	&callback=initMap">
+      </script>
 	</body>
 </html>

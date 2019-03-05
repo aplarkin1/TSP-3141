@@ -8,6 +8,7 @@ $("document").ready(function() {
 		      "href" : "/info",
 		      "title" : "Account"
 		    });
+		$("#logSquare").text("Account");
 	}
 });
 
