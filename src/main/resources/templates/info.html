@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf" crossorigin="anonymous">
 		<script type="text/javascript" th:src="@{/js/example.js}"></script>
+		<script type="text/javascript" th:src="@{/js/global.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/css/example.css}">
 		<title>Info</title>
 		<style>
@@ -43,10 +44,16 @@
       </nav>
       
       <div id="map"></div>
-      
+      <script>
+		// Initialize and add the map
+		function initMap() {
+			var start = {lat: 47.6062, lng: -122.3321};
+  		// The map, centered at Uluru
+  			var map = new google.maps.Map(document.getElementById('map'), {zoom: 4, center: start});
+  		}
+    </script>
       <script async defer
-    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO1F_FVQT42wzr2cTWB0hWW0z0p4Yh8f4
-    	&callback=initMap">
+    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO1F_FVQT42wzr2cTWB0hWW0z0p4Yh8f4&callback=initMap">
       </script>
 	</body>
 </html>
