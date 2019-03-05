@@ -93,7 +93,9 @@ public class LoginSuccessController {
 		
 	    ModelAndView modelAndView = new ModelAndView("loginSuccess");
 	    //modelAndView.addObject("apiToken", user.getAPIToken());
-	    response.addCookie(new Cookie("apiToken", user.getAPIToken()));
+	    Cookie newCookie = new Cookie("apiToken", user.getAPIToken());
+	    newCookie.setMaxAge(600);
+	    response.addCookie(newCookie);
 	    return modelAndView;
 	}
 }
