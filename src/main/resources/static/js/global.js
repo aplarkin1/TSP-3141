@@ -26,6 +26,7 @@ $("document").ready(function() {
 	}
 
 	if (logCheck !== -1) {
+		getGeo();
 		setInterval(function() {
 			getGeo();
 			$.post("/api/updateLocation",
