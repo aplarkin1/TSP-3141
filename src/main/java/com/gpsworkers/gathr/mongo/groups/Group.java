@@ -11,11 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  *
- * @author Alexander Larkin
+ * @author Amanda Erdmann
  *
- * This class is the MongoDB specification for a user record
+ * This class is the MongoDB specification for a group record
  */
-@Document(collection="groups")
+@Document(collection = "groups")
 public class Group {
 
 	//API Token used by API requests
@@ -39,6 +39,7 @@ public class Group {
 
     /**
      * gets group name
+     * @return returns a string of the group name
      */
      public String getGroupName() {
        return groupName;
@@ -59,6 +60,7 @@ public class Group {
 
       /**
        * returns all users in a group
+       * @return a collection of all users in the group
        */
       public Collection<User> getUsers() {
         return users;
@@ -90,6 +92,14 @@ public class Group {
       }
 
       /**
+       * returns all admins in group
+       * @return collection of all user who are admins
+       */
+      public Collection<User> getAdmin() {
+        return admins;
+      }
+
+      /**
        * makes another user admin if and only if the current user is an admin
        * @param user user atemepting to create admin
        * @param newAdmin user to be an admin
@@ -112,4 +122,4 @@ public class Group {
           admins.remove( removedAdmin );
         }
       }
-}
+    }

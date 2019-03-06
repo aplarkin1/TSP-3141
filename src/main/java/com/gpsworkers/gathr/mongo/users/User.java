@@ -185,6 +185,12 @@ public class User {
 		this.apiToken = apiToken;
 	}
 
+	public void addGroup( Group group ) {
+		groups.add( group );
 
+	}
 
+	public void removeGroup ( Group group ) {
+		groups.remove( group );
+	}
 }
