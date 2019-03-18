@@ -26,6 +26,8 @@ public class Group {
     private Collection<User> users;
     private Collection<User> admins;
 
+    String groupInvite;
+
     /**
      * This constructor allows for the construction of a new Group
      * @param groupName the new Group's name
@@ -121,5 +123,9 @@ public class Group {
         if ( admins.size() > 1 && admins.contains( user )) {
           admins.remove( removedAdmin );
         }
+      }
+
+      public String getGroupInvite( ) {
+        return groupInvite;
       }
     }

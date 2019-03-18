@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class MvcConfiguration implements WebMvcConfigurer{
-	
+
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/").setViewName("home");
 		registry.addViewController("/home").setViewName("home");
@@ -15,11 +15,13 @@ public class MvcConfiguration implements WebMvcConfigurer{
 		registry.addViewController("/about").setViewName("info");
 		registry.addViewController("/api").setViewName("API");
 		registry.addViewController("/loginSucess").setViewName("loginSuccess");
+		registry.addViewController("/aboutUs").setViewName("aboutUs");
+		registry.addViewController("/account").setViewName("account");
 	}
-	
+
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**", "/css/**", "/js/**")
                 .addResourceLocations("classpath:/static/images/", "classpath:/static/css/", "classpath:/static/js/");
 	}
-	
+
 }
