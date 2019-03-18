@@ -25,6 +25,21 @@
 <script type="text/javascript" th:src="@{/js/loginCheck.js}"></script>
 <script type="text/javascript" th:src="@{/js/global.js}"></script>
 <title>Home</title>
+<style>
+	#slideshow {
+		width: 500px;
+		height: 500px;
+		margin: 0 auto;
+		position: relative;
+	}
+	.slide {
+		width: 500px;
+		height: 500px;
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+</style>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -42,7 +57,7 @@
 				<li class="nav-item"><a class="nav-link" href="#">Join</a></li>
 				<li class="nav-item"><a class="nav-link" href="/info">About</a>
 				</li>
-				<li class="nav-item"><a class="nav-link" href="/info">Contact
+				<li class="nav-item"><a class="nav-link" href="/ContactUs">Contact
 						Us</a></li>
 			</ul>
 			<div class="my-2 my-lg-0">
@@ -50,11 +65,21 @@
 			</div>
 		</div>
 	</nav>
-	</header>
+	
 	<section class="container primary">
 		<div class="welcome-container">
 			<img src="../images/logo2.png" class="welcome-logo" alt="Gathr Logo">
 		</div>
+		<div class="welcome-text">
+		</div>
 	</section>
+	
+	<div id=slideshow>
+		<img class=slide src="../images/meeting.jpg" />
+		<img class=slide src="../images/phone.jpg" />
+		<img class=slide src="../images/peoplewithphones.jpg" />		
+	</div>
+	
+
 </body>
 </html>
