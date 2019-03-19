@@ -9,6 +9,10 @@ $("document").ready(function() {
 		      "title" : "Account"
 		    });
 		$("#logSquare").text("Account");
+	} else {
+		setTimeout(function() {
+			window.location.href = "/login";
+		}, 1);
 	}
 });
 
