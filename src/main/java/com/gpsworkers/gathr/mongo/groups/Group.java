@@ -1,5 +1,6 @@
 package com.gpsworkers.gathr.mongo.groups;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import java.util.Collection;
 import com.gpsworkers.gathr.mongo.users.User;
@@ -26,7 +27,8 @@ public class Group {
     private Collection<User> users;
     private Collection<User> admins;
 
-    String groupInvite;
+  @Indexed ( unique = true )
+    private String groupInvite;
 
     /**
      * This constructor allows for the construction of a new Group
@@ -129,11 +131,12 @@ public class Group {
         return groupInvite;
       }
 
-      private void newGroupInvite( ) {
-
+      private String newGroupInvite( ) {
+        String str = "0";
+        return str;
       }
 
       public void setGroupInvite() {
-
+        groupInvite = newGroupInvite();
       }
      }

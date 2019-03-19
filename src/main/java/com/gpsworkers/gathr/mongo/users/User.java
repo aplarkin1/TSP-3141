@@ -24,10 +24,10 @@ public class User {
 
   @Indexed
     private String firstName, lastName, username;
+
     private Location currentLocation;
 
     //Helps determine if a user API Tokn should be expired.
-  @Indexed
     private Date dateOfLastInteraction;
 
 	@Id
