@@ -72,8 +72,8 @@ public class Group {
        * adds a user to the group
        * @param newUser user to ba added
       */
-      public void addUser( User newUser) {
-        if ( !users.contains( newUser) ) {
+      public void addUser( User newUser, String groupInvite ) {
+        if ( !users.contains( newUser) && this.groupInvite == groupInvite ) {
           users.add( newUser );
         }
       }
@@ -128,4 +128,12 @@ public class Group {
       public String getGroupInvite( ) {
         return groupInvite;
       }
-    }
+
+      private void newGroupInvite( ) {
+
+      }
+
+      public void setGroupInvite() {
+
+      }
+     }

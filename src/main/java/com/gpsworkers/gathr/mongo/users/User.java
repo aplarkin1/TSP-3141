@@ -1,5 +1,6 @@
 package com.gpsworkers.gathr.mongo.users;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import java.util.Collection;
 import java.util.Date;
@@ -18,12 +19,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
 	//API Token used by API requests
+  @Indexed
     private ObjectId apiToken;
 
+  @Indexed
     private String firstName, lastName, username;
     private Location currentLocation;
 
     //Helps determine if a user API Tokn should be expired.
+  @Indexed
     private Date dateOfLastInteraction;
 
 	@Id
