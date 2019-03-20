@@ -1,0 +1,6 @@
+---
+applications:
+- name: GathR
+  memory: 768M
+  instances: 1
+  path: ./target/TSP_GathR-0.0.1-SNAPSHOT.jar
