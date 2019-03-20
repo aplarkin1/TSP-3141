@@ -6,3 +6,7 @@ spring:
           google:
             client-id: 513607975763-ckfoe9j1hc73feh78svnr1jcrlnao4g3.apps.googleusercontent.com
             client-secret: KZScMyzd0Y7TyjrKqprntdMd
+  data:
+    mongodb:
+      uri: mongodb+srv://m001-student:T3amS0ftwar3!@team-software-5cubw.azure.mongodb.net/test?retryWrites=true
+      database: GathR
