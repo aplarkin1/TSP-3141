@@ -1,4 +1,4 @@
-package com.gpsworkers.gathr.communication;
+package com.gpsworkers.gathr.mongo.communication;
 
 import java.util.Date;
 
