@@ -17,7 +17,7 @@ public class SeleniumConfig {
 	}
 	
 	static {
-		System.setProperty("webdriver.gecko.driver", "C:/Users/Alexander Larkin/Desktop/geckodriver.exe");
+		System.setProperty("webdriver.gecko.driver", "/geckodriver.exe");
 	}
 	
 	public FirefoxDriver getDriver() {
