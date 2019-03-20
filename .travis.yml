@@ -1,0 +1,9 @@
+deploy:
+  provider: cloudfoundry
+  username: ajerds@outlook.com
+  password:
+    secure: qUvbH06DzbK1JYLDN4STYi9JK42lQAde0bLzqfJUhevGOCRas3GDWjVR5/u0olDyr0JNXk54pyfUWYEJC+ns1CeybbjVFtUraaCVd6VcIeWZT+ZpBPpBsv3fz+k5i6xwwCR/qWW+ASZhF6ARe9B/He8NK+xfX3TNAhLEjApQazpsmGp0/4TH/9s5UiJuHRPdLDyp21t1ZqaKH6O7mDa4u816NkxTwNed8jGJ9iOi8M5RD+OhB0ecXsLuSOgaoBfnPNoQVSfayaFqfb7XFBf58Tt6TxG9Xa3bI+v36IUsiSSF9m7VSj0UPJUPwUsdEtkxd+XamjYl6Sl0jDHxgpZsxhlnlyZ9VeZ8VK1zX74whVWcLKan2csBTlebZmFa8FNWgHACA7rG0WBdzOeRIaYO9Qe+F/ddEPhkDwRLr6sx30980hL+Ij38OYGn4tv7w8SZpn5nbBX+z93dKNkhXCxoQ0hYHrFHMm5/IQJnGzcTi/NUgj8UWYOJUxX9OfRSex/Wtp1y57VgyKd9O1KiwX1+GYu+OW+uywfOAMkfubLZ9qb0qTwuhj9pAjokJwy9mOKc5UKLj5BecHS8HLbj0n1YC//xrFazEy0mCzARLTmzrE/zvXSVwmqSWobD67w5sqvQr462uCtJroODEz9bFzkgRN4Ewe+e/Cw3q6JU3k37vmU=
+  organization: MTU
+  space: development
+  manifest: manifest.yml
+  app_name: GathR
