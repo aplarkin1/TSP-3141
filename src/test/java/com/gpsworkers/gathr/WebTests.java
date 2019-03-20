@@ -2,118 +2,193 @@ package com.gpsworkers.gathr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.gpsworkers.gathr.controllers.APIController;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
 import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
 import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+import com.gpsworkers.gathr.mongo.users.Location;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class WebTests {
 	
 	@LocalServerPort
 	private int port;
 	
-	@Autowired
-	private TestRestTemplate restTemplate;
+	//@Autowired
+	//private TestRestTemplate restTemplate;
 	
 	@Autowired
 	UserRepository userRepo;
 	
+	private SeleniumAPI gathrApi;
+	
+	@After
+	public void clean() {
+		User user = userRepo.findByEmail("gathrtester1@gmail.com");
+		if(user != null) {
+			userRepo.deleteById(user.getEmail());
+		}
+		
+		try {
+			gathrApi.closeBrowser();
+		} catch(RuntimeException e){
+			
+		}
+	}
+	
 	@Test
 	public void getInfoRedirectsToLoginPageWithoutAuthTest() throws Exception {
-		String url = "/info";
-		String loginContents = this.restTemplate.getForObject("http://localhost:" + port + "/login", String.class).toString();
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Login</title>");
-		
+		gathrApi = new SeleniumAPI();
+		gathrApi.getInfo();
+		String title = gathrApi.getTitle();
+		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
-	public void getRootReturnsHomePageTest() throws Exception {
-		String url = "/";
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Home</title>");
-	}
-	
-	@Test
-	public void getHomeReturnsHomePageTest() throws Exception {
-		String url = "/home";
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Home</title>");
+	public void getRootWhenUnauthenticatedReturnsLoginPageTest() throws Exception {
+		gathrApi = new SeleniumAPI();
+		gathrApi.getRoot();
+		String title = gathrApi.getTitle();
+		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
 	public void getLoginSuccessRedirectsToLoginPageWithoutAuthTest() throws Exception {
-		String url = "/loginSuccess";
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Login</title>");
+		gathrApi = new SeleniumAPI();
+		gathrApi.getLoginSuccess();
+		String title = gathrApi.getTitle();
+		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
 	public void getLoginSuccessfullyRespondsWithLoginPageTest() throws Exception {
-		String url = "/login";
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + url, String.class)).contains("<title>Login</title>");
+		gathrApi = new SeleniumAPI();
+		gathrApi.getLogin();
+		String title = gathrApi.getTitle();
+		assertThat(title).isEqualTo("Login");
+	}
+
+	@Test
+	public void userCreationTest() throws Exception {
+		gathrApi = new SeleniumAPI();
+		gathrApi.getRoot();
+		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+		WebElement loginBtn = driver.findElementById("Google");
+		loginBtn.click();
+		
+		WebElement emailTextField = driver.findElementById("identifierId");
+		WebElement nextBtn = driver.findElementById("identifierNext");
+		emailTextField.sendKeys("gathrtester1@gmail.com");
+		nextBtn.click();
+		Thread.sleep(3000);
+		
+		WebElement passwordField = driver.findElementByName("password");
+		passwordField.sendKeys("Th3P@ssw0rd");
+		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
+		passwordSubmitBtn.click();
+		Thread.sleep(3000);
+		
+		User user = userRepo.findByEmail("gathrtester1@gmail.com");
+		
+		userRepo.deleteById(user.getEmail());
+		assertThat(user).isNotNull();
 	}
 	
 	@Test
-	public void updateLocationWithInvalidTokenFailsTest() throws Exception {
-		String url = "/api/updateLocation";
-		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("0", 0, 0, 0), String.class).getBody())
-		.isEqualTo(GathrJSONUtils.write(new ErrorResponseBody(APIController.ERR_INVALID_TOKEN, "Invalid token sent")));
-	}
-	
-	@Test
-	public void updateLocationWithFakeTokenFailsTest() throws Exception {
-		String url = "/api/updateLocation";
-		String hexString = "5c77056c2ed3cf1b10e06a91";
-		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody(hexString, 0, 0, 0), String.class).getBody())
-		.isEqualTo(GathrJSONUtils.write(new ErrorResponseBody(APIController.ERR_EXP_OR_FAKE_TOKEN, "Expired or fake token sent")));
-	}
-	
-	@Test
-	public void updateLocationWithoutTokenFailsTest() throws Exception {
-		String url = "/api/updateLocation";
-		System.out.println(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody());
-		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody("", 0, 0, 0), String.class).getBody())
-		.isEqualTo(GathrJSONUtils.write(new ErrorResponseBody(APIController.ERR_INVALID_TOKEN, "Invalid token sent")));
+	public void userLoginTest() throws Exception {
+		
+		User newUser = new User("Gathr", "Tester", "gathrtester1@gmail.com");
+		userRepo.insert(newUser);
+		gathrApi = new SeleniumAPI();
+		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+		gathrApi.getRoot();
+		Thread.sleep(2000);
+		WebElement loginBtn = driver.findElementById("Google");
+		loginBtn.click();
+		
+		WebElement emailTextField = driver.findElementById("identifierId");
+		WebElement nextBtn = driver.findElementById("identifierNext");
+		emailTextField.sendKeys("gathrtester1@gmail.com");
+		nextBtn.click();
+		Thread.sleep(3000);
+		
+		WebElement passwordField = driver.findElementByName("password");
+		passwordField.sendKeys("Th3P@ssw0rd");
+		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
+		passwordSubmitBtn.click();
+		Thread.sleep(3000);
+		
+		String title = driver.getTitle();
+		
+		User user = userRepo.findByEmail("gathrtester1@gmail.com");
+		userRepo.deleteById(user.getEmail());
+		assertThat(title).isEqualTo("Home");
 	}
 	
 	@Test
 	public void updateLocationValidTest() throws Exception {
-		String url = "/api/updateLocation";
+		gathrApi = new SeleniumAPI();
+		gathrApi.getRoot();
+		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+		WebElement loginBtn = driver.findElementById("Google");
+		loginBtn.click();
 		
-		User user = new User("Alex", "Larkin", "me@newemail.com");
-		userRepo.delete(user);
+		WebElement emailTextField = driver.findElementById("identifierId");
+		WebElement nextBtn = driver.findElementById("identifierNext");
+		emailTextField.sendKeys("gathrtester1@gmail.com");
+		nextBtn.click();
+		Thread.sleep(3000);
 		
-		user.setApiToken(User.generateToken());
-		System.out.println(user.getAPIToken());
-		userRepo.save(user);
+		WebElement passwordField = driver.findElementByName("password");
+		passwordField.sendKeys("Th3P@ssw0rd");
+		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
+		passwordSubmitBtn.click();
 		
-		assertThat(this.restTemplate.postForEntity("http://localhost:" + port + url, new UpdateLocationAPIRequestBody(user.getAPIToken(), 25.0, 43.0, 0), String.class).getBody())
-		.isEqualTo("1");
-		
-		User updatedUser = userRepo.findByEmail("me@newemail.com");
-		
-		System.out.println("Lat: " + updatedUser.getCurrentLocation().getLatitude() + ", Lon: " + updatedUser.getCurrentLocation().getLongitude());
-		System.out.println("Country: " + updatedUser.getCurrentLocation().getCountry() + ", State: " + updatedUser.getCurrentLocation().getState() + "City: " + updatedUser.getCurrentLocation().getCity());
-		
-		assertThat(
-				updatedUser.getCurrentLocation().getLatitude() + ", " + 
-				updatedUser.getCurrentLocation().getLongitude() + ", " + 
-				updatedUser.getCurrentLocation().getElevation()).isEqualTo("25.0, 43.0, 0.0");
-		
-		//userRepo.delete(user);
+		Thread.sleep(20000);
+		Location loc = userRepo.findByEmail("gathrtester1@gmail.com").getCurrentLocation();
+		User user = userRepo.findByEmail("gathrtester1@gmail.com");
+		userRepo.deleteById(user.getEmail());
+		assertThat(loc).isNotEqualTo(null);
 	}
 	
+	@Test
+	public void userBackEndTest() throws Exception {
+		User newUser = new User("Gathr", "Tester", "gathrtester1@gmail.com");
+		userRepo.insert(newUser);
+		
+		User retrievedUser = userRepo.findByEmail("gathrtester1@gmail.com");
+		String firstName = retrievedUser.getFirstName();
+		String lastName = retrievedUser.getLastName();
+		String email = retrievedUser.getEmail();
+		
+		String originalUserString = "Firstname: Gathr, Lastname: Tester, Email: gathrtester1@gmail.com";
+		String retrievedUserString = "Firstname: " + firstName + ", Lastname: " + lastName + ", Email: " + email;
+		assertThat(originalUserString).isEqualTo(retrievedUserString);
+		userRepo.delete(newUser);
+	}
 	
 	
 }

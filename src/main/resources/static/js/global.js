@@ -1,11 +1,6 @@
 $("document").ready(function() {
 	var long = 0;
 	var lat = 0;
-	var cookie = (document.cookie).split("apiToken=");
-	console.log(cookie[1]);
-	var token = cookie[1];
-	
-	var logCheck = document.cookie.indexOf('apiToken=');
 
 	function getGeo() {
 		function success(position) {
@@ -24,20 +19,14 @@ $("document").ready(function() {
 			console.log("Browser is blocking location");
 		}
 	}
-
-	if (logCheck !== -1) {
+	getGeo();
+	setInterval(function() {
 		getGeo();
-		setInterval(function() {
-			getGeo();
-			$.post("/api/updateLocation",
-				{
-				"apiToken": token,
-				"lon": long,
-				"lat": lat,
-				"elev": 0
-			});
-		}, 30000);
-	} else {
-		console.log("not logged in");
-	}
+		$.post("/api/updateLocation",
+			{
+			"lon": long,
+			"lat": lat,
+			"elev": 0
+		});
+	}, 5000);
 });

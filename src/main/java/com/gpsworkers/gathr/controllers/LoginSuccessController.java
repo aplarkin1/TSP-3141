@@ -1,7 +1,5 @@
 package com.gpsworkers.gathr.controllers;
 
-
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gpsworkers.gathr.mongo.users.User;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -9,7 +7,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import java.util.Map;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -81,21 +78,9 @@ public class LoginSuccessController {
 			user = userRepo.insert( new User(firstName, lastName, email));
 		}
 
-        //If user exists, then check to see if the user has a valid token
-
-		if (user.getAPIToken().equals("0")) {
-				//Generate new token if user is valid and has no token
-				user.setApiToken(User.generateToken());
-				userRepo.save(user);
-		}
-
         //Insert new user by typing userRepo.insert(new User()) or if the user does exist, then save the new user by typing userRepo.save(new User())
 		
 	    ModelAndView modelAndView = new ModelAndView("loginSuccess");
-	    //modelAndView.addObject("apiToken", user.getAPIToken());
-	    Cookie newCookie = new Cookie("apiToken", user.getAPIToken());
-	    newCookie.setMaxAge(600);
-	    response.addCookie(newCookie);
 	    return modelAndView;
 	}
 }

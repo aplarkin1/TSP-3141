@@ -8,9 +8,4 @@ package com.gpsworkers.gathr.controllers.requestbodys;
  */
 public interface BasicRequestBody {
 	
-	/**
-	 * This method returns the API token stored that is stored in whatever implementation implements this interface
-	 * @return String representation of the API Token.
-	 */
-	public String getApiToken();
 }

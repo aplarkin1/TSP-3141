@@ -18,16 +18,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="users")
 public class User {
 
-	//API Token used by API requests
-  @Indexed
-    private ObjectId apiToken;
-
   @Indexed
     private String firstName, lastName, username;
 
     private Location currentLocation;
 
-    //Helps determine if a user API Tokn should be expired.
+    //Helps determine if a user API Token should be expired.
     private Date dateOfLastInteraction;
 
 	@Id
@@ -43,12 +39,10 @@ public class User {
      * @param email is the given email
      */
     public User(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        currentLocation = new Location();
+    	setEmail(email);
+    	setFirstName(firstName);
+    	setLastName(lastName);
         updateLastInteraction();
-        generateToken();
     }
 
     /**
@@ -135,27 +129,10 @@ public class User {
 	 * @param city is the city name where the user is currently located
 	 */
     public void updateLocation(double longitude, double latitude, double elevation, String country, String state, String city) {
-    	currentLocation.update(longitude, latitude, elevation, country, state, city);
-    }
-
-    /**
-     * This method generates a fresh user API token
-     * @return a new ObjectId.
-     */
-    public static final ObjectId generateToken() {
-    	return new ObjectId();
-    }
-
-    /**
-     * This method returns a hex string representation of the API token.
-     * @return String version of the apiToken
-     */
-    public String getAPIToken() {
-    	if(apiToken != null) {
-    		return apiToken.toHexString();
-    	} else {
-    		return "0";
+    	if(currentLocation == null) {
+    		currentLocation = new Location();
     	}
+    	currentLocation.update(longitude, latitude, elevation, country, state, city);
     }
 
     /**
@@ -173,21 +150,6 @@ public class User {
     public Date getDateOfLastInteraction() {
     	return dateOfLastInteraction;
     }
-
-    /**
-     * This method expires the user's current API token.  This is mainly used by the scheduled API Token cleaning task.
-     */
-    public void removeToken() {
-    	apiToken = null;;
-    }
-
-    /**
-     * This method allows for setting of a new API Token
-     * @param apiToken the new API token to be assigned to the user.
-     */
-	public void setApiToken(ObjectId apiToken) {
-		this.apiToken = apiToken;
-	}
 
 	public void addGroup( Group group ) {
 		groups.add( group );

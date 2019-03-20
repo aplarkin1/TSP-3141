@@ -1,21 +1,18 @@
 package com.gpsworkers.gathr.controllers;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import com.gpsworkers.gathr.controllers.requestbodys.BasicRequestBody;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
-import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
-import com.gpsworkers.gathr.exceptions.WebApiErrorResponseException;
-import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 
@@ -44,61 +41,46 @@ public class APIController {
 	 */
 	@PostMapping("/api/updateLocation")
 	@ResponseBody
-	public String updateLocation(@RequestBody UpdateLocationAPIRequestBody request) {
+	public ResponseEntity<String> updateLocation(UpdateLocationAPIRequestBody request) {
 		System.out.println("HELLO WORLD!!!");
-		try {
-			validateAPIRequest(request);
-			User validUser = users.findByApiToken(new ObjectId(request.apiToken));
-			GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
-			try {
-				GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(request.lat, request.lon)).await();
-				String cityName = results[0].addressComponents[1].longName;
-				String stateName = results[0].addressComponents[2].longName;
-				String countryName = results[0].addressComponents[3].longName;
-				System.out.println("Latitude: " + request.lat);
-				System.out.println("Longitude: " + request.lon);
-				validUser.updateLocation(request.lat, request.lon, request.elev, countryName, stateName, cityName);
-				users.save(validUser);
-			} catch (Exception e) {
-				System.out.println("Geocoding Connection Failed!");
-				e.printStackTrace();
-			}
-			return "1";
-		} catch(WebApiErrorResponseException e) {
-			return e.getMessage();
-		}
-	}
-	
-	/**
-	 * This method is a helper method that validates requests that contain an apiToken.
-	 * All requests that contain tokens are derived from the interface @see BasicRequestBody
-	 * This way we don't have to worry about creating validation code for each API request.
-	 * @param request @see BasicRequestBody
-	 * @throws WebApiErrorResponseException if the token is found to be forged or has a bad format
-	 */
-	private void validateAPIRequest(BasicRequestBody request) throws WebApiErrorResponseException{
-		//System.out.println(new ObjectId().toHexString());
-		try {
-			//Check user API Token validity
-			try {
-				ObjectId apiToken = new ObjectId(request.getApiToken());
-				System.out.print(apiToken);
-				User user = users.findByApiToken(apiToken);
-				
-				// If user not found in user repo, based on token.  Then send back bad token error message
-				if(user == null) {
-					throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_EXP_OR_FAKE_TOKEN, "Expired or fake token sent"))); 
-				}
-				
-			} catch(IllegalArgumentException e) {
-				//e.printStackTrace();
-				throw new WebApiErrorResponseException(GathrJSONUtils.write(new ErrorResponseBody(ERR_INVALID_TOKEN, "Invalid token sent")));
-			}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
-		} catch(JsonProcessingException jsErr) {
-			//jsErr.printStackTrace();
-			throw new WebApiErrorResponseException("{ 'error': " + ERR_INVALID_REQUEST_SENT + ", 'desc': 'Invalid Request Sent'}");
+			
+		System.out.println("NAME: " + auth.getPrincipal());
+		    
+		String authString = "" + auth.getPrincipal();
+	    authString = authString.replace("[", "");
+		authString = authString.replace("]", "");
+		System.out.println(authString);
+		String userEmail = authString.split("email=")[1];
+		System.out.println("EMAIL: " + userEmail);
+		    
+		User validUser = users.findByEmail(userEmail);
+		    
+		GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
+		try {
+			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(request.lat, request.lon)).await();
+			if(results.length == 0) {
+				return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
+			}
+			String fullAddress = results[1].formattedAddress;
+			String[] fullAddressSplit = fullAddress.split(",");
+			System.out.println(fullAddress);
+			String city = fullAddressSplit[1].split(" ")[1];
+			String state = fullAddressSplit[2].split(" ")[1];
+			String country = fullAddressSplit[3].split(" ")[1];
+
+			System.out.println(country + "->" + state + "->" + city);
+
+			validUser.updateLocation(request.lat, request.lon, request.elev, country, state, city);
+			users.save(validUser);
+		} catch (Exception e) {
+			System.out.println("Geocoding Connection Failed!");
+			e.printStackTrace();
+			return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
 		}
+		return new ResponseEntity<>("1", HttpStatus.OK);
+
 	}
 	
 }

@@ -12,19 +12,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * This is the MongoRepository where users can be saved and retrieved from.
  */
 public interface UserRepository extends MongoRepository<User, String> {
-	/**
-	 * This method specifies that all Users that have had no interaction before the given date should be returned as a List
-	 * @param dateOfLastInteraction is the threshold date
-	 * @return
-	 */
-	public List<User> findAllByDateOfLastInteractionLessThanEqualAndApiTokenNotNull(Date dateOfLastInteraction);
-
-	/**
-	 * This method allows for the retrieval of a user given an API Token
-	 * @param token is the ObjectID that can be used to retrieve User
-	 * @return User that the token belongs to.
-	 */
-	public User findByApiToken(ObjectId token);
 
 	/**
 		* This method allows for the retrieval of a user given an email address
