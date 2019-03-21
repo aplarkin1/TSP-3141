@@ -2,6 +2,7 @@ package com.gpsworkers.gathr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -26,6 +27,8 @@ import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBod
 import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
 import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+import com.gpsworkers.gathr.mongo.groups.Group;
+import com.gpsworkers.gathr.mongo.groups.GroupRepository;
 import com.gpsworkers.gathr.mongo.users.Location;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
@@ -42,6 +45,9 @@ public class WebTests {
 	
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	GroupRepository groups;
 	
 	private SeleniumAPI gathrApi;
 	
@@ -94,22 +100,7 @@ public class WebTests {
 	@Test
 	public void userCreationTest() throws Exception {
 		gathrApi = new SeleniumAPI();
-		gathrApi.getRoot();
-		FirefoxDriver driver = gathrApi.getConfig().getDriver();
-		WebElement loginBtn = driver.findElementById("Google");
-		loginBtn.click();
-		
-		WebElement emailTextField = driver.findElementById("identifierId");
-		WebElement nextBtn = driver.findElementById("identifierNext");
-		emailTextField.sendKeys("gathrtester1@gmail.com");
-		nextBtn.click();
-		Thread.sleep(3000);
-		
-		WebElement passwordField = driver.findElementByName("password");
-		passwordField.sendKeys("Th3P@ssw0rd");
-		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
-		passwordSubmitBtn.click();
-		Thread.sleep(3000);
+		login(gathrApi);
 		
 		User user = userRepo.findByEmail("gathrtester1@gmail.com");
 		
@@ -119,27 +110,12 @@ public class WebTests {
 	
 	@Test
 	public void userLoginTest() throws Exception {
-		
 		User newUser = new User("Gathr", "Tester", "gathrtester1@gmail.com");
 		userRepo.insert(newUser);
+		
 		gathrApi = new SeleniumAPI();
+		login(gathrApi);
 		FirefoxDriver driver = gathrApi.getConfig().getDriver();
-		gathrApi.getRoot();
-		Thread.sleep(2000);
-		WebElement loginBtn = driver.findElementById("Google");
-		loginBtn.click();
-		
-		WebElement emailTextField = driver.findElementById("identifierId");
-		WebElement nextBtn = driver.findElementById("identifierNext");
-		emailTextField.sendKeys("gathrtester1@gmail.com");
-		nextBtn.click();
-		Thread.sleep(3000);
-		
-		WebElement passwordField = driver.findElementByName("password");
-		passwordField.sendKeys("Th3P@ssw0rd");
-		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
-		passwordSubmitBtn.click();
-		Thread.sleep(3000);
 		
 		String title = driver.getTitle();
 		
@@ -151,22 +127,7 @@ public class WebTests {
 	@Test
 	public void updateLocationValidTest() throws Exception {
 		gathrApi = new SeleniumAPI();
-		gathrApi.getRoot();
-		FirefoxDriver driver = gathrApi.getConfig().getDriver();
-		WebElement loginBtn = driver.findElementById("Google");
-		loginBtn.click();
-		
-		WebElement emailTextField = driver.findElementById("identifierId");
-		WebElement nextBtn = driver.findElementById("identifierNext");
-		emailTextField.sendKeys("gathrtester1@gmail.com");
-		nextBtn.click();
-		Thread.sleep(3000);
-		
-		WebElement passwordField = driver.findElementByName("password");
-		passwordField.sendKeys("Th3P@ssw0rd");
-		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
-		passwordSubmitBtn.click();
-		
+		login(gathrApi);
 		Thread.sleep(20000);
 		Location loc = userRepo.findByEmail("gathrtester1@gmail.com").getCurrentLocation();
 		User user = userRepo.findByEmail("gathrtester1@gmail.com");
@@ -178,7 +139,6 @@ public class WebTests {
 	public void userBackEndTest() throws Exception {
 		User newUser = new User("Gathr", "Tester", "gathrtester1@gmail.com");
 		userRepo.insert(newUser);
-		
 		User retrievedUser = userRepo.findByEmail("gathrtester1@gmail.com");
 		String firstName = retrievedUser.getFirstName();
 		String lastName = retrievedUser.getLastName();
@@ -193,8 +153,42 @@ public class WebTests {
 	@Test
 	public void groupCreationWebRequestTest() throws Exception {
 		gathrApi = new SeleniumAPI();
+		login(gathrApi);
+		String url = "/api/createGroup";
+		HashMap<String, Object> keyValuePairs = new HashMap<String, Object>();
+		keyValuePairs.put("groupId", "TESTING123");
+		gathrApi = new SeleniumAPI();
 		gathrApi.getRoot();
 		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+		String response = gathrApi.executePost(url, keyValuePairs);
+		Thread.sleep(2000);
+		
+		boolean groupFound = false;
+		Group group = groups.findById((String)keyValuePairs.get("groupId")).get();
+		
+		if(group != null) {
+			groupFound = true;
+			groups.delete(group);
+		}
+		
+		assertThat(groupFound).isEqualTo(true);
+	}
+	
+	public void login(SeleniumAPI gathrApi) throws InterruptedException {
+		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+		WebElement loginBtn = driver.findElementById("Google");
+		loginBtn.click();
+		
+		WebElement emailTextField = driver.findElementById("identifierId");
+		WebElement nextBtn = driver.findElementById("identifierNext");
+		emailTextField.sendKeys("gathrtester1@gmail.com");
+		nextBtn.click();
+		Thread.sleep(3000);
+		
+		WebElement passwordField = driver.findElementByName("password");
+		passwordField.sendKeys("Th3P@ssw0rd");
+		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
+		passwordSubmitBtn.click();
 	}
 	
 	

@@ -171,7 +171,7 @@ public class APIController {
 	
 	@PostMapping("/api/createGroup")
 	@ResponseBody
-	public ResponseEntity<String> createGroup(String groupId, String groupInvite) throws JsonProcessingException {
+	public ResponseEntity<String> createGroup(String groupId) throws JsonProcessingException {
 		
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User sourceUser = users.findByEmail(sourceEmail);
@@ -179,6 +179,7 @@ public class APIController {
 		if(groups.findById(groupId).isEmpty()) {
 			Group newGroup = new Group(groupId, sourceUser);
 			groups.save(newGroup);
+			return new ResponseEntity<>("1", HttpStatus.OK);
 		}
 		
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
