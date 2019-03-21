@@ -99,7 +99,7 @@ public class APIController {
 
 	}
 	
-	@PostMapping("/proto/api/sendGroupChannelMessage")
+	@PostMapping("/api/sendGroupChannelMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendGroupChannelMessage(String message, String groupId, String channelName) {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -114,7 +114,7 @@ public class APIController {
 		
 	}
 	
-	@PostMapping("/proto/api/openCommsWithUser")
+	@PostMapping("/api/openCommsWithUser")
 	@ResponseBody
 	public ResponseEntity<String> openCommsWithUser(String message, String targetUserEmail) throws JsonProcessingException, NotAdminException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -144,7 +144,7 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
-	@PostMapping("/proto/api/sendPersonalGroupMessage")
+	@PostMapping("/api/sendPersonalGroupMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendPersonalGroupMessage(String message, String groupId) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
@@ -162,7 +162,7 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
-	@PostMapping("/proto/api/sendPrivateGroupInviteToUser")
+	@PostMapping("/api/sendPrivateGroupInviteToUser")
 	@ResponseBody
 	public ResponseEntity<String> addUserToGroup(String groupId, String userEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
@@ -191,7 +191,7 @@ public class APIController {
 		}
 	}
 	
-	@PostMapping("/proto/api/getGroupInvites")
+	@PostMapping("/api/getGroupInvites")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvites() throws JsonProcessingException {
 		HashMap<String, String> errMsg = new HashMap<>();
@@ -206,7 +206,7 @@ public class APIController {
 		}
 	}
 	
-	@PostMapping("/proto/api/getGroupInvitationDetails")
+	@PostMapping("/api/getGroupInvitationDetails")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvitationDetails(String groupId, String groupInvite) throws JsonProcessingException {
 		HashMap<String, String> errMsg = new HashMap<>();
