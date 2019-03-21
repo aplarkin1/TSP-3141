@@ -2,7 +2,11 @@ package com.gpsworkers.gathr.mongo.groups;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
+
+import java.util.ArrayList;
 import java.util.Collection;
+
+import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
 import java.util.Date;
 import org.bson.types.ObjectId;
@@ -26,7 +30,7 @@ public class Group {
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
-
+    private CommunicationNetwork groupCommsNetwork;
   @Indexed ( unique = true )
     private String groupInvite;
 
@@ -39,6 +43,7 @@ public class Group {
         this.groupName = groupName;
         users.add( user );
         admins.add( user );
+        groupCommsNetwork = new CommunicationNetwork();
     }
 
     /**
@@ -135,8 +140,22 @@ public class Group {
         String str = "0";
         return str;
       }
-
+      
+      public boolean isAdmin(String email) {
+    	  for(User user : admins) {
+    		  if(user.getEmail().equals(email)) {
+    			  return true;
+    		  }
+    	  }
+    	  return false;
+      }
+      
       public void setGroupInvite() {
         groupInvite = newGroupInvite();
       }
+
+		public CommunicationNetwork getGroupCommsNetwork() {
+			return groupCommsNetwork;
+		}
+      
      }

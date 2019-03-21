@@ -1,13 +1,22 @@
 package com.gpsworkers.gathr.mongo.users;
 
 import org.springframework.data.mongodb.core.index.Indexed;
+
+import com.gpsworkers.gathr.controllers.APIController;
+import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
+import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
+import com.gpsworkers.gathr.mongo.communication.CommunicationsRepository;
 import com.gpsworkers.gathr.mongo.groups.Group;
+import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -25,13 +34,17 @@ public class User {
 
     //Helps determine if a user API Token should be expired.
     private Date dateOfLastInteraction;
-
-	@Id
+    private ArrayList<String> blackList;
+	private ArrayList<GroupInvitation> groupInvitations;
+	
+    @Id
     private String email;
 
   @DBRef
     public Collection<Group> groups;
-
+  
+  
+  
     /**
      * This constructor allows for the construction of User if and only if a first name, last name, and email are given.
      * @param firstName is the given first name
@@ -42,6 +55,8 @@ public class User {
     	setEmail(email);
     	setFirstName(firstName);
     	setLastName(lastName);
+    	blackList = new ArrayList<String>();
+    	groupInvitations = new ArrayList<GroupInvitation>();
         updateLastInteraction();
     }
 
@@ -159,4 +174,59 @@ public class User {
 	public void removeGroup ( Group group ) {
 		groups.remove( group );
 	}
+	
+	public boolean sendMessage(String message, String groupId, String channelName) {
+		
+		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		
+		if(message == null || message.isEmpty()) {
+			System.out.println("Null or empty message passed for transmission!");
+			return false;
+		} else if(groupId == null || groupId.isEmpty()) {
+			System.out.println("Null or empty group name passed for message transmission!");
+			return false;
+		} else if(channelName == null || channelName.isEmpty()) {
+			System.out.println("Null or empty channel name passed for message transmission!");
+			return false;
+		}
+		
+		for(Group group : groups) {
+			try {
+				if(group.getGroupName().equals(groupId) && group.getGroupCommsNetwork().getChannel(channelName) != null) {
+					group.getGroupCommsNetwork().getChannel(channelName).postMessage(message, email);
+					return true;
+				}
+			} catch (ChannelDoesntExistException e) {
+				System.out.println("Channel: " + channelName + " doesn't exist!");
+				return false;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		System.out.println("User doesn't belong to the group: " + groupId);
+		return false;
+	}
+
+	public boolean hasBlacklistedUser(String emailToCheck) {
+		if(blackList.indexOf(emailToCheck) != -1) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Group getGroup(String groupId) {
+		for(Group group : groups) {
+			if(group.getGroupName().equals(groupId)) {
+				return group;
+			}
+		}
+		return null;
+	}
+	
+	public void postGroupInvite(String sourceEmail, String groupId, String groupInvite, String invitationMessage) {
+		GroupInvitation newInvitation = new GroupInvitation(sourceEmail, groupInvite, invitationMessage, groupId);
+		groupInvitations.add(newInvitation);
+	}
+	
 }

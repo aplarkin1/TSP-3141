@@ -19,4 +19,5 @@ public interface UserRepository extends MongoRepository<User, String> {
 		* @return user the email belongs to
 	*/
 	public User findByEmail( String email );
+
 }

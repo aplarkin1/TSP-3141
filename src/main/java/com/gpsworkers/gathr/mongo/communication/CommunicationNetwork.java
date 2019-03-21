@@ -60,4 +60,13 @@ public class CommunicationNetwork {
 		
 		return channels.get(name);
 	}
+	
+	public HashMap<String, Channel> getChannels() {
+		return channels;
+	}
+	
+	public void removeChannel(String name) {
+		channels.remove(name);
+	}
+
 }
