@@ -1,7 +1,9 @@
 package com.gpsworkers.gathr.controllers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -22,6 +23,7 @@ import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import com.gpsworkers.gathr.mongo.groups.Group;
+import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
@@ -97,9 +99,9 @@ public class APIController {
 
 	}
 	
-	@PostMapping("/api/sendGroupMessage")
+	@PostMapping("/proto/api/sendGroupChannelMessage")
 	@ResponseBody
-	public ResponseEntity<String> sendGroupMessage(String message, String groupId, String channelName) {
+	public ResponseEntity<String> sendGroupChannelMessage(String message, String groupId, String channelName) {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User user = users.findByEmail(email);
 		
@@ -112,7 +114,7 @@ public class APIController {
 		
 	}
 	
-	@PostMapping("/api/openCommsWithUser")
+	@PostMapping("/proto/api/openCommsWithUser")
 	@ResponseBody
 	public ResponseEntity<String> openCommsWithUser(String message, String targetUserEmail) throws JsonProcessingException, NotAdminException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -142,7 +144,7 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
-	@PostMapping("/api/sendPersonalGroupMessage")
+	@PostMapping("/proto/api/sendPersonalGroupMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendPersonalGroupMessage(String message, String groupId) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
@@ -160,9 +162,9 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
-	@PostMapping("/api/sendPrivateGroupInviteToUser")
+	@PostMapping("/proto/api/sendPrivateGroupInviteToUser")
 	@ResponseBody
-	public ResponseEntity<String> addUserToConversation(String groupId, String userEmail) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+	public ResponseEntity<String> addUserToGroup(String groupId, String userEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
 		HashMap<String, String> errMsg = new HashMap<>();
 		
@@ -174,7 +176,8 @@ public class APIController {
 		if(group != null) {
 			User targetUser = users.findByEmail(userEmail);
 			if(targetUser != null) {
-				targetUser.postGroupInvite(sourceUser.getEmail(), group.getGroupName(), group.getGroupInvite(), "Would you like to join my conversation?");
+				GroupInvitation invitation = new GroupInvitation(sourceEmail, group.getGroupInvite(), invitationMessage, group.getGroupName());
+				targetUser.postGroupInvite(invitation);
 				users.save(targetUser);
 				return new ResponseEntity<>("1", HttpStatus.OK);
 			} else {
@@ -187,31 +190,46 @@ public class APIController {
 			return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 		}
 	}
-	/*
-	@PostMapping("/api/sendGroupInviteToUser")
+	
+	@PostMapping("/proto/api/getGroupInvites")
 	@ResponseBody
-	public ResponseEntity<String> addUserToConversation(String groupId, String userEmail, String invitationDescription) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
-		
+	public ResponseEntity<String> getGroupInvites() throws JsonProcessingException {
 		HashMap<String, String> errMsg = new HashMap<>();
 		
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User sourceUser = users.findByEmail(sourceEmail);
 		
-		Group group = sourceUser.getGroup(groupId);
-
-		if(group != null) {
-			User targetUser = users.findByEmail(userEmail);
-			if(targetUser != null) {
-				targetUser.postGroupInvite();
-			}
+		if(sourceUser.getGroupInvites().size() > 0) {
+			return new ResponseEntity<>(GathrJSONUtils.write(sourceUser.getGroupInvites()), HttpStatus.FOUND);
 		} else {
-			errMsg.put("error", "-1");
-			errMsg.put("desc", "Target user doesn't exist!");
+			return new ResponseEntity<>("1", HttpStatus.OK);
 		}
+	}
+	
+	@PostMapping("/proto/api/getGroupInvitationDetails")
+	@ResponseBody
+	public ResponseEntity<String> getGroupInvitationDetails(String groupId, String groupInvite) throws JsonProcessingException {
+		HashMap<String, String> errMsg = new HashMap<>();
+		
+		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		User sourceUser = users.findByEmail(sourceEmail);
 
+		for(GroupInvitation invite : sourceUser.getGroupInvites()) {
+			if(invite.groupId.equals(groupId) && invite.groupInvite.equals(groupInvite)) {
+				
+				Optional<Group> group = groups.findById(groupId);
+				if(group.isPresent()) {
+					return new ResponseEntity<>(group.get().getGroupSummary(), HttpStatus.FOUND);
+				} else {
+					errMsg.put("error", "-1");
+					errMsg.put("description", "The group " + groupId + " no longer exists!");
+					return new ResponseEntity<>(GathrJSONUtils.write(errMsg), HttpStatus.NOT_FOUND);
+				}
+			}
+		}
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
-	*/
+
 	public static final String extractEmailFromAuth(Authentication auth) {
 		String authString = "" + auth.getPrincipal();
 	    authString = authString.replace("[", "");

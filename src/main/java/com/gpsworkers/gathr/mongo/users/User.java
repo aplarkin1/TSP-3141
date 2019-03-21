@@ -224,9 +224,11 @@ public class User {
 		return null;
 	}
 	
-	public void postGroupInvite(String sourceEmail, String groupId, String groupInvite, String invitationMessage) {
-		GroupInvitation newInvitation = new GroupInvitation(sourceEmail, groupInvite, invitationMessage, groupId);
-		groupInvitations.add(newInvitation);
+	public void postGroupInvite(GroupInvitation invite) {
+		groupInvitations.add(invite);
 	}
 	
+	public ArrayList<GroupInvitation> getGroupInvites() {
+		return groupInvitations;
+	}
 }

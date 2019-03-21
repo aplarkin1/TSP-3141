@@ -1,7 +1,10 @@
 package com.gpsworkers.gathr.mongo.groups;
 
 import org.springframework.data.mongodb.core.index.Indexed;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
+import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +12,8 @@ import java.util.Collection;
 import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
 import java.util.Date;
+import java.util.HashMap;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -152,6 +157,24 @@ public class Group {
       
       public void setGroupInvite() {
         groupInvite = newGroupInvite();
+      }
+      
+      public String getGroupSummary() throws JsonProcessingException {
+    	  HashMap<String, Object> summary = new HashMap<>();
+    	  ArrayList<String> userEmails = new ArrayList<String>();
+    	  ArrayList<String> adminEmails = new ArrayList<String>();
+    	  for(User user : users) {
+    		  userEmails.add(user.getEmail());
+    	  }
+    	  for(User user : admins) {
+    		  userEmails.add(user.getEmail());
+    	  }
+    	  summary.put("name", groupName);
+    	  summary.put("admins", adminEmails);
+    	  summary.put("members", userEmails);
+    	  summary.put("size", users.size());
+    	  
+    	  return GathrJSONUtils.write(summary);
       }
 
 		public CommunicationNetwork getGroupCommsNetwork() {
