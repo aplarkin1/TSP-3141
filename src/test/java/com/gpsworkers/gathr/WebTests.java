@@ -190,6 +190,13 @@ public class WebTests {
 		userRepo.delete(newUser);
 	}
 	
+	@Test
+	public void groupCreationWebRequestTest() throws Exception {
+		gathrApi = new SeleniumAPI();
+		gathrApi.getRoot();
+		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+	}
+	
 	
 	
 	
