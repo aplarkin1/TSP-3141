@@ -1,10 +1,30 @@
 body{
+    background-image: url("../images/background.png");
+    background-size: 100%;
+}
 
-	background-image: url("../../background.png"");
-	
-	padding-top: 40px;
-	padding-bottom: 40px;
+.welcome-text{
+    font-size: 1.5em;
+    text-align: right;
+}
 
 .welcome-logo{
-	width: 50%;
+    width: 20%;
+    height: 20%;
+}
+.container-primary{
+    background-color: white;
+    border-style: solid;
+    border-color: #2B3D4F;
+    border-width: thick;
+    margin-left: auto;
+    margin-right: auto;
+    float: center;
+}
+
+.container-primary{
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 2.5%;
+    margin-bottom: 1.25%;
 }
