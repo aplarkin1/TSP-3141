@@ -1,5 +1,10 @@
 package com.gpsworkers.gathr;
 
+import java.util.HashMap;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+
 public class SeleniumAPI {
 	
 	SeleniumConfig config;
@@ -26,6 +31,10 @@ public class SeleniumAPI {
 		config.getDriver().get(baseUri + infoUri);
 	}
 	
+	public void getHome() {
+		config.getDriver().get(baseUri + "home");
+	}
+	
 	public void getLoginSuccess() {
 		config.getDriver().get(baseUri + loginSuccessUri);
 	}
@@ -40,6 +49,19 @@ public class SeleniumAPI {
 	
 	public SeleniumConfig getConfig() {
 		return config;
+	}
+	
+	public String executePost(String path, HashMap<String, Object> keyValuePairs) throws JsonProcessingException {
+		Object[] empty = new Object[0];
+		String keyValuePairJSON = GathrJSONUtils.write(keyValuePairs);
+		StringBuilder builder = new StringBuilder();
+		builder.append("$.post('");
+		builder.append(path);
+		builder.append("', ");
+		String request = String.format("$.post('%s', %s)", path, keyValuePairJSON);
+		System.out.println(request);
+		
+		return (String)config.getDriver().executeScript(request, empty);
 	}
 	
 }
