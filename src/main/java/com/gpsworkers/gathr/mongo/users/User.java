@@ -8,6 +8,7 @@ import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.communication.CommunicationsRepository;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
+import com.gpsworkers.gathr.mongo.users.FriendInvitation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,17 +35,20 @@ public class User {
 
     //Helps determine if a user API Token should be expired.
     private Date dateOfLastInteraction;
+
     private ArrayList<String> blackList;
-	private ArrayList<GroupInvitation> groupInvitations;
-	
-    @Id
+	  private ArrayList<GroupInvitation> groupInvitations;
+    private ArrayList<FriendInvitation> friendInvitations;
+
+  @Id
     private String email;
 
   @DBRef
-    public Collection<Group> groups;
-  
-  
-  
+    private Collection<Group> groups;
+    private Collection<User> friends;
+
+
+
     /**
      * This constructor allows for the construction of User if and only if a first name, last name, and email are given.
      * @param firstName is the given first name
@@ -64,7 +68,7 @@ public class User {
      * Getter for Location
      * @return location of user
      */
-    public Location getCurrentLocation() {
+  public Location getCurrentLocation() {
 		return currentLocation;
 	}
 
@@ -174,11 +178,20 @@ public class User {
 	public void removeGroup ( Group group ) {
 		groups.remove( group );
 	}
-	
+
+  public Group getGroup(String groupId) {
+		for(Group group : groups) {
+			if(group.getGroupName().equals(groupId)) {
+				return group;
+			}
+		}
+		return null;
+	}
+
 	public boolean sendMessage(String message, String groupId, String channelName) {
-		
+
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		
+
 		if(message == null || message.isEmpty()) {
 			System.out.println("Null or empty message passed for transmission!");
 			return false;
@@ -189,7 +202,7 @@ public class User {
 			System.out.println("Null or empty channel name passed for message transmission!");
 			return false;
 		}
-		
+
 		for(Group group : groups) {
 			try {
 				if(group.getGroupName().equals(groupId) && group.getGroupCommsNetwork().getChannel(channelName) != null) {
@@ -214,21 +227,28 @@ public class User {
 		}
 		return true;
 	}
-	
-	public Group getGroup(String groupId) {
-		for(Group group : groups) {
-			if(group.getGroupName().equals(groupId)) {
-				return group;
-			}
-		}
-		return null;
-	}
-	
+
 	public void postGroupInvite(GroupInvitation invite) {
 		groupInvitations.add(invite);
 	}
-	
+
 	public ArrayList<GroupInvitation> getGroupInvites() {
 		return groupInvitations;
 	}
+
+  public Collection<User> getFriends() {
+    return friends;
+  }
+
+  public void removeFriend( User user) {
+    friends.remove( user );
+  }
+  
+  public void sendFriendRequest( FriendInvitation invite) {
+    friendInvitations.add( invite );
+  }
+
+  public ArrayList<FriendInvitation> getFriendInvites() {
+    return friendInvitations;
+  }
 }
