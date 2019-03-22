@@ -47,6 +47,8 @@ public class Group {
      */
     public Group(String groupName, User user) {
         this.groupName = groupName;
+        System.out.println(users);
+        System.out.println(admins);
         users.add( user );
         admins.add( user );
         groupCommsNetwork = new CommunicationNetwork();
