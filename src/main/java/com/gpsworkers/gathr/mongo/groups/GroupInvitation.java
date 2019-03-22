@@ -1,7 +1,5 @@
 package com.gpsworkers.gathr.mongo.groups;
 
-import java.util.ArrayList;
-
 public class GroupInvitation {
 	public String sourceEmail;
 	public String groupInvite;

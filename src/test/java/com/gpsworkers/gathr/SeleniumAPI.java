@@ -31,6 +31,10 @@ public class SeleniumAPI {
 		config.getDriver().get(baseUri + infoUri);
 	}
 	
+	public void getHome() {
+		config.getDriver().get(baseUri + "home");
+	}
+	
 	public void getLoginSuccess() {
 		config.getDriver().get(baseUri + loginSuccessUri);
 	}
@@ -54,7 +58,7 @@ public class SeleniumAPI {
 		builder.append("$.post('");
 		builder.append(path);
 		builder.append("', ");
-		String request = String.format("$.post('%s', %s", path, keyValuePairJSON);
+		String request = String.format("$.post('%s', %s)", path, keyValuePairJSON);
 		System.out.println(request);
 		
 		return (String)config.getDriver().executeScript(request, empty);

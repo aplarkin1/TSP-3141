@@ -176,7 +176,7 @@ public class APIController {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User sourceUser = users.findByEmail(sourceEmail);
 		
-		if(groups.findById(groupId).isEmpty()) {
+		if(!groups.findById(groupId).isPresent()) {
 			Group newGroup = new Group(groupId, sourceUser);
 			groups.save(newGroup);
 			return new ResponseEntity<>("1", HttpStatus.OK);

@@ -14,7 +14,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/css/**", "/js/**", "/images/**", "/login").permitAll().anyRequest().anonymous()
+                .antMatchers("/css/**", "/js/**", "/images/**", "/login", "/proto/**").permitAll().anyRequest().anonymous()
                 .antMatchers("/home", "/loginSuccess", "/info", "/api/**").permitAll().anyRequest().authenticated()                
                 .and().oauth2Login().loginPage("/login").defaultSuccessUrl("/loginSuccess", true);
         http.csrf().disable();

@@ -4,8 +4,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 import com.gpsworkers.gathr.controllers.APIController;
 import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
-import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
-import com.gpsworkers.gathr.mongo.communication.CommunicationsRepository;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 
@@ -15,7 +13,6 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -207,7 +204,11 @@ public class User {
 		System.out.println("User doesn't belong to the group: " + groupId);
 		return false;
 	}
-
+	
+	public void setLocation(Location location) {
+		this.currentLocation = null;
+	}
+	
 	public boolean hasBlacklistedUser(String emailToCheck) {
 		if(blackList.indexOf(emailToCheck) != -1) {
 			return false;
