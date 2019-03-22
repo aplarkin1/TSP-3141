@@ -46,12 +46,15 @@ public class Group {
      * @param user user that created the new group
      */
     public Group(String groupName, User user) {
+        users = new ArrayList<User>();
+        admins = new ArrayList<User>();
         this.groupName = groupName;
         System.out.println(users);
         System.out.println(admins);
         users.add( user );
         admins.add( user );
         groupCommsNetwork = new CommunicationNetwork();
+
     }
 
     /**
