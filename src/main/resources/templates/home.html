@@ -21,25 +21,10 @@
 	integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf"
 	crossorigin="anonymous">
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
-<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/static/css/styles.css}">
 <script type="text/javascript" th:src="@{/js/loginCheck.js}"></script>
 <script type="text/javascript" th:src="@{/js/global.js}"></script>
 <title>Home</title>
-<style>
-	#slideshow {
-		width: 500px;
-		height: 500px;
-		margin: 0 auto;
-		position: relative;
-	}
-	.slide {
-		width: 500px;
-		height: 500px;
-		position: absolute;
-		left: 0;
-		top: 0;
-	}
-</style>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -60,16 +45,16 @@
 						Us</a></li>
 			</ul>
 			<div class="my-2 my-lg-0">
-				<a class="nav-link" id="account-link" href="/account">Account</a>
+				<a class="nav-link" id="nav-link" href="/account">Account</a>
 			</div>
 		</div>
 	</nav>
 	
-	<section class="container primary">
+	<section class="container-primary">
 		<div class="welcome-container">
-			<img src="../images/logo2.png" class="welcome-logo" alt="Gathr Logo">
-		</div>
-		<div class="welcome-text">
+			<img src="images/logo2.png" class="welcome-logo" alt="Gathr Logo">
+			<h1 class="welcome-text"> Welcome to Gathr!</h1>
+			<p class="welcome-text"> Gathr is a web service that allows users to broadcast messages to people in their area.<br> In addition Gathr allows users to share their location with other users or groups so that people can stick together.</p>
 		</div>
 	</section>
 	

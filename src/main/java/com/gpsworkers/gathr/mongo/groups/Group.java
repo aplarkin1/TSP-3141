@@ -1,5 +1,6 @@
 package com.gpsworkers.gathr.mongo.groups;
 
+import com.microsoft.applicationinsights.core.dependencies.apachecommons.lang3.RandomStringUtils;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,10 +46,15 @@ public class Group {
      * @param user user that created the new group
      */
     public Group(String groupName, User user) {
+        users = new ArrayList<User>();
+        admins = new ArrayList<User>();
         this.groupName = groupName;
+        System.out.println(users);
+        System.out.println(admins);
         users.add( user );
         admins.add( user );
         groupCommsNetwork = new CommunicationNetwork();
+
     }
 
     /**
@@ -142,10 +148,10 @@ public class Group {
       }
 
       private String newGroupInvite( ) {
-        String str = "0";
+        String str = RandomStringUtils.randomAlphanumeric(42);
         return str;
       }
-      
+
       public boolean isAdmin(String email) {
     	  for(User user : admins) {
     		  if(user.getEmail().equals(email)) {
@@ -154,11 +160,11 @@ public class Group {
     	  }
     	  return false;
       }
-      
+
       public void setGroupInvite() {
         groupInvite = newGroupInvite();
       }
-      
+
       public String getGroupSummary() throws JsonProcessingException {
     	  HashMap<String, Object> summary = new HashMap<>();
     	  ArrayList<String> userEmails = new ArrayList<String>();
@@ -173,12 +179,11 @@ public class Group {
     	  summary.put("admins", adminEmails);
     	  summary.put("members", userEmails);
     	  summary.put("size", users.size());
-    	  
+
     	  return GathrJSONUtils.write(summary);
       }
 
 		public CommunicationNetwork getGroupCommsNetwork() {
 			return groupCommsNetwork;
 		}
-      
-     }
+}

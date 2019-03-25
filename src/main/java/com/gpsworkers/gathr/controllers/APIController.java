@@ -93,13 +93,13 @@ public class APIController {
 		} catch (Exception e) {
 			System.out.println("Geocoding Connection Failed!");
 			e.printStackTrace();
-			return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
+			return new ResponseEntity<>("-1", HttpStatus.BAD_GATEWAY);
 		}
 		return new ResponseEntity<>("1", HttpStatus.OK);
 
 	}
 	
-	@PostMapping("/proto/api/sendGroupChannelMessage")
+	@PostMapping("/api/sendGroupChannelMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendGroupChannelMessage(String message, String groupId, String channelName) {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -114,7 +114,7 @@ public class APIController {
 		
 	}
 	
-	@PostMapping("/proto/api/openCommsWithUser")
+	@PostMapping("/api/openCommsWithUser")
 	@ResponseBody
 	public ResponseEntity<String> openCommsWithUser(String message, String targetUserEmail) throws JsonProcessingException, NotAdminException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -144,7 +144,7 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
-	@PostMapping("/proto/api/sendPersonalGroupMessage")
+	@PostMapping("/api/sendPersonalGroupMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendPersonalGroupMessage(String message, String groupId) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
@@ -161,10 +161,48 @@ public class APIController {
 		
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
+
+	public static final String extractEmailFromAuth(Authentication auth) {
+		String authString = "" + auth.getPrincipal();
+	    authString = authString.replace("[", "");
+		authString = authString.replace("]", "");
+		return authString.split("email=")[1];
+	}
 	
-	@PostMapping("/proto/api/sendPrivateGroupInviteToUser")
+	@PostMapping("/api/createGroup")
 	@ResponseBody
-	public ResponseEntity<String> addUserToGroup(String groupId, String userEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+	public ResponseEntity<String> createGroup(String groupId) throws JsonProcessingException {
+		
+		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		User sourceUser = users.findByEmail(sourceEmail);
+		
+		if(!groups.findById(groupId).isPresent()) {
+			Group newGroup = new Group(groupId, sourceUser);
+			groups.save(newGroup);
+			return new ResponseEntity<>("1", HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
+	}
+	
+	/*
+	@PostMapping("/api/deleteGroup")
+	@ResponseBody
+	public ResponseEntity<String> deleteGroup(String groupId, String groupInvite) throws JsonProcessingException {
+		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		User sourceUser = users.findByEmail(sourceEmail);
+		
+		if(groups.findById(groupId).isEmpty()) {
+			Group newGroup = new Group(groupId, sourceUser);
+			groups.save(newGroup);
+		}
+		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
+	}
+	*/
+	
+	@PostMapping("/api/inviteUserToGroup")
+	@ResponseBody
+	public ResponseEntity<String> inviteUserToGroup(String groupId, String userEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		
 		HashMap<String, String> errMsg = new HashMap<>();
 		
@@ -191,7 +229,7 @@ public class APIController {
 		}
 	}
 	
-	@PostMapping("/proto/api/getGroupInvites")
+	@PostMapping("/api/getGroupInvites")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvites() throws JsonProcessingException {
 		HashMap<String, String> errMsg = new HashMap<>();
@@ -206,7 +244,7 @@ public class APIController {
 		}
 	}
 	
-	@PostMapping("/proto/api/getGroupInvitationDetails")
+	@PostMapping("/api/getGroupInvitationDetails")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvitationDetails(String groupId, String groupInvite) throws JsonProcessingException {
 		HashMap<String, String> errMsg = new HashMap<>();
@@ -228,13 +266,6 @@ public class APIController {
 			}
 		}
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
-	}
-
-	public static final String extractEmailFromAuth(Authentication auth) {
-		String authString = "" + auth.getPrincipal();
-	    authString = authString.replace("[", "");
-		authString = authString.replace("]", "");
-		return authString.split("email=")[1];
 	}
 	
 	
