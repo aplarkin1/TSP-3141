@@ -17,6 +17,7 @@ public class MvcConfiguration implements WebMvcConfigurer{
 		registry.addViewController("/loginSucess").setViewName("loginSuccess");
 		registry.addViewController("/contactus").setViewName("contactus");
 		registry.addViewController("/account").setViewName("account");
+		registry.addViewController("/chat").setViewName("chat");
 	}
 
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
