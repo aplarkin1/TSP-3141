@@ -20,11 +20,16 @@ import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
 import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
+import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
+import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
+import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
+import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
+import com.gpsworkers.gathr.mongo.users.Location;
 import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.users.UserRepository;
 import com.gpsworkers.gathr.gathrutils.*;
@@ -57,48 +62,21 @@ public class APIController {
 	 */
 	@PostMapping("/api/updateLocation")
 	@ResponseBody
-	public ResponseEntity<String> updateLocation(UpdateLocationAPIRequestBody request) {
+	public ResponseEntity<String> handleUpdateLocationRequest(UpdateLocationAPIRequestBody request) {
 		System.out.println("HELLO WORLD!!!");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			
-			
-		System.out.println("NAME: " + auth.getPrincipal());
-		    
-		String authString = "" + auth.getPrincipal();
-	    authString = authString.replace("[", "");
-		authString = authString.replace("]", "");
-		System.out.println(authString);
-		String userEmail = authString.split("email=")[1];
-		System.out.println("EMAIL: " + userEmail);
-		    
-		User validUser = users.findByEmail(userEmail);
-		    
-		GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
+		String email = extractEmailFromAuth(auth);
 		try {
-			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(request.lat, request.lon)).await();
-			if(results.length == 0) {
-				return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
-			}
-			String fullAddress = results[1].formattedAddress;
-			String[] fullAddressSplit = fullAddress.split(",");
-			System.out.println(fullAddress);
-			String city = fullAddressSplit[1].split(" ")[1];
-			String state = fullAddressSplit[2].split(" ")[1];
-			String country = fullAddressSplit[3].split(" ")[1];
-
-			System.out.println(country + "->" + state + "->" + city);
-
-			validUser.updateLocation(request.lat, request.lon, request.elev, country, state, city);
-			users.save(validUser);
-		} catch (Exception e) {
-			System.out.println("Geocoding Connection Failed!");
-			e.printStackTrace();
+			updateLocation(email, request.lat, request.lon, request.elev);
+		} catch (GeoCodingConnectionFailedException gccfe) {
 			return new ResponseEntity<>("-1", HttpStatus.BAD_GATEWAY);
+		} catch (EmptyGeocodingResultException egre) {
+			return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
 		}
 		return new ResponseEntity<>("1", HttpStatus.OK);
-
 	}
 	
+	/*
 	@PostMapping("/api/sendGroupChannelMessage")
 	@ResponseBody
 	public ResponseEntity<String> sendGroupChannelMessage(String message, String groupId, String channelName) {
@@ -161,7 +139,7 @@ public class APIController {
 		
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
-
+	*/
 	public static final String extractEmailFromAuth(Authentication auth) {
 		String authString = "" + auth.getPrincipal();
 	    authString = authString.replace("[", "");
@@ -171,23 +149,19 @@ public class APIController {
 	
 	@PostMapping("/api/createGroup")
 	@ResponseBody
-	public ResponseEntity<String> createGroup(String groupId) throws JsonProcessingException {
-		
+	public ResponseEntity<String> handleCreateGroupRequest(String groupId) throws JsonProcessingException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		User sourceUser = users.findByEmail(sourceEmail);
-		
-		if(!groups.findById(groupId).isPresent()) {
-			Group newGroup = new Group(groupId, sourceUser);
-			groups.save(newGroup);
+		try {
+			createGroup(sourceEmail, groupId);
 			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch(GroupIdAlreadyInUseException e) {
+			return new ResponseEntity<>("-1", HttpStatus.CONFLICT);
 		}
-		
-		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	
 	/*
 	@PostMapping("/api/deleteGroup")
-	@ResponseBody
+	@ResponseBodyw
 	public ResponseEntity<String> deleteGroup(String groupId, String groupInvite) throws JsonProcessingException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User sourceUser = users.findByEmail(sourceEmail);
@@ -199,6 +173,7 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	*/
+	
 	
 	@PostMapping("/api/inviteUserToGroup")
 	@ResponseBody
@@ -229,6 +204,7 @@ public class APIController {
 		}
 	}
 	
+	/*
 	@PostMapping("/api/getGroupInvites")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvites() throws JsonProcessingException {
@@ -266,6 +242,63 @@ public class APIController {
 			}
 		}
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
+	}
+	*/
+	
+	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
+		User validUser = users.findByEmail(email);
+		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
+		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
+		users.save(validUser);
+		return true;
+	}
+	
+	public Location getLocationGeoCodeInformation(double lat, double lon) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
+		
+		GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
+		try {
+			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(lat, lon)).await();
+			if(results.length == 0) {
+				throw new EmptyGeocodingResultException();
+				
+			}
+			String fullAddress = results[1].formattedAddress;
+			String[] fullAddressSplit = fullAddress.split(",");
+			System.out.println(fullAddress);
+			String city = fullAddressSplit[1].split(" ")[1];
+			String state = fullAddressSplit[2].split(" ")[1];
+			String country = fullAddressSplit[3].split(" ")[1];
+
+			System.out.println(country + "->" + state + "->" + city);
+
+			Location newLocation = new Location();
+			newLocation.update(lon, lat, 0, country, state, city);
+			return newLocation;
+		} catch (Exception e) {
+			System.out.println("Geocoding Connection Failed!");
+			e.printStackTrace();
+			throw new GeoCodingConnectionFailedException();
+		}
+		
+	}
+	
+	public boolean createGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
+		Optional<User> sourceUser = users.findById(sourceEmail);
+		
+		if(!sourceUser.isPresent()) {
+			throw new UserNotFoundException();
+		}
+		System.out.println(groupId);
+		if(!groups.findById(groupId).isPresent()) {
+			Group newGroup = new Group(groupId);
+			newGroup.addUser(sourceUser.get());
+			groups.save(newGroup);
+			sourceUser.get().addGroup(newGroup);
+			users.save(sourceUser.get());
+			return true;
+		} else {
+			throw new GroupIdAlreadyInUseException();
+		}
 	}
 	
 	

@@ -10,7 +10,7 @@ import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
+//import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class Group {
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
-    private CommunicationNetwork groupCommsNetwork;
+    //private CommunicationNetwork groupCommsNetwork;
   @Indexed ( unique = true )
     private String groupInvite;
 
@@ -45,15 +45,13 @@ public class Group {
      * @param groupName the new Group's name
      * @param user user that created the new group
      */
-    public Group(String groupName, User user) {
+    public Group(String groupName) {
         users = new ArrayList<User>();
         admins = new ArrayList<User>();
         this.groupName = groupName;
-        System.out.println(users);
-        System.out.println(admins);
-        users.add( user );
-        admins.add( user );
-        groupCommsNetwork = new CommunicationNetwork();
+        //System.out.println(users);
+        //System.out.println(admins);
+        //groupCommsNetwork = new CommunicationNetwork();
 
     }
 
@@ -91,6 +89,16 @@ public class Group {
        * @param newUser user to ba added
       */
       public void addUser( User newUser, String groupInvite ) {
+        if ( !users.contains( newUser) && this.groupInvite == groupInvite ) {
+          users.add( newUser );
+        }
+      }
+      
+      /**
+       * adds a user to the group
+       * @param newUser user to ba added
+      */
+      public void addUser( User newUser) {
         if ( !users.contains( newUser) && this.groupInvite == groupInvite ) {
           users.add( newUser );
         }
@@ -182,8 +190,9 @@ public class Group {
 
     	  return GathrJSONUtils.write(summary);
       }
-
+      /*
 		public CommunicationNetwork getGroupCommsNetwork() {
 			return groupCommsNetwork;
 		}
+       */
 }

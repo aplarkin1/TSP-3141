@@ -1,4 +1,4 @@
-package com.gpsworkers.gathr.mongo.communication;
+package com.gpsworkers.gathr.mongo.communications;
 
 import java.util.HashMap;
 
@@ -60,13 +60,4 @@ public class CommunicationNetwork {
 		
 		return channels.get(name);
 	}
-	
-	public HashMap<String, Channel> getChannels() {
-		return channels;
-	}
-	
-	public void removeChannel(String name) {
-		channels.remove(name);
-	}
-
 }

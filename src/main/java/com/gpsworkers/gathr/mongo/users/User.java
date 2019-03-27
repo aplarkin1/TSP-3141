@@ -34,7 +34,7 @@ public class User {
     private Date dateOfLastInteraction;
 
     private ArrayList<String> blackList;
-	  private ArrayList<GroupInvitation> groupInvitations;
+	private ArrayList<GroupInvitation> groupInvitations;
     private ArrayList<FriendInvitation> friendInvitations;
 
   @Id
@@ -58,6 +58,9 @@ public class User {
     	setLastName(lastName);
     	blackList = new ArrayList<String>();
     	groupInvitations = new ArrayList<GroupInvitation>();
+    	groups = new ArrayList<Group>();
+    	friends = new ArrayList<User>();
+    	friendInvitations = new ArrayList<FriendInvitation>();
         updateLastInteraction();
     }
 
@@ -169,7 +172,6 @@ public class User {
 
 	public void addGroup( Group group ) {
 		groups.add( group );
-
 	}
 
 	public void removeGroup ( Group group ) {
@@ -184,7 +186,7 @@ public class User {
 		}
 		return null;
 	}
-
+  /*
 	public boolean sendMessage(String message, String groupId, String channelName) {
 
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
@@ -217,7 +219,7 @@ public class User {
 		System.out.println("User doesn't belong to the group: " + groupId);
 		return false;
 	}
-	
+	*/
 	public void setLocation(Location location) {
 		this.currentLocation = null;
 	}

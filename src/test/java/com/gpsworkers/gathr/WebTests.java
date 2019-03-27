@@ -3,6 +3,7 @@ package com.gpsworkers.gathr;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -53,15 +54,17 @@ public class WebTests {
 	
 	@After
 	public void clean() {
-		User user = userRepo.findByEmail("wwwest09@gmail.com");
-		if(user != null) {
-			userRepo.deleteById(user.getEmail());
+		
+		if(userRepo.existsById("wwwest09@gmail.com")) {
+			userRepo.deleteById("wwwest09@gmail.com");
 		}
 		
 		try {
-			gathrApi.closeBrowser();
+			if(gathrApi != null) {
+				gathrApi.closeBrowser();	
+			}
 		} catch(RuntimeException e){
-			
+			e.printStackTrace();
 		}
 	}
 	
@@ -127,30 +130,75 @@ public class WebTests {
 		HashMap<String, Object> keyValuePairs = new HashMap<String, Object>();
 		keyValuePairs.put("groupId", "TESTING123");
 		String response = gathrApi.executePost(url, keyValuePairs);
-		Thread.sleep(30000);
-		
-		boolean groupFound = false;
-		Group group = groups.findById((String)keyValuePairs.get("groupId")).get();
-		
-		if(group != null) {
-			groupFound = true;
-			groups.delete(group);
+		Thread.sleep(5000);
+		boolean groupFound = groups.existsById((String)keyValuePairs.get("groupId"));
+		if(groupFound == true) {
+			System.out.println("Group " + keyValuePairs.get("groupId") + " found");	
+		} else {
+			System.out.println("Group " + keyValuePairs.get("groupId") + " not found");	
 		}
-		
+		Thread.sleep(10000);
 		return groupFound;
 	}
+	/*
+	public boolean groupInvitationGenerationTest() throws Exception {
+		String url = "/api/createGroup";
+		HashMap<String, Object> keyValuePairs = new HashMap<String, Object>();
+		String response = "";
+
+		url = "/api/inviteUserToGroup";
+		keyValuePairs = new HashMap<String, Object>();
+		keyValuePairs.put("groupId", "TESTING123");
+		keyValuePairs.put("userEmail", "lolme@gmail.com");
+		keyValuePairs.put("invitationMessage", "You want to join our group?");
+		Optional<User> invitedUserPreInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
+		boolean wasInvited = false;
+
+		response = gathrApi.executePost(url, keyValuePairs);
+		Thread.sleep(10000);
+		
+		Optional<User> invitedUserPostInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
+		
+		if(invitedUserPostInvitationState.get().getGroupInvites().size() == invitedUserPreInvitationState.get().getGroupInvites().size() + 1) {
+			System.out.println("User " + invitedUserPreInvitationState.get().getEmail() + "was invited");
+			invitedUserPostInvitationState.get().getGroupInvites().remove(invitedUserPostInvitationState.get().getGroupInvites().size() - 1);
+			userRepo.save(invitedUserPostInvitationState.get());
+			wasInvited = true;
+		} else {
+			System.out.println("User " + invitedUserPreInvitationState.get().getEmail() + "was not invited");
+		}
+		
+		return wasInvited;
+	}
+	*/
 	
 	@Test
-	public void UserInteractionTest() throws Exception {
+	public void userInteractionTest() throws Exception {
+		
+		if(groups.existsById("TESTING123")) {
+			groups.delete(groups.findById("TESTING123").get());
+		}
+		
+		if(userRepo.findById("lolme@gmail.com").isPresent()) {
+			userRepo.delete(userRepo.findById("lolme@gmail.com").get());
+		}
+		
+		User targetUser = new User("NEW", "TESTER", "lolme@gmail.com");
+		userRepo.save(targetUser);
+
+		
 		gathrApi = new SeleniumAPI();
 		login(gathrApi);
 		
 		boolean results = updateLocationValidTest();
 		
-		//results = groupCreationWebRequestTest();
+		results = groupCreationWebRequestTest();
+		
+		//results = groupInvitationGenerationTest();
 		
 		assertThat(results).isEqualTo(true);
 	}
+	
 	
 	public void login(SeleniumAPI gathrApi) throws InterruptedException {
 		gathrApi.getRoot();
@@ -162,16 +210,14 @@ public class WebTests {
 		WebElement nextBtn = driver.findElementById("identifierNext");
 		emailTextField.sendKeys("wwwest09@gmail.com");
 		nextBtn.click();
-		Thread.sleep(7000);
+		Thread.sleep(3000);
 		
 		WebElement passwordField = driver.findElementByName("password");
 		passwordField.sendKeys("Th3P@ssw0rd");
 		WebElement passwordSubmitBtn = driver.findElementById("passwordNext");
 		passwordSubmitBtn.click();
-		Thread.sleep(7000);
+		Thread.sleep(30000);
 	}
-	
-	
 	
 	
 }
