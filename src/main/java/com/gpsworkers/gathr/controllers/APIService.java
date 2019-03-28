@@ -30,18 +30,18 @@ import com.gpsworkers.gathr.mongo.users.UserRepository;
 
 @Service
 public class APIService {
-	
+
 	public static int ERR_EXP_OR_FAKE_TOKEN = -9;
 	public static int ERR_INVALID_TOKEN = -2;
 	public static int ERR_INVALID_REQUEST_SENT = -1;
 	public static int ERR_MISSING_FIELD_IN_REQUEST = -3;
-	
+
 	@Autowired
 	UserRepository users;
-	
+
 	@Autowired
 	GroupRepository groups;
-	
+
 	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
 		User validUser = users.findByEmail(email);
 		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
@@ -49,15 +49,15 @@ public class APIService {
 		users.save(validUser);
 		return true;
 	}
-	
+
 	public Location getLocationGeoCodeInformation(double lat, double lon) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
-		
+
 		GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
 		try {
 			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(lat, lon)).await();
 			if(results.length == 0) {
 				throw new EmptyGeocodingResultException();
-				
+
 			}
 			String fullAddress = results[1].formattedAddress;
 			String[] fullAddressSplit = fullAddress.split(",");
@@ -76,9 +76,9 @@ public class APIService {
 			e.printStackTrace();
 			throw new GeoCodingConnectionFailedException();
 		}
-		
+
 	}
-	
+
 	public boolean createGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
 		Optional<User> sourceUser = users.findById(sourceEmail);
 		if(!sourceUser.isPresent()) {
@@ -86,7 +86,7 @@ public class APIService {
 		}
 		System.out.println(groupId);
 		if(!groups.findById(groupId).isPresent()) {
-			Group newGroup = new Group(groupId);
+			Group newGroup = new Group(groupId, sourceUser.get() );
 			newGroup.addUser(sourceUser.get());
 			groups.save(newGroup);
 			sourceUser.get().addGroup(newGroup.getGroupName());
@@ -96,7 +96,7 @@ public class APIService {
 			throw new GroupIdAlreadyInUseException();
 		}
 	}
-	
+
 	public boolean deleteGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
 		Optional<User> sourceUser = users.findById(sourceEmail);
 		if(!sourceUser.isPresent()) {
@@ -104,7 +104,7 @@ public class APIService {
 		}
 		System.out.println(groupId);
 		if(groups.findById(groupId).isPresent()) {
-			
+
 			//MAYBE ADD ADMIN VOTE LOGIC....NOT ESSENTIAL
 			if(true) {
 				Group group = groups.findById(groupId).get();
@@ -118,11 +118,11 @@ public class APIService {
 			throw new GroupIdAlreadyInUseException();
 		}
 	}
-	
+
 	public boolean inviteUserToGroup(String groupId, String sourceEmail, String targetEmail, String invitationMessage) throws UserNotFoundException, GroupDoesntExistException{
 		User sourceUser = users.findByEmail(sourceEmail);
 		Optional<Group> group = groups.findById(groupId);
-		
+
 		if(group.isPresent()) {
 			User targetUser = users.findByEmail(targetEmail);
 			if(targetUser != null) {
@@ -137,7 +137,7 @@ public class APIService {
 			throw new GroupDoesntExistException();
 		}
 	}
-	
+
 	public boolean postMessageInGroup(String message, String groupId, String posterEmail) throws EmptyMessageException, MessageUserIdCannotBeEmptyException, UnauthorizedUserInteractionException, GroupDoesntExistException, UserNotFoundException, Exception {
 		Optional<User> poster = users.findById(posterEmail);
 		if(poster.isPresent()) {
@@ -150,7 +150,7 @@ public class APIService {
 					}
 				}
 				throw new UnauthorizedUserInteractionException();
-				
+
 			} else {
 				throw new GroupDoesntExistException();
 			}
@@ -158,7 +158,7 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 	public boolean deleteMessageInGroup(String groupId, int index, String deleterEmail) throws EmptyMessageException, MessageUserIdCannotBeEmptyException, UnauthorizedUserInteractionException, GroupDoesntExistException, UserNotFoundException, Exception {
 		Optional<User> deleter = users.findById(deleterEmail);
 		if(deleter.isPresent()) {
@@ -182,7 +182,7 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 	public void addUserToGroup(String adderUserEmail, String targetUserEmail, String groupId) throws UnauthorizedGroupManagementException, TargetUserNotFoundException, GroupDoesntExistException, UserNotFoundException {
 		Optional<User> adderUser = users.findById(adderUserEmail);
 		if(adderUser.isPresent()) {
@@ -206,5 +206,5 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 }
