@@ -74,6 +74,11 @@ public class WebTests {
 	
 	@Before
 	public void initialize() {
+		userRepo.deleteById(TEST_GROUP_ADMIN_EMAIL);
+		userRepo.deleteById(TEST_USER_1_EMAIL);
+		userRepo.deleteById(TEST_USER_2_EMAIL);
+		groups.deleteById(TEST_GROUP_ID);
+		groups.deleteById(TEST_WEB_GROUP_ID);
 		userRepo.insert(new User("ADMIN", "Test", TEST_GROUP_ADMIN_EMAIL));
 		userRepo.insert(new User("USER1", "Test", TEST_USER_1_EMAIL));
 		userRepo.insert(new User("USER2", "Test", TEST_USER_2_EMAIL));
@@ -81,11 +86,7 @@ public class WebTests {
 	
 	@After
 	public void clean() {
-		userRepo.deleteById(TEST_GROUP_ADMIN_EMAIL);
-		userRepo.deleteById(TEST_USER_1_EMAIL);
-		userRepo.deleteById(TEST_USER_2_EMAIL);
-		groups.deleteById(TEST_GROUP_ID);
-		groups.deleteById(TEST_WEB_GROUP_ID);
+
 	}
 	
 	@Test
@@ -131,6 +132,7 @@ public class WebTests {
 		return loc != null;
 	}
 	
+	/*
 	@Test
 	public void userBackEndTest() throws Exception {
 		User retrievedUser = userRepo.findByEmail(TEST_USER_1_EMAIL);
@@ -141,7 +143,7 @@ public class WebTests {
 			throw new RuntimeException("User Backend Test Failure");
 		}
 	}
-	
+	*/
 	@Test
 	public void apiGroupFirstTestCreate() {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
@@ -242,7 +244,6 @@ public class WebTests {
 		assertThat(results).isEqualTo(true);
 	}
 	*/
-	
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
 		FirefoxDriver driver = gathr.getConfig().getDriver();
@@ -281,16 +282,25 @@ public class WebTests {
 		group = groups.findById(TEST_GROUP_ID).get();
 		
 		group.getGroupCommsNetwork().postMesage(poster, "This is my first message to you all!");
+		
+		groups.save(group);
+		
+		group = groups.findById(TEST_GROUP_ID).get();
+		
 		Message message = group.getGroupCommsNetwork().getLastMessage();
 		assertThat(message.getMessageContent()).isEqualTo("This is my first message to you all!");
 	}
 	/*
 	@Test
 	public void groupCommunicationNetworkSecondTestReadingPostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
-		Group group = new Group(TEST_GROUP_ID);
-		User sourceUser = userRepo.findById(TEST_USER_1_EMAIL).get();
-		group.getGroupCommsNetwork().postMesage(sourceUser, "This is my first message to you all!");
-		groups.save(group);
+
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		Group group = groups.findById(TEST_GROUP_ID).get();
+		
+		group.getGroupCommsNetwork().postMesage(userRepo.findById(TEST_USER_1_EMAIL).get(), "This is my first message to you all!");
+		
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
 		
 		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
 		

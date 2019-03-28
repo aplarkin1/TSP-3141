@@ -38,9 +38,12 @@ public class Group {
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
+    
   @Indexed ( unique = true )
     private String groupInvite;
 
+  private User user;
+  
     /**
      * This constructor allows for the construction of a new Group
      * @param groupName the new Group's name
@@ -49,15 +52,20 @@ public class Group {
     public Group(String groupName, User user) {
         users = new ArrayList<User>();
         admins = new ArrayList<User>();
+        groupInvite = newGroupInvite();
         this.groupName = groupName;
+        this.user = user;
         users.add( user );
         admins.add( user );
         //System.out.println(users);
         //System.out.println(admins);
         groupCommsNetwork = new CommunicationsNetwork();
-
+        System.out.println("I AM HERE: " + groupInvite);
+        System.out.println(hashCode());
+        System.out.println(groupInvite);
+       
     }
-
+    
     /**
      * gets group name
      * @return returns a string of the group name
@@ -102,7 +110,7 @@ public class Group {
        * @param newUser user to ba added
       */
       public void addUser( User newUser) {
-        if ( !users.contains( newUser) && this.groupInvite == groupInvite ) {
+        if ( !users.contains( newUser) ) {
           users.add( newUser );
         }
       }
@@ -158,8 +166,9 @@ public class Group {
         return groupInvite;
       }
 
-      private String newGroupInvite( ) {
+      private String newGroupInvite() {
         String str = RandomStringUtils.randomAlphanumeric(42);
+        System.out.println("YOLOBOI: " + str);
         return str;
       }
 

@@ -86,8 +86,9 @@ public class APIService {
 		}
 		System.out.println(groupId);
 		if(!groups.findById(groupId).isPresent()) {
-			Group newGroup = new Group(groupId, sourceUser.get() );
-			newGroup.addUser(sourceUser.get());
+			Group newGroup = new Group(groupId, sourceUser.get());
+			System.out.println("SAVED GROUP HASH: " + newGroup.hashCode());
+			System.out.println(newGroup.getGroupInvite());
 			groups.save(newGroup);
 			sourceUser.get().addGroup(newGroup.getGroupName());
 			users.save(sourceUser.get());
