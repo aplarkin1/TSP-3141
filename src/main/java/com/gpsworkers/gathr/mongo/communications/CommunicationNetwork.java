@@ -1,11 +1,17 @@
 package com.gpsworkers.gathr.mongo.communications;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.gpsworkers.gathr.exceptions.ChannelAlreadyExistsException;
-import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
+import com.gpsworkers.gathr.exceptions.EmptyMessageException;
+import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
+import com.gpsworkers.gathr.exceptions.UserMutedInCommsNetworkException;
+import com.gpsworkers.gathr.mongo.users.User;
 
 /**
  * 
@@ -15,49 +21,70 @@ import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
  */
 @Document(collection="commsnetworks")
 public class CommunicationNetwork {
-	private HashMap<String, Channel> channels;
-
+	
+	private ArrayList<Message> messages;
+	private ArrayList<String> mutedUsers;
 	/**
 	 * Default constructor
 	 */
 	public CommunicationNetwork() {
-		this.channels = new HashMap<>();
+		messages = new ArrayList<Message>();
+		mutedUsers = new ArrayList<String>();
 	}
 	
-	/**
-	 * This method allows for creation of an additional channel in this communication network instance
-	 * @param name is the name of channel to be created
-	 * @throws ChannelAlreadyExistsException if a channel with the given name already exists
-	 * @throws Exception if the name given is null or an empty string
-	 */
-	public void addChannel(String name) throws ChannelAlreadyExistsException, Exception {
-		if(name == null || name.isEmpty()) {
-			throw new Exception("Cannot create a channel with a null or empty String");
+	public void postMesage(User poster, String message) throws MessageUserIdCannotBeEmptyException, EmptyMessageException, Exception {
+		if(message.isEmpty() == false) {
+			if(mutedUsers.indexOf(poster.getEmail()) == -1) {
+				if(messages.size() > 0) {
+					int indexOfLastMessage = messages.size() - 1;
+					Message mostRecentMessage = messages.get(indexOfLastMessage);
+					if(mostRecentMessage.getUserId().equals(poster.getEmail())){
+						mostRecentMessage.appendMessageContent(message);
+						return;
+					}
+				}
+				Message messageObject = new Message(message, poster.getEmail());
+				messages.add(messageObject);
+			} else {
+				throw new UserMutedInCommsNetworkException();
+			}
+		} else {
+			throw new EmptyMessageException();
 		}
-		
-		if(channels.containsKey(name)) {
-			throw new ChannelAlreadyExistsException("Channel already xists!");
-		}
-		
-		channels.put(name, new Channel(name));
 	}
 	
-	/**
-	 * This method allows for the retrieval of a channel created on the this communication network instance
-	 * @param name is the name of the channel to b retrieved
-	 * @return the channel queried for
-	 * @throws ChannelDoesntExistException if the queried channel doesn't exist.
-	 * @throws Exception of the name of the channel to be retrieved is null or an empty string
-	 */
-	public Channel getChannel(String name) throws ChannelDoesntExistException, Exception {
-		if(name == null || name.isEmpty()) {
-			throw new Exception("Cannot retrieve a channel with a name of null or empty String");
+	
+	public void deleteMesage(String deleterEmail, int index, boolean isAdmin) {
+		if(messages.size() > index && index >= 0) {
+			if(isAdmin) {
+				messages.remove(index);
+			} else if(messages.get(index).getUserId().equals(deleterEmail)) {
+				messages.remove(index);
+			} else {
+				throw new UnauthorizedUserInteractionException();
+			}
+		} else {
+			throw new RuntimeException("Tried to delete message ");
 		}
-		
-		if(channels.containsKey(name) == false) {
-			throw new ChannelDoesntExistException("Channel doesn't exist!");
-		}
-		
-		return channels.get(name);
+
 	}
+	
+	public ArrayList<Message> getMessagesAfterDatetime(DateTime time) {
+		if(messages.size() > 0) {
+			ArrayList<Message> messagesFound = new ArrayList<Message>(messages.size()/2 + messages.size()/4);
+			for(Message message : messages) {
+				if(message.getPostDate().isAfter(time.toInstant())) {
+					messagesFound.add(message);
+				}
+			}
+			return messagesFound;
+		} else {
+			return new ArrayList<Message>();
+		}
+	}
+	
+	public Message getMessage(int index) {
+		return messages.get(index);
+	}
+	
 }

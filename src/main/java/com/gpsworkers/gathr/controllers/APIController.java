@@ -21,10 +21,13 @@ import com.google.maps.model.LatLng;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
 import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
 import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
+import com.gpsworkers.gathr.exceptions.EmptyMessageException;
 import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
+import com.gpsworkers.gathr.exceptions.GroupDoesntExistException;
 import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
@@ -42,16 +45,8 @@ import com.gpsworkers.gathr.gathrutils.*;
 @RestController
 public class APIController {
 	
-	public static int ERR_EXP_OR_FAKE_TOKEN = -9;
-	public static int ERR_INVALID_TOKEN = -2;
-	public static int ERR_INVALID_REQUEST_SENT = -1;
-	public static int ERR_MISSING_FIELD_IN_REQUEST = -3;
-	
 	@Autowired
-	UserRepository users;
-	
-	@Autowired
-	GroupRepository groups;
+	private APIService api;
 	
 	/**
 	 * This method is called a POST web request is sent to /api/updateLocation.
@@ -67,7 +62,7 @@ public class APIController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String email = extractEmailFromAuth(auth);
 		try {
-			updateLocation(email, request.lat, request.lon, request.elev);
+			api.updateLocation(email, request.lat, request.lon, request.elev);
 		} catch (GeoCodingConnectionFailedException gccfe) {
 			return new ResponseEntity<>("-1", HttpStatus.BAD_GATEWAY);
 		} catch (EmptyGeocodingResultException egre) {
@@ -76,22 +71,50 @@ public class APIController {
 		return new ResponseEntity<>("1", HttpStatus.OK);
 	}
 	
-	/*
-	@PostMapping("/api/sendGroupChannelMessage")
+	
+	@PostMapping("/api/postMessageInGroup")
 	@ResponseBody
-	public ResponseEntity<String> sendGroupChannelMessage(String message, String groupId, String channelName) {
-		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		User user = users.findByEmail(email);
-		
-		boolean status = user.sendMessage(message, groupId, channelName);
-		if(status == false) {
-			return new ResponseEntity<>("-1", HttpStatus.CONFLICT);
-		} else {
+	public ResponseEntity<String> handlePostMessageInGroupRequest(String message, String groupId) {
+		String posterEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		try {
+			api.postMessageInGroup(message, groupId, posterEmail);
 			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch (EmptyMessageException e) {
+			return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
+		} catch (MessageUserIdCannotBeEmptyException e) {
+			return new ResponseEntity<>("-2", HttpStatus.BAD_REQUEST);
+		} catch (UnauthorizedUserInteractionException e) {
+			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch (GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		}  catch (Exception e) {
+			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
 	}
 	
+	@PostMapping("/api/deleteMessageInGroup")
+	@ResponseBody
+	public ResponseEntity<String> handleDeleteMessageInGroupRequest(String groupId, int index) {
+		String deleterEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		try {
+			api.deleteMessageInGroup(groupId, index, deleterEmail);
+			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch (MessageUserIdCannotBeEmptyException e) {
+			return new ResponseEntity<>("-2", HttpStatus.BAD_REQUEST);
+		} catch (UnauthorizedUserInteractionException e) {
+			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch (GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		}  catch (Exception e) {
+			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/*
 	@PostMapping("/api/openCommsWithUser")
 	@ResponseBody
 	public ResponseEntity<String> openCommsWithUser(String message, String targetUserEmail) throws JsonProcessingException, NotAdminException {
@@ -152,7 +175,7 @@ public class APIController {
 	public ResponseEntity<String> handleCreateGroupRequest(String groupId) throws JsonProcessingException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		try {
-			createGroup(sourceEmail, groupId);
+			api.createGroup(sourceEmail, groupId);
 			return new ResponseEntity<>("1", HttpStatus.OK);
 		} catch(GroupIdAlreadyInUseException e) {
 			return new ResponseEntity<>("-1", HttpStatus.CONFLICT);
@@ -161,7 +184,6 @@ public class APIController {
 	
 	/*
 	@PostMapping("/api/deleteGroup")
-	@ResponseBodyw
 	public ResponseEntity<String> deleteGroup(String groupId, String groupInvite) throws JsonProcessingException {
 		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		User sourceUser = users.findByEmail(sourceEmail);
@@ -177,30 +199,15 @@ public class APIController {
 	
 	@PostMapping("/api/inviteUserToGroup")
 	@ResponseBody
-	public ResponseEntity<String> inviteUserToGroup(String groupId, String userEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
-		
-		HashMap<String, String> errMsg = new HashMap<>();
-		
-		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		User sourceUser = users.findByEmail(sourceEmail);
-		
-		Group group = sourceUser.getGroup(groupId);
-
-		if(group != null) {
-			User targetUser = users.findByEmail(userEmail);
-			if(targetUser != null) {
-				GroupInvitation invitation = new GroupInvitation(sourceEmail, group.getGroupInvite(), invitationMessage, group.getGroupName());
-				targetUser.postGroupInvite(invitation);
-				users.save(targetUser);
-				return new ResponseEntity<>("1", HttpStatus.OK);
-			} else {
-				errMsg.put("error", "-1");
-				errMsg.put("desc", "Target user doesn't exist!");
-				return new ResponseEntity<>(GathrJSONUtils.write(errMsg), HttpStatus.NOT_FOUND);
-			}
-		} else {
-			System.out.println("Group doesn't exist!");
-			return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
+	public ResponseEntity<String> handleInviteUserToGroupRequest(String groupId, String targetUserEmail, String invitationMessage) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+		try {
+			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+			api.inviteUserToGroup(groupId, sourceEmail, targetUserEmail, invitationMessage);
+			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch (UserNotFoundException e){
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch(GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -244,62 +251,5 @@ public class APIController {
 		return new ResponseEntity<>("-1", HttpStatus.BAD_REQUEST);
 	}
 	*/
-	
-	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
-		User validUser = users.findByEmail(email);
-		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
-		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
-		users.save(validUser);
-		return true;
-	}
-	
-	public Location getLocationGeoCodeInformation(double lat, double lon) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
-		
-		GeoApiContext context = new GeoApiContext.Builder().apiKey("AIzaSyC2OKbwa0DhWHlA9cp8WxJP2TIRopz9daY").build();
-		try {
-			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(lat, lon)).await();
-			if(results.length == 0) {
-				throw new EmptyGeocodingResultException();
-				
-			}
-			String fullAddress = results[1].formattedAddress;
-			String[] fullAddressSplit = fullAddress.split(",");
-			System.out.println(fullAddress);
-			String city = fullAddressSplit[1].split(" ")[1];
-			String state = fullAddressSplit[2].split(" ")[1];
-			String country = fullAddressSplit[3].split(" ")[1];
-
-			System.out.println(country + "->" + state + "->" + city);
-
-			Location newLocation = new Location();
-			newLocation.update(lon, lat, 0, country, state, city);
-			return newLocation;
-		} catch (Exception e) {
-			System.out.println("Geocoding Connection Failed!");
-			e.printStackTrace();
-			throw new GeoCodingConnectionFailedException();
-		}
-		
-	}
-	
-	public boolean createGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
-		Optional<User> sourceUser = users.findById(sourceEmail);
-		
-		if(!sourceUser.isPresent()) {
-			throw new UserNotFoundException();
-		}
-		System.out.println(groupId);
-		if(!groups.findById(groupId).isPresent()) {
-			Group newGroup = new Group(groupId);
-			newGroup.addUser(sourceUser.get());
-			groups.save(newGroup);
-			sourceUser.get().addGroup(newGroup);
-			users.save(sourceUser.get());
-			return true;
-		} else {
-			throw new GroupIdAlreadyInUseException();
-		}
-	}
-	
 	
 }

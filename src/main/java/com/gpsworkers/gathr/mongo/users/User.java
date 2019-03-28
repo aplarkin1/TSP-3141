@@ -40,9 +40,9 @@ public class User {
   @Id
     private String email;
 
-  @DBRef
-    private Collection<Group> groups;
-    private Collection<User> friends;
+  //@DBRef
+    private Collection<String> groupNames;
+    //private Collection<User> friends;
 
 
 
@@ -58,8 +58,8 @@ public class User {
     	setLastName(lastName);
     	blackList = new ArrayList<String>();
     	groupInvitations = new ArrayList<GroupInvitation>();
-    	groups = new ArrayList<Group>();
-    	friends = new ArrayList<User>();
+    	groupNames = new ArrayList<String>();
+    	//friends = new ArrayList<String>();
     	friendInvitations = new ArrayList<FriendInvitation>();
         updateLastInteraction();
     }
@@ -170,22 +170,14 @@ public class User {
     	return dateOfLastInteraction;
     }
 
-	public void addGroup( Group group ) {
-		groups.add( group );
+	public void addGroup( String groupName ) {
+		groupNames.add( groupName );
 	}
 
-	public void removeGroup ( Group group ) {
-		groups.remove( group );
+	public void removeGroup ( String groupName ) {
+		groupNames.remove(groupName);
 	}
 
-  public Group getGroup(String groupId) {
-		for(Group group : groups) {
-			if(group.getGroupName().equals(groupId)) {
-				return group;
-			}
-		}
-		return null;
-	}
   /*
 	public boolean sendMessage(String message, String groupId, String channelName) {
 
@@ -238,7 +230,7 @@ public class User {
 	public ArrayList<GroupInvitation> getGroupInvites() {
 		return groupInvitations;
 	}
-
+	/*
   public Collection<User> getFriends() {
     return friends;
   }
@@ -246,7 +238,7 @@ public class User {
   public void removeFriend( User user) {
     friends.remove( user );
   }
-  
+  */
   public void sendFriendRequest( FriendInvitation invite) {
     friendInvitations.add( invite );
   }

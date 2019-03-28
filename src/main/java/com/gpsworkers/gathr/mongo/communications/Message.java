@@ -2,6 +2,7 @@ package com.gpsworkers.gathr.mongo.communications;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
@@ -17,7 +18,7 @@ public class Message {
 	
 	private String messageContent;
 	private String userId;
-	private Date postDate;
+	private DateTime postDate;
 	
 	/**
 	 * This constructor allows for the creation of a new instance of Message with the message content and UserId specified
@@ -29,8 +30,8 @@ public class Message {
 	public Message(String messageContent, String userId) throws MessageUserIdCannotBeEmptyException, Exception {
 		setMessageContent(messageContent);
 		setUserId(userId);
-		postDate = new Date();
-		messageId = userId + "-" + Date.from(postDate.toInstant());
+		postDate = new DateTime();
+		messageId = userId + "-" + postDate.toString("yyyy, MMMM, dd, HH:mm:ss");
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class Message {
 	 * This method returns the post date of the message
 	 * @return the Date that this message was posted on.
 	 */
-	public Date getPostDate() {
+	public DateTime getPostDate() {
 		return postDate;
 	}
 	
@@ -79,6 +80,10 @@ public class Message {
 			throw new MessageUserIdCannotBeEmptyException("Message with empty user ID cannot be created");
 		}
 		this.userId = userId;
+	}
+	
+	public void appendMessageContent(String newContent) {
+		this.messageContent = this.messageContent + "\n" + newContent;
 	}
 
 }

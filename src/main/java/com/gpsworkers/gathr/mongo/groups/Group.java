@@ -10,6 +10,7 @@ import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.gpsworkers.gathr.mongo.communications.CommunicationNetwork;
 //import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
 import java.util.Date;
@@ -36,7 +37,7 @@ public class Group {
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
-    //private CommunicationNetwork groupCommsNetwork;
+    private CommunicationNetwork groupCommsNetwork;
   @Indexed ( unique = true )
     private String groupInvite;
 
@@ -51,7 +52,7 @@ public class Group {
         this.groupName = groupName;
         //System.out.println(users);
         //System.out.println(admins);
-        //groupCommsNetwork = new CommunicationNetwork();
+        groupCommsNetwork = new CommunicationNetwork();
 
     }
 
@@ -190,9 +191,18 @@ public class Group {
 
     	  return GathrJSONUtils.write(summary);
       }
-      /*
-		public CommunicationNetwork getGroupCommsNetwork() {
-			return groupCommsNetwork;
-		}
-       */
+      
+      public CommunicationNetwork getGroupCommsNetwork() {
+    	  return groupCommsNetwork;
+      }
+      
+      public boolean isUserInGroup(String email) {
+    	  for(User user : users) {
+    		  if(user.getEmail().equals(email)) {
+    			  return true;
+    		  }
+    	  }
+    	  return false;
+      }
+       
 }

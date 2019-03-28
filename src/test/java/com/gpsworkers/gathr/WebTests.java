@@ -10,8 +10,10 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.gpsworkers.gathr.controllers.APIController;
+import com.gpsworkers.gathr.controllers.APIService;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
 import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
@@ -36,7 +39,16 @@ import com.gpsworkers.gathr.mongo.users.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebTests {
+	
+	private static final String TEST_GROUP_ADMIN_EMAIL = "testadmin@gmail.com";
+	private static final String TEST_USER_1_EMAIL = "testuser1@gmail.com";
+	private static final String TEST_USER_2_EMAIL = "testuser2@gmail.com";
+	private static final String WEB_USER_GMAIL = "wwwest09@gmail.com";
+	
+	private static final String TEST_GROUP_ID = "THE TESTING GROUP!";
+	private static final String TEST_WEB_GROUP_ID = "WEB TESTING GROUP!";
 	
 	@LocalServerPort
 	private int port;
@@ -50,86 +62,117 @@ public class WebTests {
 	@Autowired
 	GroupRepository groups;
 	
-	private SeleniumAPI gathrApi;
+	@Autowired
+	private APIService api;
+	
+	private SeleniumAPI gathr;
+	
+	@Before
+	public void initialize() {
+		userRepo.insert(new User("ADMIN", "Test", TEST_GROUP_ADMIN_EMAIL));
+		userRepo.insert(new User("USER1", "Test", TEST_USER_1_EMAIL));
+		userRepo.insert(new User("USER2", "Test", TEST_USER_2_EMAIL));
+	}
 	
 	@After
 	public void clean() {
-		
-		if(userRepo.existsById("wwwest09@gmail.com")) {
-			userRepo.deleteById("wwwest09@gmail.com");
-		}
-		
-		try {
-			if(gathrApi != null) {
-				gathrApi.closeBrowser();	
-			}
-		} catch(RuntimeException e){
-			e.printStackTrace();
-		}
+		userRepo.deleteById(TEST_GROUP_ADMIN_EMAIL);
+		userRepo.deleteById(TEST_USER_1_EMAIL);
+		userRepo.deleteById(TEST_USER_2_EMAIL);
+		groups.deleteById(TEST_GROUP_ID);
+		groups.deleteById(TEST_WEB_GROUP_ID);
 	}
 	
 	@Test
 	public void getInfoRedirectsToLoginPageWithoutAuthTest() throws Exception {
-		gathrApi = new SeleniumAPI();
-		gathrApi.getInfo();
-		String title = gathrApi.getTitle();
+		gathr = new SeleniumAPI();
+		gathr.getInfo();
+		String title = gathr.getTitle();
+		gathr.closeBrowser();
 		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
 	public void getRootWhenUnauthenticatedReturnsLoginPageTest() throws Exception {
-		gathrApi = new SeleniumAPI();
-		gathrApi.getRoot();
-		String title = gathrApi.getTitle();
+		gathr = new SeleniumAPI();
+		gathr.getRoot();
+		String title = gathr.getTitle();
+		gathr.closeBrowser();
 		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
 	public void getLoginSuccessRedirectsToLoginPageWithoutAuthTest() throws Exception {
-		gathrApi = new SeleniumAPI();
-		gathrApi.getLoginSuccess();
-		String title = gathrApi.getTitle();
+		gathr = new SeleniumAPI();
+		gathr.getLoginSuccess();
+		String title = gathr.getTitle();
+		gathr.closeBrowser();
 		assertThat(title).isEqualTo("Login");
 	}
 	
 	@Test
 	public void getLoginSuccessfullyRespondsWithLoginPageTest() throws Exception {
-		gathrApi = new SeleniumAPI();
-		gathrApi.getLogin();
-		String title = gathrApi.getTitle();
+		gathr = new SeleniumAPI();
+		gathr.getLogin();
+		String title = gathr.getTitle();
+		gathr.closeBrowser();
 		assertThat(title).isEqualTo("Login");
 	}
 	
 	public boolean updateLocationValidTest() throws Exception {
-		User user = userRepo.findByEmail("wwwest09@gmail.com");
-		user.setLocation(null);
-		gathrApi.getHome();
+		gathr.getHome();
 		Thread.sleep(20000);
-		Location loc = userRepo.findByEmail("wwwest09@gmail.com").getCurrentLocation();
+		Location loc = userRepo.findByEmail(TEST_USER_1_EMAIL).getCurrentLocation();
 		return loc != null;
 	}
 	
 	@Test
 	public void userBackEndTest() throws Exception {
-		User newUser = new User("Gathr", "Tester", "wwwest09@gmail.com");
-		userRepo.insert(newUser);
-		User retrievedUser = userRepo.findByEmail("wwwest09@gmail.com");
+		User retrievedUser = userRepo.findByEmail(TEST_USER_1_EMAIL);
 		String firstName = retrievedUser.getFirstName();
 		String lastName = retrievedUser.getLastName();
 		String email = retrievedUser.getEmail();
-		
-		String originalUserString = "Firstname: Gathr, Lastname: Tester, Email: wwwest09@gmail.com";
-		String retrievedUserString = "Firstname: " + firstName + ", Lastname: " + lastName + ", Email: " + email;
-		assertThat(originalUserString).isEqualTo(retrievedUserString);
-		userRepo.delete(newUser);
 	}
 	
+	/*@Test
+	public void apiGroupTest() {
+		apiGroupFirstTestCreate();
+		apiGroupSecondTestInvite();
+		apiGroupThirdTestDelete();
+	}*/
+	
+	@Test
+	public void apiGroupFirstTestCreate() {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isTrue();
+	}
+	
+	@Test
+	public void apiGroupSecondTestInvite() {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		User targetUser = userRepo.findById(TEST_USER_1_EMAIL).get();
+		int preInviteInvitationsSize = targetUser.getGroupInvites().size();
+		api.inviteUserToGroup(TEST_GROUP_ID, TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, "you should join...or else!!!!");
+		targetUser = userRepo.findById(TEST_USER_1_EMAIL).get();
+		int postInviteInvitationsSize = targetUser.getGroupInvites().size();
+		if(preInviteInvitationsSize == postInviteInvitationsSize) {
+			throw new RuntimeException("API INVITE FAILED");
+		}
+		//assertThat(postInviteInvitationsSize).isGreaterThan(preInviteInvitationsSize);
+	}
+	
+	@Test
+	public void apiGroupThirdTestDelete() {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.deleteGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isFalse();
+	}
 	
 	public boolean groupCreationWebRequestTest() throws Exception {
 		String url = "/api/createGroup";
 		HashMap<String, Object> keyValuePairs = new HashMap<String, Object>();
-		keyValuePairs.put("groupId", "TESTING123");
-		String response = gathrApi.executePost(url, keyValuePairs);
+		keyValuePairs.put("groupId", TEST_WEB_GROUP_ID);
+		String response = gathr.executePost(url, keyValuePairs);
 		Thread.sleep(5000);
 		boolean groupFound = groups.existsById((String)keyValuePairs.get("groupId"));
 		if(groupFound == true) {
@@ -137,7 +180,7 @@ public class WebTests {
 		} else {
 			System.out.println("Group " + keyValuePairs.get("groupId") + " not found");	
 		}
-		Thread.sleep(10000);
+		Thread.sleep(3000);
 		return groupFound;
 	}
 	/*
@@ -154,7 +197,7 @@ public class WebTests {
 		Optional<User> invitedUserPreInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
 		boolean wasInvited = false;
 
-		response = gathrApi.executePost(url, keyValuePairs);
+		response = gathr.executePost(url, keyValuePairs);
 		Thread.sleep(10000);
 		
 		Optional<User> invitedUserPostInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
@@ -179,16 +222,16 @@ public class WebTests {
 			groups.delete(groups.findById("TESTING123").get());
 		}
 		
-		if(userRepo.findById("lolme@gmail.com").isPresent()) {
-			userRepo.delete(userRepo.findById("lolme@gmail.com").get());
+		if(userRepo.findById(TEST_USER_2_EMAIL).isPresent()) {
+			userRepo.delete(userRepo.findById(TEST_USER_2_EMAIL).get());
 		}
 		
 		User targetUser = new User("NEW", "TESTER", "lolme@gmail.com");
 		userRepo.save(targetUser);
 
 		
-		gathrApi = new SeleniumAPI();
-		login(gathrApi);
+		gathr = new SeleniumAPI();
+		login(gathr);
 		
 		boolean results = updateLocationValidTest();
 		
@@ -196,19 +239,21 @@ public class WebTests {
 		
 		//results = groupInvitationGenerationTest();
 		
+		gathr.closeBrowser();
+		
 		assertThat(results).isEqualTo(true);
 	}
 	
 	
-	public void login(SeleniumAPI gathrApi) throws InterruptedException {
-		gathrApi.getRoot();
-		FirefoxDriver driver = gathrApi.getConfig().getDriver();
+	public void login(SeleniumAPI gathr) throws InterruptedException {
+		gathr.getRoot();
+		FirefoxDriver driver = gathr.getConfig().getDriver();
 		WebElement loginBtn = driver.findElementById("Google");
 		loginBtn.click();
 		
 		WebElement emailTextField = driver.findElementById("identifierId");
 		WebElement nextBtn = driver.findElementById("identifierNext");
-		emailTextField.sendKeys("wwwest09@gmail.com");
+		emailTextField.sendKeys(WEB_USER_GMAIL);
 		nextBtn.click();
 		Thread.sleep(3000);
 		
