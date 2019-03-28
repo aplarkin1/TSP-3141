@@ -34,7 +34,7 @@ public class User {
     private Date dateOfLastInteraction;
 
     private ArrayList<String> blackList;
-	private ArrayList<GroupInvitation> groupInvitations;
+	  private ArrayList<GroupInvitation> groupInvitations;
     private ArrayList<FriendInvitation> friendInvitations;
 
   @Id
@@ -215,7 +215,7 @@ public class User {
 	public void setLocation(Location location) {
 		this.currentLocation = null;
 	}
-	
+
 	public boolean hasBlacklistedUser(String emailToCheck) {
 		if(blackList.indexOf(emailToCheck) != -1) {
 			return false;
@@ -246,9 +246,9 @@ public class User {
   public ArrayList<FriendInvitation> getFriendInvites() {
     return friendInvitations;
   }
-  
+
   public Collection<String> getGroupNames(){
 	  return groupNames;
   }
-  
+
 }

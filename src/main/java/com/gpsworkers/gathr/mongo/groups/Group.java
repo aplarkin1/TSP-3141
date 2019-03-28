@@ -46,10 +46,12 @@ public class Group {
      * @param groupName the new Group's name
      * @param user user that created the new group
      */
-    public Group(String groupName) {
+    public Group(String groupName, User user) {
         users = new ArrayList<User>();
         admins = new ArrayList<User>();
         this.groupName = groupName;
+        users.add( user );
+        admins.add( user );
         //System.out.println(users);
         //System.out.println(admins);
         groupCommsNetwork = new CommunicationsNetwork();
@@ -94,7 +96,7 @@ public class Group {
           users.add( newUser );
         }
       }
-      
+
       /**
        * adds a user to the group
        * @param newUser user to ba added
@@ -191,11 +193,11 @@ public class Group {
 
     	  return GathrJSONUtils.write(summary);
       }
-      
+
       public CommunicationsNetwork getGroupCommsNetwork() {
     	  return groupCommsNetwork;
       }
-      
+
       public boolean isUserInGroup(String email) {
     	  for(User user : users) {
     		  if(user.getEmail().equals(email)) {
@@ -204,5 +206,5 @@ public class Group {
     	  }
     	  return false;
       }
-       
+
 }
