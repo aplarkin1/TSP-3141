@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.gpsworkers.gathr.exceptions.EmptyMessageException;
@@ -20,14 +21,15 @@ import com.gpsworkers.gathr.mongo.users.User;
  * This class contains prototype code for a flexible communication network.
  */
 @Document(collection="commsnetworks")
-public class CommunicationNetwork {
+public class CommunicationsNetwork {
 	
 	private ArrayList<Message> messages;
 	private ArrayList<String> mutedUsers;
+
 	/**
 	 * Default constructor
 	 */
-	public CommunicationNetwork() {
+	public CommunicationsNetwork() {
 		messages = new ArrayList<Message>();
 		mutedUsers = new ArrayList<String>();
 	}
@@ -80,6 +82,18 @@ public class CommunicationNetwork {
 			return messagesFound;
 		} else {
 			return new ArrayList<Message>();
+		}
+	}
+	
+	public ArrayList<Message> getAllMessages() {
+		return messages;
+	}
+	
+	public Message getLastMessage() {
+		if(messages.size() >= 1) {
+			return messages.get(messages.size() - 1);
+		} else {
+			return null;
 		}
 	}
 	

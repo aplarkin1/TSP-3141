@@ -16,8 +16,11 @@ import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
 import com.gpsworkers.gathr.exceptions.GroupDoesntExistException;
 import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
+import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
+import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
@@ -179,4 +182,29 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
+	
+	public void addUserToGroup(String adderUserEmail, String targetUserEmail, String groupId) throws UnauthorizedGroupManagementException, TargetUserNotFoundException, GroupDoesntExistException, UserNotFoundException {
+		Optional<User> adderUser = users.findById(adderUserEmail);
+		if(adderUser.isPresent()) {
+			Optional<Group> group = groups.findById(groupId);
+			if(group.isPresent()) {
+				Optional<User> targetUser = users.findById(targetUserEmail);
+				if(targetUser.isPresent()) {
+					if(group.get().isAdmin(adderUserEmail)) {
+						group.get().addUser(targetUser.get());
+						groups.save(group.get());
+					} else {
+						throw new UnauthorizedGroupManagementException();
+					}
+				} else {
+					throw new TargetUserNotFoundException();
+				}
+			} else {
+				throw new GroupDoesntExistException();
+			}
+		} else {
+			throw new UserNotFoundException();
+		}
+	}
+	
 }

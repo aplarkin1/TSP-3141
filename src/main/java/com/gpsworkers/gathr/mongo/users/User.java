@@ -246,4 +246,9 @@ public class User {
   public ArrayList<FriendInvitation> getFriendInvites() {
     return friendInvitations;
   }
+  
+  public Collection<String> getGroupNames(){
+	  return groupNames;
+  }
+  
 }

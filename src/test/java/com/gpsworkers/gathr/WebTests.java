@@ -30,7 +30,12 @@ import com.gpsworkers.gathr.controllers.APIService;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
 import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
+import com.gpsworkers.gathr.exceptions.EmptyMessageException;
+import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+import com.gpsworkers.gathr.mongo.communications.CommunicationsNetwork;
+import com.gpsworkers.gathr.mongo.communications.CommunicationsNetworkRepository;
+import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
 import com.gpsworkers.gathr.mongo.users.Location;
@@ -132,14 +137,10 @@ public class WebTests {
 		String firstName = retrievedUser.getFirstName();
 		String lastName = retrievedUser.getLastName();
 		String email = retrievedUser.getEmail();
+		if(firstName == null || lastName == null || email == null) {
+			throw new RuntimeException("User Backend Test Failure");
+		}
 	}
-	
-	/*@Test
-	public void apiGroupTest() {
-		apiGroupFirstTestCreate();
-		apiGroupSecondTestInvite();
-		apiGroupThirdTestDelete();
-	}*/
 	
 	@Test
 	public void apiGroupFirstTestCreate() {
@@ -155,10 +156,7 @@ public class WebTests {
 		api.inviteUserToGroup(TEST_GROUP_ID, TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, "you should join...or else!!!!");
 		targetUser = userRepo.findById(TEST_USER_1_EMAIL).get();
 		int postInviteInvitationsSize = targetUser.getGroupInvites().size();
-		if(preInviteInvitationsSize == postInviteInvitationsSize) {
-			throw new RuntimeException("API INVITE FAILED");
-		}
-		//assertThat(postInviteInvitationsSize).isGreaterThan(preInviteInvitationsSize);
+		assertThat(postInviteInvitationsSize).isGreaterThan(preInviteInvitationsSize);
 	}
 	
 	@Test
@@ -214,7 +212,7 @@ public class WebTests {
 		return wasInvited;
 	}
 	*/
-	
+	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 		
@@ -243,7 +241,7 @@ public class WebTests {
 		
 		assertThat(results).isEqualTo(true);
 	}
-	
+	*/
 	
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
@@ -264,5 +262,48 @@ public class WebTests {
 		Thread.sleep(30000);
 	}
 	
+	@Test
+	public void groupCommunicationNetworkFirstTestCreation() {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isTrue();
+	}
 	
+	@Test
+	public void groupCommunicationNetworkSecondTestPostingMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		Group group = groups.findById(TEST_GROUP_ID).get();
+		
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		
+		
+		User poster = userRepo.findById(TEST_USER_1_EMAIL).get();
+		group = groups.findById(TEST_GROUP_ID).get();
+		
+		group.getGroupCommsNetwork().postMesage(poster, "This is my first message to you all!");
+		Message message = group.getGroupCommsNetwork().getLastMessage();
+		assertThat(message.getMessageContent()).isEqualTo("This is my first message to you all!");
+	}
+	/*
+	@Test
+	public void groupCommunicationNetworkSecondTestReadingPostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+		Group group = new Group(TEST_GROUP_ID);
+		User sourceUser = userRepo.findById(TEST_USER_1_EMAIL).get();
+		group.getGroupCommsNetwork().postMesage(sourceUser, "This is my first message to you all!");
+		groups.save(group);
+		
+		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
+		
+		for(String groupName : readingUser.getGroupNames()) {
+			if(groupName.equals(TEST_GROUP_ID)) {
+				Group alternateGroupReference = groups.findById(groupName).get();
+				System.out.println("HELLO WORLD !!!!!!!");
+				Message message = alternateGroupReference.getGroupCommsNetwork().getLastMessage();
+				assertThat(message.getMessageContent()).isEqualTo("This is my first message to you all!");
+				return;
+			}
+		}
+		throw new RuntimeException("Alternate Group Reference Test Failed!");
+	}
+	*/
 }
