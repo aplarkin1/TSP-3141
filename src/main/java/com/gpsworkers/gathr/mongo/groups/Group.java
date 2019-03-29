@@ -38,14 +38,14 @@ public class Group {
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
-    
+
   @Indexed ( unique = true )
     private String groupInvite;
 
-  
+
   	//Hello WOrld
   	private User user;
-  
+
     /**
      * This constructor allows for the construction of a new Group
      * @param groupName the new Group's name
@@ -65,9 +65,9 @@ public class Group {
         System.out.println("I AM HERE: " + groupInvite);
         System.out.println(hashCode());
         System.out.println(groupInvite);
-       
+
     }
-    
+
     /**
      * gets group name
      * @return returns a string of the group name
