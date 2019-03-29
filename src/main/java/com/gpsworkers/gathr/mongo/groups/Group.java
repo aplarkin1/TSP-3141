@@ -1,5 +1,6 @@
 package com.gpsworkers.gathr.mongo.groups;
 
+import java.util.HashMap;
 import com.microsoft.applicationinsights.core.dependencies.apachecommons.lang3.RandomStringUtils;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -13,10 +14,9 @@ import java.util.Collection;
 import com.gpsworkers.gathr.mongo.communications.CommunicationsNetwork;
 //import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
-import java.util.Date;
-import java.util.HashMap;
+//import java.util.HashMap;
 
-import org.bson.types.ObjectId;
+//import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;

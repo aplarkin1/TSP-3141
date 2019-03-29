@@ -5,12 +5,12 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.maps.GeoApiContext;
@@ -27,8 +27,8 @@ import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
-import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
-import com.gpsworkers.gathr.mongo.communications.Message;
+//import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
+//import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
@@ -220,13 +220,13 @@ public class APIService {
 
 	public ArrayList<GroupInvitation> getGroupInvites(String userEmail) {
 		Optional<User> user = users.findById(userEmail);
-		if(user.isPresent()) {	
+		if(user.isPresent()) {
 			return user.get().getGroupInvites();
 		} else {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 	public String getGroupSummary(String groupId) throws JsonProcessingException {
 		Optional<Group> group = groups.findById(groupId);
 		if(groups.findById(groupId).isPresent()) {
@@ -235,5 +235,5 @@ public class APIService {
 			throw new GroupDoesntExistException();
 		}
 	}
-	
+
 }
