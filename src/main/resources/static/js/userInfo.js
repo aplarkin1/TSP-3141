@@ -1,6 +1,8 @@
 $("document").ready(function() {
 	$.get("api/getAccountInformation", function(data, status)
 	{
-		var obj = JSON.parse()
+		if (this.status == 200){
+			var obj = JSON.parse(data);
+		}
 	});
 });
