@@ -3,7 +3,7 @@ package com.gpsworkers.gathr;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.junit.runner.RunWith;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;

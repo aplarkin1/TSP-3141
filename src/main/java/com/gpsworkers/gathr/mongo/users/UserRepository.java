@@ -1,9 +1,12 @@
 package com.gpsworkers.gathr.mongo.users;
 
-import java.util.Date;
-import java.util.List;
+<<<<<<< HEAD
+//import java.util.Date;
+//import java.util.List;
 
-import org.bson.types.ObjectId;
+//import org.bson.types.ObjectId;
+=======
+>>>>>>> 143bdc2707e5aaf3e3e08d06e930a344274ef26a
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
