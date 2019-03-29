@@ -58,7 +58,7 @@ public class APIService {
 		return true;
 	}
 	
-	public ArrayList<String> getAccountInformation(UserRepository user, String email){
+	public ArrayList<String> getAccountInformation(String email){
 		ArrayList<String> accountInformation = new ArrayList<>();
 		
 		User validUser = users.findByEmail(email);
