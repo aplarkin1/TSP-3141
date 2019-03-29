@@ -49,7 +49,7 @@
           </div>
           
       </nav>
-      	<div class="jumbotron">
+      	<div class="jumbotron" style="height:400px;overflow:auto;">
       	<div class="container">
   			<p>Hi!</p>
   			<span class="time-right" >11:00</span>
@@ -63,16 +63,27 @@
 		
 		<form name="message" action="" style="text-align: center">
 			<input name="msg" type="text" id="msg" size="63" />
-			<input name="enter" type="submit" id="enter" value="Send" />
 		</form>
+			<button onclick="addMsg() " >Submit</button>
 		
 		
 		<script type="text/javascript">
 			var sentmsg;
-			$("#message").submit(function() {
-				sentmsg = $( input:first ).val();
-				$( ".jumbotron" ).append( "<p>" sentmsg"</p>")
-			});
+			function addMsg() {
+				var dt = new Date();
+				var time = dt.getHours() + ":" + dt.getMinutes();
+				sentmsg = document.getElementById("msg");
+				var msg = sentmsg.value;
+				$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
+				console.log(msg);
+			};
+			//$("#message").submit(function() {
+			//	sentmsg = $( input:first ).val();
+			//	$( ".jumbotron" ).append( <div class="container sender">
+			//  	<p>I got your message!</p>
+			//  	<span class="time-left" style="float:right">11:01</span>
+			//</div>)
+			//});
 			
 		</script>
 		

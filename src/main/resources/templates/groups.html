@@ -52,9 +52,24 @@
 		</div>
 	</nav>
 	
-	<h1> Groups </h1>
+	<h1 style="text-align: center"> Create New Group! </h1>
 	
+	<form name="group" action="" style="text-align: center">
+		<input name="groupID" type="text" id="groupID" size="63" />
+	</form>
+		<button onclick="getInfo() " style="text-align: center">Submit</button>
 	
+	<script type="text/javascript">
+		function getInfo() {
+			var name = document.getElementById("groupID");
+			var deciphered = name.value;
+			console.log(deciphered);
+			$.post("/api/createGroup",
+					{
+					"groupId": deciphered
+				});
+		}
+	</script>
 
 </body>
 </html>
