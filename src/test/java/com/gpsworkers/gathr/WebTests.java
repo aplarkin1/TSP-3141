@@ -3,6 +3,7 @@ package com.gpsworkers.gathr;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
+<<<<<<< HEAD
 //import java.util.Optional;
 //import java.util.concurrent.TimeUnit;
 
@@ -10,12 +11,18 @@ import org.junit.After;
 //import org.junit.AfterClass;
 import org.junit.Before;
 //import org.junit.BeforeClass;
+=======
+
+import org.junit.After;
+import org.junit.Before;
+>>>>>>> 143bdc2707e5aaf3e3e08d06e930a344274ef26a
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+<<<<<<< HEAD
 //import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +40,17 @@ import com.gpsworkers.gathr.exceptions.EmptyMessageException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 //import com.gpsworkers.gathr.mongo.communications.CommunicationsNetwork;
 //import com.gpsworkers.gathr.mongo.communications.CommunicationsNetworkRepository;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.gpsworkers.gathr.controllers.APIService;
+import com.gpsworkers.gathr.exceptions.EmptyMessageException;
+import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
+>>>>>>> 143bdc2707e5aaf3e3e08d06e930a344274ef26a
 import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;

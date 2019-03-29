@@ -14,9 +14,14 @@ import java.util.Collection;
 import com.gpsworkers.gathr.mongo.communications.CommunicationsNetwork;
 //import com.gpsworkers.gathr.mongo.communication.CommunicationNetwork;
 import com.gpsworkers.gathr.mongo.users.User;
+<<<<<<< HEAD
 //import java.util.HashMap;
 
 //import org.bson.types.ObjectId;
+=======
+import java.util.HashMap;
+
+>>>>>>> 143bdc2707e5aaf3e3e08d06e930a344274ef26a
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
