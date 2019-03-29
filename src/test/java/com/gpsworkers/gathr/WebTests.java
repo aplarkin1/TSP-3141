@@ -290,21 +290,24 @@ public class WebTests {
 		Message message = group.getGroupCommsNetwork().getLastMessage();
 		assertThat(message.getMessageContent()).isEqualTo("This is my first message to you all!");
 	}
-	/*
+	
 	@Test
 	public void groupCommunicationNetworkSecondTestReadingPostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
 
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		Group group = groups.findById(TEST_GROUP_ID).get();
 		
-		group.getGroupCommsNetwork().postMesage(userRepo.findById(TEST_USER_1_EMAIL).get(), "This is my first message to you all!");
-		
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
+		
+		group.getGroupCommsNetwork().postMesage(userRepo.findById(TEST_USER_1_EMAIL).get(), "This is my first message to you all!");
+		
+		groups.save(group);
 		
 		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
 		
 		for(String groupName : readingUser.getGroupNames()) {
+			System.out.println("Group!!!!!");
 			if(groupName.equals(TEST_GROUP_ID)) {
 				Group alternateGroupReference = groups.findById(groupName).get();
 				System.out.println("HELLO WORLD !!!!!!!");
@@ -315,5 +318,7 @@ public class WebTests {
 		}
 		throw new RuntimeException("Alternate Group Reference Test Failed!");
 	}
-	*/
+	
+	
+	
 }

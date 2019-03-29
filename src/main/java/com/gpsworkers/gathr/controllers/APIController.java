@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -211,22 +212,29 @@ public class APIController {
 		}
 	}
 	
-	/*
-	@PostMapping("/api/getGroupInvites")
+	
+	@GetMapping("/api/getGroupInvites")
 	@ResponseBody
-	public ResponseEntity<String> getGroupInvites() throws JsonProcessingException {
-		HashMap<String, String> errMsg = new HashMap<>();
-		
-		String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		User sourceUser = users.findByEmail(sourceEmail);
-		
-		if(sourceUser.getGroupInvites().size() > 0) {
-			return new ResponseEntity<>(GathrJSONUtils.write(sourceUser.getGroupInvites()), HttpStatus.FOUND);
-		} else {
-			return new ResponseEntity<>("1", HttpStatus.OK);
-		}
+	public ResponseEntity<String> handleGetGroupInvites() throws JsonProcessingException {
+		String userEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		ArrayList<GroupInvitation> invites = api.getGroupInvites(userEmail);
+		return new ResponseEntity<>(GathrJSONUtils.write(invites), HttpStatus.OK);
 	}
 	
+	@GetMapping("/api/getGroupSummary")
+	@ResponseBody
+	public ResponseEntity<String> handleGetGroupSummary(String groupId) throws JsonProcessingException {
+		String userEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		try {
+			api.getGroupSummary(groupId);
+		} catch (GroupDoesntExistException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(groupId, HttpStatus.OK);
+	}
+	
+	
+	/*
 	@PostMapping("/api/getGroupInvitationDetails")
 	@ResponseBody
 	public ResponseEntity<String> getGroupInvitationDetails(String groupId, String groupInvite) throws JsonProcessingException {
