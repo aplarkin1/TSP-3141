@@ -42,7 +42,9 @@ public class Group {
   @Indexed ( unique = true )
     private String groupInvite;
 
-  private User user;
+  
+  	//Hello WOrld
+  	private User user;
   
     /**
      * This constructor allows for the construction of a new Group
