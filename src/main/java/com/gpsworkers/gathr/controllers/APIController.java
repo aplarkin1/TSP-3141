@@ -261,13 +261,13 @@ public class APIController {
 	*/
 	
 	
-	@PostMapping("/api/getAccountInformation")
+	@GetMapping("/api/getAccountInformation")
 	@ResponseBody
 	public ResponseEntity<String> handleGetAccountInformation() throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		try {
 			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-			api.getAccountInformation(sourceEmail);
-			return new ResponseEntity<>("1", HttpStatus.OK);
+			ArrayList<String> accountInformation = api.getAccountInformation(sourceEmail);
+			return new ResponseEntity<>(GathrJSONUtils.write(accountInformation), HttpStatus.OK);
 		} catch (UserNotFoundException e){
 			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		} catch(GroupDoesntExistException e) {
