@@ -57,6 +57,19 @@ public class APIService {
 		users.save(validUser);
 		return true;
 	}
+	
+	public ArrayList<String> getAccountInformation(UserRepository user, String email){
+		ArrayList<String> accountInformation = new ArrayList<>();
+		
+		User validUser = users.findByEmail(email);
+		accountInformation.add(validUser.getEmail());
+		accountInformation.add(validUser.getUsername());
+		accountInformation.add(validUser.getFirstName());
+		accountInformation.add(validUser.getLastName());
+		accountInformation.add(validUser.getCurrentLocation().toString());
+		
+		return accountInformation;
+	}
 
 	public Location getLocationGeoCodeInformation(double lat, double lon) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
 
