@@ -34,14 +34,13 @@ public class Group {
   @Id
     private String groupName;
 
-  private CommunicationsNetwork groupCommsNetwork;
+    private CommunicationsNetwork groupCommsNetwork;
   @DBRef
     private Collection<User> users;
     private Collection<User> admins;
 
   @Indexed ( unique = true )
     private String groupInvite;
-
 
   	//Hello WOrld
   	private User user;
