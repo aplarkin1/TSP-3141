@@ -43,6 +43,9 @@
 				</li>
 				<li class="nav-item"><a class="nav-link" href="/info">Location</a>
 				</li>
+				<li class="nav-item">
+                <a class="nav-link" href="/chat">Chat</a>
+              </li>
 				<li class="nav-item"><a class="nav-link" href="/contactus">Contact
 						Us</a></li>
 			</ul>
@@ -64,10 +67,11 @@
 			var name = document.getElementById("groupID");
 			var deciphered = name.value;
 			console.log(deciphered);
-			$.post("/api/createGroup",
+			var response = $.post("/api/createGroup",
 					{
 					"groupId": deciphered
 				});
+			console.log(response);
 		}
 	</script>
 
