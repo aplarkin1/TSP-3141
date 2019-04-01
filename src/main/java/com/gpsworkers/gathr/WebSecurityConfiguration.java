@@ -15,7 +15,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
         http
             .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/images/**", "/login", "/proto/**").permitAll().anyRequest().anonymous()
-                .antMatchers("/home", "/loginSuccess", "/info", "/api/**").permitAll().anyRequest().authenticated()                
+                .antMatchers("/home", "/loginSuccess", "/info", "/api/**", "/account", "/groups", "/chat").permitAll().anyRequest().authenticated()                
                 .and().oauth2Login().loginPage("/login").defaultSuccessUrl("/loginSuccess", true);
         http.csrf().disable();
     }
