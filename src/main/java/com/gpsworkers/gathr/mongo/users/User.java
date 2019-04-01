@@ -25,7 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Document(collection="users")
 public class User {
 
-  @Indexed
     private String firstName, lastName, username;
 
     private Location currentLocation;
