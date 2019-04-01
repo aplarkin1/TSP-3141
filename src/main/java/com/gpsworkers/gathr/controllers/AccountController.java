@@ -22,8 +22,14 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("account");
 		modelAndView.addObject("username", userInfo.username);
 		modelAndView.addObject("email", userInfo.email);
-		
-		
+		modelAndView.addObject("firstname", userInfo.firstname);
+		modelAndView.addObject("lastname", userInfo.lastname);
+		modelAndView.addObject("country", userInfo.country);
+		modelAndView.addObject("state", userInfo.state);
+		modelAndView.addObject("city", userInfo.city);
+		modelAndView.addObject("lon", userInfo.lon);
+		modelAndView.addObject("lat", userInfo.lat);
+		modelAndView.addObject("elev", userInfo.elev);
 		
 		return modelAndView;
 	}
