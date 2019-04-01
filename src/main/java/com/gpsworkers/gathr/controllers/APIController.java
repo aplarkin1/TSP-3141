@@ -20,6 +20,8 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.gpsworkers.gathr.controllers.requestbodys.UpdateLocationAPIRequestBody;
+import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
+import com.gpsworkers.gathr.controllers.responsebodys.UserAccountInformationResponse;
 import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
 import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
 import com.gpsworkers.gathr.exceptions.EmptyMessageException;
@@ -266,12 +268,24 @@ public class APIController {
 	public ResponseEntity<String> handleGetAccountInformation() throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		try {
 			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-			ArrayList<String> accountInformation = api.getAccountInformation(sourceEmail);
+			UserAccountInformationResponse accountInformation = api.getAccountInformation(sourceEmail);
 			return new ResponseEntity<>(GathrJSONUtils.write(accountInformation), HttpStatus.OK);
 		} catch (UserNotFoundException e){
 			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		} catch(GroupDoesntExistException e) {
 			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@GetMapping("/api/getUserLocation")
+	@ResponseBody
+	public ResponseEntity<String> handleGetUserLocation() throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+		try {
+			String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+			GetLocationResponse userLocation = api.getUserLocation(email);
+			return new ResponseEntity<>(GathrJSONUtils.write(userLocation), HttpStatus.OK);
+		} catch (UserNotFoundException e){
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		}
 	}
 }

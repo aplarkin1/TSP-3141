@@ -17,6 +17,8 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
+import com.gpsworkers.gathr.controllers.responsebodys.UserAccountInformationResponse;
 import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
 import com.gpsworkers.gathr.exceptions.EmptyMessageException;
 import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
@@ -58,17 +60,30 @@ public class APIService {
 		return true;
 	}
 	
-	public ArrayList<String> getAccountInformation(String email){
+	
+	public UserAccountInformationResponse getAccountInformation(String email){
+		/*
 		ArrayList<String> accountInformation = new ArrayList<>();
-		
-		User validUser = users.findByEmail(email);
 		accountInformation.add(validUser.getEmail());
 		accountInformation.add(validUser.getUsername());
 		accountInformation.add(validUser.getFirstName());
 		accountInformation.add(validUser.getLastName());
 		accountInformation.add(validUser.getCurrentLocation().toString());
-		
-		return accountInformation;
+		*/
+		User validUser = users.findByEmail(email);
+		UserAccountInformationResponse userInfo = new UserAccountInformationResponse();
+		userInfo.firstname = validUser.getFirstName();
+		userInfo.lastname = validUser.getLastName();
+		userInfo.email = validUser.getEmail();
+		userInfo.username = validUser.getUsername();
+		userInfo.country = validUser.getCurrentLocation().getCountry();
+		userInfo.state = validUser.getCurrentLocation().getState();
+		userInfo.city = validUser.getCurrentLocation().getCity();
+		userInfo.lat = validUser.getCurrentLocation().getLatitude();
+		userInfo.lon = validUser.getCurrentLocation().getLongitude();
+		userInfo.elev = validUser.getCurrentLocation().getElevation();
+
+		return userInfo;
 	}
 
 	public Location getLocationGeoCodeInformation(double lat, double lon) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
@@ -246,6 +261,23 @@ public class APIService {
 			return group.get().getGroupSummary();
 		} else {
 			throw new GroupDoesntExistException();
+		}
+	}
+	
+	public GetLocationResponse getUserLocation(String email) {
+		Optional<User> optUser = users.findById(email);
+		if(optUser.isPresent()) {
+			User user = optUser.get();
+			GetLocationResponse response = new GetLocationResponse();
+			response.country = user.getCurrentLocation().getCountry();
+			response.state = user.getCurrentLocation().getState();
+			response.city = user.getCurrentLocation().getCity();
+			response.lat = user.getCurrentLocation().getLatitude();
+			response.lon = user.getCurrentLocation().getLongitude();
+			response.elev = user.getCurrentLocation().getElevation();
+			return response;
+		} else {
+			throw new UserNotFoundException();
 		}
 	}
 
