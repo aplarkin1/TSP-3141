@@ -36,8 +36,14 @@
               <li class="nav-item">
                 <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/groups">Groups</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/info">Location</a>
+              </li>
               <li class="nav-item active">
-                <a class="nav-link" href="/info">About</a>
+                <a class="nav-link" href="/chat">Chat</a>
               </li>
               <li class="nav-item"><a class="nav-link" href="/contactus">Contact
 						Us</a></li>
@@ -62,7 +68,7 @@
 		</div>
 		
 		<form name="message" action="" style="text-align: center">
-			<input name="msg" type="text" id="msg" size="63" />
+			<textarea rows="3" cols="50" id="msg"></textarea>
 		</form>
 			<button onclick="addMsg() " >Submit</button>
 		
@@ -75,7 +81,13 @@
 				sentmsg = document.getElementById("msg");
 				var msg = sentmsg.value;
 				$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
-				console.log(msg);
+				//console.log(msg);
+				var response = $.post("/api/postMessageInGroup",
+						{
+						"message": msg,
+						"groupId": "test"
+					});
+				console.log(response);
 			};
 			//$("#message").submit(function() {
 			//	sentmsg = $( input:first ).val();
