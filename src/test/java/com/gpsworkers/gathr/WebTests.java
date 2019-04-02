@@ -27,6 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 //import com.gpsworkers.gathr.controllers.APIController;
 import com.gpsworkers.gathr.controllers.APIService;
+import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
 //import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 //import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
 import com.gpsworkers.gathr.exceptions.EmptyMessageException;
@@ -212,7 +213,7 @@ public class WebTests {
 		return wasInvited;
 	}
 	*/
-	/*
+	
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -241,18 +242,19 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
-	*/
+	
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
 		FirefoxDriver driver = gathr.getConfig().getDriver();
 		WebElement loginBtn = driver.findElementById("Google");
 		loginBtn.click();
 
+		Thread.sleep(6000);
 		WebElement emailTextField = driver.findElementById("identifierId");
 		WebElement nextBtn = driver.findElementById("identifierNext");
 		emailTextField.sendKeys(WEB_USER_GMAIL);
 		nextBtn.click();
-		Thread.sleep(3000);
+		Thread.sleep(7000);
 
 		WebElement passwordField = driver.findElementByName("password");
 		passwordField.sendKeys("Th3P@ssw0rd");
@@ -311,7 +313,7 @@ public class WebTests {
 	}
 	
 	@Test
-	public void groupCommunicationNetworkDeletePostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+	public void groupCommunicationNetworkAdminDeletePostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
@@ -321,6 +323,23 @@ public class WebTests {
 			Group group = groups.findById(TEST_GROUP_ID).get();
 			group = groups.findById(TEST_GROUP_ID).get();
 			api.deleteMessageInGroup(TEST_GROUP_ID, 0, TEST_GROUP_ADMIN_EMAIL);
+			assertThat(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size()).isEqualTo(0);
+		} else {
+			throw new RuntimeException("Message was never posted!");
+		}
+	}
+	
+	@Test
+	public void groupCommunicationNetworkDeletePostedMessageBySelfTest() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
+		api.postMessageInGroup("This is my first message to you all!", TEST_GROUP_ID, TEST_USER_1_EMAIL);
+
+		if(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size() > 0) {
+			Group group = groups.findById(TEST_GROUP_ID).get();
+			group = groups.findById(TEST_GROUP_ID).get();
+			api.deleteMessageInGroup(TEST_GROUP_ID, 0, TEST_USER_1_EMAIL);
 			assertThat(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size()).isEqualTo(0);
 		} else {
 			throw new RuntimeException("Message was never posted!");
@@ -345,6 +364,20 @@ public class WebTests {
 
 		assertThat(api.getGroupSummary(TEST_GROUP_ID).size()).isGreaterThan(0);
 	}
-
+	
+	@Test
+	public void getUserAccountInfoTest() {
+		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
+		assertThat(api.getAccountInformation(TEST_USER_1_EMAIL)).isNotNull();
+	}
+	
+	@Test
+	public void updateUserLocationAndGetUserLocationTest() {
+		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
+		GetLocationResponse location = api.getUserLocation(TEST_USER_1_EMAIL);
+		String locationString = "" + location.lat + "" + location.lon + "" + location.city + "" + location.state + "" + location.country;
+		System.out.println(location);
+		assertThat(locationString).isNotEmpty();
+	}
 
 }
