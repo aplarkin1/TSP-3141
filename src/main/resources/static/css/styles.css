@@ -32,3 +32,12 @@ h{
     margin-top: 2.5%;
     margin-bottom: 1.25%;
 }
+
+.container-account {
+	background-color: white;
+	width: 20%;
+}
+
+.body-account{
+	background-color: white;
+}
