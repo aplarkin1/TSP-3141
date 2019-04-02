@@ -26,6 +26,7 @@ import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
 import com.gpsworkers.gathr.exceptions.GroupDoesntExistException;
 import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
+import com.gpsworkers.gathr.exceptions.NotAdminException;
 import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
@@ -159,7 +160,7 @@ public class APIService {
 			}
 			return true;
 		} else {
-			throw new GroupIdAlreadyInUseException();
+			throw new GroupDoesntExistException();
 		}
 	}
 
@@ -233,17 +234,23 @@ public class APIService {
 	}
 
 	public void addUserToGroup(String adderUserEmail, String targetUserEmail, String groupId) throws UnauthorizedGroupManagementException, TargetUserNotFoundException, GroupDoesntExistException, UserNotFoundException {
+		System.out.println("1");
 		Optional<User> adderUser = users.findById(adderUserEmail);
 		if(adderUser.isPresent()) {
+			System.out.println("2");
 			Optional<Group> group = groups.findById(groupId);
 			if(group.isPresent()) {
+				System.out.println("3");
 				Optional<User> targetUser = users.findById(targetUserEmail);
 				if(targetUser.isPresent()) {
+					System.out.println("4");
 					if(group.get().isAdmin(adderUserEmail)) {
+						System.out.println("5");
 						group.get().addUser(targetUser.get());
 						groups.save(group.get());
 						targetUser.get().addGroup(groupId);
 						users.save(targetUser.get());
+						System.out.println("HELLO FRIENDS: " + users.findByEmail(targetUserEmail).getGroupNames().size());
 					} else {
 						throw new UnauthorizedGroupManagementException();
 					}
@@ -314,14 +321,104 @@ public class APIService {
 	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) {
 		String groupId = country + "->" + state + "->" + city;
 		if(groups.findById(groupId).isPresent()) {
-			if(!groups.findById(groupId).get().isUserInGroup(emailOfUserToAdd)) {
-				addUserToGroup("", emailOfUserToAdd, groupId);
+			if(groups.findById(groupId).get().isUserInGroup(emailOfUserToAdd)) {
+				return;
+			} else {
+				addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
 			}
 		} else {
 			Group group = new Group(groupId, users.findById(GLOBAL_ADMIN_EMAIL).get());
 			groups.save(group);
-			addUserToGroup("", emailOfUserToAdd, groupId);
+			addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
+		}
+	}
+	
+	public Collection<String> getGroupNamesOfUser(String email) {
+		Optional<User> optUser = users.findById(email);
+		if(optUser.isPresent()) {
+			User user = optUser.get();
+			return user.getGroupNames();
+		} else {
+			throw new UserNotFoundException();
+		}
+	}
+	
+	public void removeUserFromGroup(String authorityEmail, String targetUserEmail, String groupId) {
+		Optional<User> targetUser = users.findById(targetUserEmail);
+		if(targetUser.isPresent()) {
+			Optional<Group> group = groups.findById(groupId);
+			if(group.isPresent()) {
+				try {
+					group.get().deleteUser(targetUserEmail);
+					System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+					targetUser.get().removeGroup(groupId);
+					System.out.println("THE USER IS GETTING REMOVED");
+					users.save(targetUser.get());
+					System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+					groups.save(group.get());
+					if(group.get().getUsers().size() == 0) {
+						systemDeleteGroup(groupId);
+					}
+				} catch (NotAdminException e) {
+					throw new UnauthorizedUserInteractionException();
+				}
+			} else {
+				throw new GroupDoesntExistException();
+			}
+		} else {
+			throw new UserNotFoundException();
+		}
+	}
+	
+	public void deleteUser(String targetUserEmail) {
+		Optional<User> targetUser = users.findById(targetUserEmail);
+		if(targetUser.isPresent()) {
+			for(String groupName : targetUser.get().getGroupNames()) {
+				Optional<Group> group = groups.findById(groupName);
+				if(group.isPresent()) {
+					removeUserFromGroup(group.get().getAdmin().iterator().next().getEmail(), targetUserEmail, groupName);
+					if(group.get().getUsers().size() == 0) {
+						groups.deleteById(groupName);
+					}
+				} else {
+					throw new GroupDoesntExistException();
+				}
+			}
+			users.deleteById(targetUserEmail);
+		} else {
+			throw new UserNotFoundException();
 		}
 	}
 
+	public void systemDeleteGroup(String groupId) {
+		System.out.println(groupId);
+		if(groups.findById(groupId).isPresent()) {
+
+			//MAYBE ADD ADMIN VOTE LOGIC....NOT ESSENTIAL
+			if(true) {
+				Group group = groups.findById(groupId).get();
+				for(User user : group.getUsers()) {
+					if(user != null) {
+						user.removeGroup(groupId);
+					}
+					
+				}
+				groups.deleteById(groupId);
+			}
+		}
+	}
+	
+	public void systemDeleteUser(String targetUserEmail) {
+		Optional<User> targetUser = users.findById(targetUserEmail);
+		if(targetUser.isPresent()) {
+			for(String groupName : targetUser.get().getGroupNames()) {
+				Optional<Group> group = groups.findById(groupName);
+				if(group.isPresent()) {
+					removeUserFromGroup(group.get().getAdmin().iterator().next().getEmail(), targetUserEmail, groupName);
+				}
+			}
+			users.deleteById(targetUserEmail);
+		}
+	}
+	
 }

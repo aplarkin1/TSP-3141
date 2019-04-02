@@ -27,7 +27,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * This class is the MongoDB specification for a group record
  */
-@Document(collection = "groups2")
+@Document(collection = "groups")
 public class Group {
 
 	//API Token used by API requests
@@ -37,11 +37,12 @@ public class Group {
     private CommunicationsNetwork groupCommsNetwork;
   @DBRef
     private Collection<User> users;
+  @DBRef
     private Collection<User> admins;
 
     private String groupInvite;
 
-  	//Hello WOrld
+  @DBRef
   	private User user;
 
     /**
@@ -123,7 +124,8 @@ public class Group {
       public void removeUser ( User user, User removedUser ) throws NotAdminException {
         if ( user == removedUser ) {
           users.remove( removedUser );
-        } else if( admins.contains( user )) {
+        } else if(isAdmin(user.getEmail())) {
+          admins.remove(removedUser);
           users.remove( user );
         } else {
           throw new NotAdminException( "user is not an admin");
@@ -214,6 +216,23 @@ public class Group {
     		  }
     	  }
     	  return false;
+      }
+      
+      /**
+       * removes a user from group
+       * @param email of user to be removed
+       */
+      public void deleteUser(String email) throws NotAdminException {
+    	  for(User user : users) {
+    		  if(user.getEmail().equals(email)) {
+    			  users.remove(user);
+    			  if(isAdmin(email)) {
+    				  admins.remove(user);
+    			  }
+    			  return;
+    		  }
+    		  
+    	  }
       }
 
 }

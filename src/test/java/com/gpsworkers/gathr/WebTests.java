@@ -75,18 +75,24 @@ public class WebTests {
 
 	@Before
 	public void initialize() {
-		userRepo.deleteById(TEST_GROUP_ADMIN_EMAIL);
-		userRepo.deleteById(TEST_USER_1_EMAIL);
-		userRepo.deleteById(TEST_USER_2_EMAIL);
-		groups.deleteById(TEST_GROUP_ID);
-		groups.deleteById(TEST_WEB_GROUP_ID);
+		api.systemDeleteGroup(TEST_WEB_GROUP_ID);
+		api.systemDeleteGroup(TEST_GROUP_ID);
+		api.systemDeleteUser(TEST_USER_1_EMAIL);
+		api.systemDeleteUser(TEST_USER_2_EMAIL);
+		api.systemDeleteUser(TEST_GROUP_ADMIN_EMAIL);
+		
+		
 		userRepo.insert(new User("ADMIN", "Test", TEST_GROUP_ADMIN_EMAIL));
 		userRepo.insert(new User("USER1", "Test", TEST_USER_1_EMAIL));
 		userRepo.insert(new User("USER2", "Test", TEST_USER_2_EMAIL));
 		
 		if(userRepo.findById(APIService.GLOBAL_ADMIN_EMAIL).isPresent() == false) {
-			userRepo.insert(new User("Admin", "Global", APIService.GLOBAL_ADMIN_EMAIL));
+			userRepo.save(new User("Admin", "Global", APIService.GLOBAL_ADMIN_EMAIL));
 		}
+		
+		api.systemDeleteGroup(TEST_WEB_GROUP_ID);
+		//api.systemDeleteGroup("USA->MI->Houghton");
+		
 		
 	}
 
@@ -380,7 +386,7 @@ public class WebTests {
 	}
 	
 	@Test
-	public void updateUserLocationAndGetUserLocationTest() {
+	public void updateUserLocationAndAgetUserLocationTest() {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		GetLocationResponse location = api.getUserLocation(TEST_USER_1_EMAIL);
 		String locationString = "" + location.lat + "" + location.lon + "" + location.city + "" + location.state + "" + location.country;

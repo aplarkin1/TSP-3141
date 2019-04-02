@@ -303,4 +303,12 @@ public class APIController {
 			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
 		}
 	}
+	
+	@GetMapping("/api/getAllGroupNames")
+	@ResponseBody
+	public ResponseEntity<String> handleGetAllGroupMessages() throws JsonProcessingException {
+		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		Collection<String> groupNames = api.getGroupNamesOfUser(email);
+		return new ResponseEntity<>(GathrJSONUtils.write(groupNames), HttpStatus.OK);
+	}
 }
