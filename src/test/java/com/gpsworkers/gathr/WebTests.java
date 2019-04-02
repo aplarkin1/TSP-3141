@@ -242,7 +242,7 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
-	
+	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
 		FirefoxDriver driver = gathr.getConfig().getDriver();
