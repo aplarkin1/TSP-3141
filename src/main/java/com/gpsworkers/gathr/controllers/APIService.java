@@ -369,26 +369,6 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
-	public void deleteUser(String targetUserEmail) {
-		Optional<User> targetUser = users.findById(targetUserEmail);
-		if(targetUser.isPresent()) {
-			for(String groupName : targetUser.get().getGroupNames()) {
-				Optional<Group> group = groups.findById(groupName);
-				if(group.isPresent()) {
-					removeUserFromGroup(group.get().getAdmin().iterator().next().getEmail(), targetUserEmail, groupName);
-					if(group.get().getUsers().size() == 0) {
-						groups.deleteById(groupName);
-					}
-				} else {
-					throw new GroupDoesntExistException();
-				}
-			}
-			users.deleteById(targetUserEmail);
-		} else {
-			throw new UserNotFoundException();
-		}
-	}
 
 	public void systemDeleteGroup(String groupId) {
 		System.out.println(groupId);
