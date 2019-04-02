@@ -35,9 +35,9 @@ h{
 
 .container-account {
 	background-color: white;
-	width: 20%;
-}
-
-.body-account{
-	background-color: white;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 10%;
+	margin-bottom: 10%;
+	width: 80%;
 }
