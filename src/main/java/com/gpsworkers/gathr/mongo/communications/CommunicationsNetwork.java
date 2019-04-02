@@ -23,15 +23,13 @@ import com.gpsworkers.gathr.mongo.users.User;
 @Document(collection="commsnetworks")
 public class CommunicationsNetwork {
 	
-	private ArrayList<Message> messages;
-	private ArrayList<String> mutedUsers;
+	private ArrayList<Message> messages = new ArrayList<Message>();
+	private ArrayList<String> mutedUsers = new ArrayList<String>();
 
 	/**
 	 * Default constructor
 	 */
 	public CommunicationsNetwork() {
-		messages = new ArrayList<Message>();
-		mutedUsers = new ArrayList<String>();
 	}
 	
 	public void postMesage(User poster, String message) throws MessageUserIdCannotBeEmptyException, EmptyMessageException, Exception {

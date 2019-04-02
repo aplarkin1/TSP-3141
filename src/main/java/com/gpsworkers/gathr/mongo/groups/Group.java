@@ -27,7 +27,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  * This class is the MongoDB specification for a group record
  */
-@Document(collection = "groups")
+@Document(collection = "groups2")
 public class Group {
 
 	//API Token used by API requests
@@ -39,7 +39,6 @@ public class Group {
     private Collection<User> users;
     private Collection<User> admins;
 
-  @Indexed ( unique = true )
     private String groupInvite;
 
   	//Hello WOrld
@@ -186,7 +185,7 @@ public class Group {
         groupInvite = newGroupInvite();
       }
 
-      public String getGroupSummary() throws JsonProcessingException {
+      public HashMap<String, Object> getGroupSummary() throws JsonProcessingException {
     	  HashMap<String, Object> summary = new HashMap<>();
     	  ArrayList<String> userEmails = new ArrayList<String>();
     	  ArrayList<String> adminEmails = new ArrayList<String>();
@@ -201,7 +200,7 @@ public class Group {
     	  summary.put("members", userEmails);
     	  summary.put("size", users.size());
 
-    	  return GathrJSONUtils.write(summary);
+    	  return summary;
       }
 
       public CommunicationsNetwork getGroupCommsNetwork() {

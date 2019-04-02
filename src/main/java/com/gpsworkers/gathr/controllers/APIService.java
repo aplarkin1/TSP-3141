@@ -2,6 +2,7 @@ package com.gpsworkers.gathr.controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,11 +124,9 @@ public class APIService {
 		System.out.println(groupId);
 		if(!groups.findById(groupId).isPresent()) {
 			Group newGroup = new Group(groupId, sourceUser.get());
-			System.out.println("SAVED GROUP HASH: " + newGroup.hashCode());
-			System.out.println(newGroup.getGroupInvite());
-			groups.save(newGroup);
 			sourceUser.get().addGroup(newGroup.getGroupName());
 			users.save(sourceUser.get());
+			groups.save(newGroup);
 			return true;
 		} else {
 			throw new GroupIdAlreadyInUseException();
@@ -184,6 +183,8 @@ public class APIService {
 				for(User user : users) {
 					if(user.getEmail().equals(posterEmail)) {
 						group.get().getGroupCommsNetwork().postMesage(poster.get(), message);
+						groups.save(group.get());
+						return true;
 					}
 				}
 				throw new UnauthorizedUserInteractionException();
@@ -203,11 +204,14 @@ public class APIService {
 			if(group.isPresent()) {
 				if(group.get().isAdmin(deleterEmail)) {
 					group.get().getGroupCommsNetwork().deleteMesage(deleterEmail, index, true);
+					groups.save(group.get());
+					return true;
 				}
 				Collection<User> users = group.get().getUsers();
 				for(User user : users) {
 					if(user.getEmail().equals(deleterEmail)) {
 						group.get().getGroupCommsNetwork().deleteMesage(deleterEmail, index, false);
+						groups.save(group.get());
 						return true;
 					}
 				}
@@ -255,7 +259,7 @@ public class APIService {
 		}
 	}
 
-	public String getGroupSummary(String groupId) throws JsonProcessingException {
+	public HashMap<String, Object> getGroupSummary(String groupId) throws JsonProcessingException {
 		Optional<Group> group = groups.findById(groupId);
 		if(groups.findById(groupId).isPresent()) {
 			return group.get().getGroupSummary();

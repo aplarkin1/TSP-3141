@@ -277,11 +277,8 @@ public class WebTests {
 
 
 		User poster = userRepo.findById(TEST_USER_1_EMAIL).get();
-		group = groups.findById(TEST_GROUP_ID).get();
 
-		group.getGroupCommsNetwork().postMesage(poster, "This is my first message to you all!");
-
-		groups.save(group);
+		api.postMessageInGroup("This is my first message to you all!", TEST_GROUP_ID, TEST_USER_1_EMAIL);
 
 		group = groups.findById(TEST_GROUP_ID).get();
 
@@ -291,17 +288,13 @@ public class WebTests {
 
 	@Test
 	public void groupCommunicationNetworkSecondTestReadingPostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
-
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		Group group = groups.findById(TEST_GROUP_ID).get();
 
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
-
-		group.getGroupCommsNetwork().postMesage(userRepo.findById(TEST_USER_1_EMAIL).get(), "This is my first message to you all!");
-
-		groups.save(group);
-
+		
+		api.postMessageInGroup("This is my first message to you all!", TEST_GROUP_ID, TEST_USER_1_EMAIL);
 		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
 
 		for(String groupName : readingUser.getGroupNames()) {
@@ -316,7 +309,42 @@ public class WebTests {
 		}
 		throw new RuntimeException("Alternate Group Reference Test Failed!");
 	}
+	
+	@Test
+	public void groupCommunicationNetworkDeletePostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
+		api.postMessageInGroup("This is my first message to you all!", TEST_GROUP_ID, TEST_USER_1_EMAIL);
 
+		if(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size() > 0) {
+			Group group = groups.findById(TEST_GROUP_ID).get();
+			group = groups.findById(TEST_GROUP_ID).get();
+			api.deleteMessageInGroup(TEST_GROUP_ID, 0, TEST_GROUP_ADMIN_EMAIL);
+			assertThat(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size()).isEqualTo(0);
+		} else {
+			throw new RuntimeException("Message was never posted!");
+		}
+	}
+
+	@Test
+	public void groupDeletionTest() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
+		
+		api.deleteGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isEqualTo(false);
+	}
+	
+	@Test
+	public void groupSummaryTest() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		Group group = groups.findById(TEST_GROUP_ID).get();
+
+		assertThat(api.getGroupSummary(TEST_GROUP_ID).size()).isGreaterThan(0);
+	}
 
 
 }
