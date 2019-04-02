@@ -53,6 +53,8 @@ public class WebTests {
 
 	private static final String TEST_GROUP_ID = "THE TESTING GROUP!";
 	private static final String TEST_WEB_GROUP_ID = "WEB TESTING GROUP!";
+	
+	
 
 	@LocalServerPort
 	private int port;
@@ -81,6 +83,11 @@ public class WebTests {
 		userRepo.insert(new User("ADMIN", "Test", TEST_GROUP_ADMIN_EMAIL));
 		userRepo.insert(new User("USER1", "Test", TEST_USER_1_EMAIL));
 		userRepo.insert(new User("USER2", "Test", TEST_USER_2_EMAIL));
+		
+		if(userRepo.findById(APIService.GLOBAL_ADMIN_EMAIL).isPresent() == false) {
+			userRepo.insert(new User("Admin", "Global", APIService.GLOBAL_ADMIN_EMAIL));
+		}
+		
 	}
 
 	@After
@@ -213,7 +220,7 @@ public class WebTests {
 		return wasInvited;
 	}
 	*/
-	
+	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -242,6 +249,7 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
+	*/
 	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
@@ -323,7 +331,7 @@ public class WebTests {
 			Group group = groups.findById(TEST_GROUP_ID).get();
 			group = groups.findById(TEST_GROUP_ID).get();
 			api.deleteMessageInGroup(TEST_GROUP_ID, 0, TEST_GROUP_ADMIN_EMAIL);
-			assertThat(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size()).isEqualTo(0);
+			assertThat(api.getAllGroupMessages(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID).size()).isEqualTo(0);
 		} else {
 			throw new RuntimeException("Message was never posted!");
 		}
@@ -340,7 +348,7 @@ public class WebTests {
 			Group group = groups.findById(TEST_GROUP_ID).get();
 			group = groups.findById(TEST_GROUP_ID).get();
 			api.deleteMessageInGroup(TEST_GROUP_ID, 0, TEST_USER_1_EMAIL);
-			assertThat(groups.findById(TEST_GROUP_ID).get().getGroupCommsNetwork().getAllMessages().size()).isEqualTo(0);
+			assertThat(api.getAllGroupMessages(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID).size()).isEqualTo(0);
 		} else {
 			throw new RuntimeException("Message was never posted!");
 		}
@@ -380,4 +388,11 @@ public class WebTests {
 		assertThat(locationString).isNotEmpty();
 	}
 
+	@Test
+	public void updateUserLocationAndCheckCityBasedGroup() {
+		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
+		User user = userRepo.findById(TEST_USER_1_EMAIL).get();
+		assertThat(user.getGroupNames().size()).isGreaterThan(0);
+	}
+	
 }

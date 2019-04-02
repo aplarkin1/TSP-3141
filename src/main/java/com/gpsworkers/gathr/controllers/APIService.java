@@ -30,6 +30,8 @@ import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
+import com.gpsworkers.gathr.mongo.communications.DisplayableMessage;
+import com.gpsworkers.gathr.mongo.communications.Message;
 //import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 //import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
@@ -47,6 +49,8 @@ public class APIService {
 	public static int ERR_INVALID_REQUEST_SENT = -1;
 	public static int ERR_MISSING_FIELD_IN_REQUEST = -3;
 
+	public static final String GLOBAL_ADMIN_EMAIL = "globalgathradmin@gmail.com";
+	
 	@Autowired
 	UserRepository users;
 
@@ -58,6 +62,10 @@ public class APIService {
 		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
 		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
 		users.save(validUser);
+		
+		currentLocation = validUser.getCurrentLocation();
+		updateUserCityBasedGroup(email, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
+		
 		return true;
 	}
 	
@@ -268,7 +276,7 @@ public class APIService {
 		}
 	}
 	
-	public GetLocationResponse getUserLocation(String email) {
+	public GetLocationResponse getUserLocation(String email) throws UserNotFoundException{
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			User user = optUser.get();
@@ -282,6 +290,37 @@ public class APIService {
 			return response;
 		} else {
 			throw new UserNotFoundException();
+		}
+	}
+	
+	public ArrayList<DisplayableMessage> getAllGroupMessages(String email, String groupId) throws UnauthorizedUserInteractionException, GroupDoesntExistException{
+		Optional<Group> group = groups.findById(groupId);
+		if(group.isPresent()) {
+			
+			if(group.get().isUserInGroup(email)) {
+				ArrayList<DisplayableMessage> displayableMessages = new ArrayList<DisplayableMessage>();
+				for(Message message : group.get().getGroupCommsNetwork().getAllMessages()) {
+					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate()));
+				}
+				return displayableMessages;
+			} else {
+				throw new UnauthorizedUserInteractionException();
+			}
+		} else {
+			throw new GroupDoesntExistException();
+		}
+	}
+	
+	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) {
+		String groupId = country + "->" + state + "->" + city;
+		if(groups.findById(groupId).isPresent()) {
+			if(!groups.findById(groupId).get().isUserInGroup(emailOfUserToAdd)) {
+				addUserToGroup("", emailOfUserToAdd, groupId);
+			}
+		} else {
+			Group group = new Group(groupId, users.findById(GLOBAL_ADMIN_EMAIL).get());
+			groups.save(group);
+			addUserToGroup("", emailOfUserToAdd, groupId);
 		}
 	}
 

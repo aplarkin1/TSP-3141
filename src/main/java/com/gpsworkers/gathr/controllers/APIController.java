@@ -32,6 +32,7 @@ import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
+import com.gpsworkers.gathr.mongo.communications.DisplayableMessage;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
@@ -286,6 +287,20 @@ public class APIController {
 			return new ResponseEntity<>(GathrJSONUtils.write(userLocation), HttpStatus.OK);
 		} catch (UserNotFoundException e){
 			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@GetMapping("/api/getAllGroupMessages")
+	@ResponseBody
+	public ResponseEntity<String> handleGetAllGroupMessages(String groupId) throws JsonProcessingException {
+		try {
+			String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+			ArrayList<DisplayableMessage> displayableMessage = api.getAllGroupMessages(email, groupId);
+			return new ResponseEntity<>(GathrJSONUtils.write(displayableMessage), HttpStatus.OK);
+		} catch (GroupDoesntExistException e){
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch (UnauthorizedUserInteractionException e) {
+			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
 		}
 	}
 }
