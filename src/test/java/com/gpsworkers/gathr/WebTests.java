@@ -91,7 +91,7 @@ public class WebTests {
 		}
 		
 		api.systemDeleteGroup(TEST_WEB_GROUP_ID);
-		//api.systemDeleteGroup("USA->MI->Houghton");
+		api.systemDeleteGroup("USA->MI->Houghton");
 		
 		
 	}
