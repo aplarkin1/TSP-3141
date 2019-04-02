@@ -51,67 +51,40 @@
           </div> 
 	</nav>
 	<div class="container-account">
-	    <h1> Account Info </h1>
-	    
+	    <h1>Account Info</h1>
+	    <hr>
+	    <h2>Personal Information</h2>
 	    <div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Username</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${username} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">Username: <span th:text="${username}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Email</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${firstname} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">Email: <span th:text="${email}"></span></p>
 	  	</div>    
 		<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">First Name</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${firstname} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">First Name: <span th:text="${firstname}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Last Name</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${lastname} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">Last Name: <span th:text="${lastname}"></span></p>
+	  	</div>
+	  	<hr>
+	  	<h2>Geolocation</h2>
+	  	<div class="form-group">
+	  		<p class="control-label">Country: <span th:text="${country}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Country</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${country} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">State: <span th:text="${state}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">State</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${state} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">City: <span th:text="${city}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">City</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${city} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">Latitude: <span th:text="${lat}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Latitude</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${lat} disabled="">
-	  		</fieldset>
+	  		<p class="control-label">Longitude: <span th:text="${lon}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Longitude</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${lon} disabled="">
-	  		</fieldset>
-	  	</div>
-	  	<div class="form-group">
-	  		<fieldset disabled="">
-	    		<label class="control-label" for="disabledInput">Elevation</label>
-	    		<input class="form-control" id="disabledInput" type="text" th:placeholder=${elev} disabled="">
-	  		</fieldset>
+	    		<p class="control-label">Elevation: <span th:text="${elev}"></span></p>
 	  	</div>
   	</div>      
 </body>
