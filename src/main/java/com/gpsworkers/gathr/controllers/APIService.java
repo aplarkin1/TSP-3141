@@ -58,7 +58,7 @@ public class APIService {
 	@Autowired
 	GroupRepository groups;
 
-	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException {
+	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
 		User validUser = users.findByEmail(email);
 		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
 		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
@@ -125,7 +125,7 @@ public class APIService {
 
 	}
 
-	public boolean createGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
+	public boolean createGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException, UserNotFoundException {
 		Optional<User> sourceUser = users.findById(sourceEmail);
 		if(!sourceUser.isPresent()) {
 			throw new UserNotFoundException();
@@ -142,7 +142,7 @@ public class APIService {
 		}
 	}
 
-	public boolean deleteGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException {
+	public boolean deleteGroup(String sourceEmail, String groupId) throws GroupIdAlreadyInUseException, UserNotFoundException {
 		Optional<User> sourceUser = users.findById(sourceEmail);
 		if(!sourceUser.isPresent()) {
 			throw new UserNotFoundException();
@@ -265,7 +265,7 @@ public class APIService {
 		}
 	}
 
-	public ArrayList<GroupInvitation> getGroupInvites(String userEmail) {
+	public ArrayList<GroupInvitation> getGroupInvites(String userEmail) throws UserNotFoundException {
 		Optional<User> user = users.findById(userEmail);
 		if(user.isPresent()) {
 			return user.get().getGroupInvites();
@@ -318,7 +318,7 @@ public class APIService {
 		}
 	}
 	
-	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) {
+	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) throws GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
 		String groupId = country + "->" + state + "->" + city;
 		if(groups.findById(groupId).isPresent()) {
 			if(groups.findById(groupId).get().isUserInGroup(emailOfUserToAdd)) {
@@ -333,7 +333,7 @@ public class APIService {
 		}
 	}
 	
-	public Collection<String> getGroupNamesOfUser(String email) {
+	public Collection<String> getGroupNamesOfUser(String email) throws UserNotFoundException {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			User user = optUser.get();
@@ -343,7 +343,7 @@ public class APIService {
 		}
 	}
 	
-	public void removeUserFromGroup(String authorityEmail, String targetUserEmail, String groupId) {
+	public void removeUserFromGroup(String authorityEmail, String targetUserEmail, String groupId) throws UnauthorizedUserInteractionException, UserNotFoundException {
 		Optional<User> targetUser = users.findById(targetUserEmail);
 		if(targetUser.isPresent()) {
 			Optional<Group> group = groups.findById(groupId);
@@ -388,7 +388,7 @@ public class APIService {
 		}
 	}
 	
-	public void systemDeleteUser(String targetUserEmail) {
+	public void systemDeleteUser(String targetUserEmail) throws UnauthorizedUserInteractionException, UserNotFoundException {
 		Optional<User> targetUser = users.findById(targetUserEmail);
 		if(targetUser.isPresent()) {
 			for(String groupName : targetUser.get().getGroupNames()) {

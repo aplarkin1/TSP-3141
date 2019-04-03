@@ -30,6 +30,8 @@ import com.gpsworkers.gathr.exceptions.GroupDoesntExistException;
 import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
+import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 import com.gpsworkers.gathr.mongo.communications.DisplayableMessage;
@@ -67,11 +69,17 @@ public class APIController {
 		String email = extractEmailFromAuth(auth);
 		try {
 			api.updateLocation(email, request.lat, request.lon, request.elev);
-		} catch (GeoCodingConnectionFailedException gccfe) {
-			return new ResponseEntity<>("-1", HttpStatus.BAD_GATEWAY);
-		} catch (EmptyGeocodingResultException egre) {
-			return new ResponseEntity<>("-1", HttpStatus.FAILED_DEPENDENCY);
+			
+		} catch (GroupDoesntExistException e) {
+			return new ResponseEntity<>("-3", HttpStatus.NOT_FOUND);
+		} catch (UnauthorizedGroupManagementException e) {
+			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
+		} catch (TargetUserNotFoundException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		}
+		
 		return new ResponseEntity<>("1", HttpStatus.OK);
 	}
 	
@@ -181,8 +189,10 @@ public class APIController {
 		try {
 			api.createGroup(sourceEmail, groupId);
 			return new ResponseEntity<>("1", HttpStatus.OK);
-		} catch(GroupIdAlreadyInUseException e) {
+		} catch (GroupIdAlreadyInUseException e1) {
 			return new ResponseEntity<>("-1", HttpStatus.CONFLICT);
+		} catch (UserNotFoundException e1) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -220,7 +230,12 @@ public class APIController {
 	@ResponseBody
 	public ResponseEntity<String> handleGetGroupInvites() throws JsonProcessingException {
 		String userEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		ArrayList<GroupInvitation> invites = api.getGroupInvites(userEmail);
+		ArrayList<GroupInvitation> invites;
+		try {
+			invites = api.getGroupInvites(userEmail);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(GathrJSONUtils.write(invites), HttpStatus.OK);
 	}
 	
@@ -271,8 +286,6 @@ public class APIController {
 			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 			UserAccountInformationResponse accountInformation = api.getAccountInformation(sourceEmail);
 			return new ResponseEntity<>(GathrJSONUtils.write(accountInformation), HttpStatus.OK);
-		} catch (UserNotFoundException e){
-			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
 		} catch(GroupDoesntExistException e) {
 			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
 		}
@@ -308,7 +321,26 @@ public class APIController {
 	@ResponseBody
 	public ResponseEntity<String> handleGetAllGroupMessages() throws JsonProcessingException {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		Collection<String> groupNames = api.getGroupNamesOfUser(email);
+		Collection<String> groupNames;
+		try {
+			groupNames = api.getGroupNamesOfUser(email);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(GathrJSONUtils.write(groupNames), HttpStatus.OK);
+	}
+	
+	@PostMapping("/api/addUserToGroup")
+	@ResponseBody
+	public ResponseEntity<String> handlePostAddUser(String groupId, String targetUserEmail) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+		try {
+			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+			api.addUserToGroup(sourceEmail, targetUserEmail, groupId);
+			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch (UserNotFoundException e){
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch(GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		}
 	}
 }

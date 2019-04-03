@@ -28,10 +28,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 //import com.gpsworkers.gathr.controllers.APIController;
 import com.gpsworkers.gathr.controllers.APIService;
 import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
+import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
 //import com.gpsworkers.gathr.controllers.responsebodys.ErrorResponseBody;
 //import com.gpsworkers.gathr.controllers.responsebodys.UpdateLocationAPIResponseBody;
 import com.gpsworkers.gathr.exceptions.EmptyMessageException;
+import com.gpsworkers.gathr.exceptions.GeoCodingConnectionFailedException;
+import com.gpsworkers.gathr.exceptions.GroupDoesntExistException;
+import com.gpsworkers.gathr.exceptions.GroupIdAlreadyInUseException;
 import com.gpsworkers.gathr.exceptions.MessageUserIdCannotBeEmptyException;
+import com.gpsworkers.gathr.exceptions.TargetUserNotFoundException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedGroupManagementException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
+import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 //import com.gpsworkers.gathr.mongo.communications.CommunicationsNetwork;
 //import com.gpsworkers.gathr.mongo.communications.CommunicationsNetworkRepository;
 import com.gpsworkers.gathr.mongo.communications.Message;
@@ -74,7 +82,7 @@ public class WebTests {
 	private SeleniumAPI gathr;
 
 	@Before
-	public void initialize() {
+	public void initialize() throws UnauthorizedUserInteractionException, UserNotFoundException {
 		api.systemDeleteGroup(TEST_WEB_GROUP_ID);
 		api.systemDeleteGroup(TEST_GROUP_ID);
 		api.systemDeleteUser(TEST_USER_1_EMAIL);
@@ -157,13 +165,13 @@ public class WebTests {
 	}
 	*/
 	@Test
-	public void apiGroupFirstTestCreate() {
+	public void apiGroupFirstTestCreate() throws GroupIdAlreadyInUseException, UserNotFoundException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isTrue();
 	}
 
 	@Test
-	public void apiGroupSecondTestInvite() {
+	public void apiGroupSecondTestInvite() throws GroupIdAlreadyInUseException, UserNotFoundException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		User targetUser = userRepo.findById(TEST_USER_1_EMAIL).get();
 		int preInviteInvitationsSize = targetUser.getGroupInvites().size();
@@ -174,7 +182,7 @@ public class WebTests {
 	}
 
 	@Test
-	public void apiGroupThirdTestDelete() {
+	public void apiGroupThirdTestDelete() throws GroupIdAlreadyInUseException, UserNotFoundException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.deleteGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isFalse();
@@ -278,7 +286,7 @@ public class WebTests {
 	}
 
 	@Test
-	public void groupCommunicationNetworkFirstTestCreation() {
+	public void groupCommunicationNetworkFirstTestCreation() throws GroupIdAlreadyInUseException, UserNotFoundException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isTrue();
 	}
@@ -380,13 +388,13 @@ public class WebTests {
 	}
 	
 	@Test
-	public void getUserAccountInfoTest() {
+	public void getUserAccountInfoTest() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		assertThat(api.getAccountInformation(TEST_USER_1_EMAIL)).isNotNull();
 	}
 	
 	@Test
-	public void updateUserLocationAndAgetUserLocationTest() {
+	public void updateUserLocationAndAgetUserLocationTest() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		GetLocationResponse location = api.getUserLocation(TEST_USER_1_EMAIL);
 		String locationString = "" + location.lat + "" + location.lon + "" + location.city + "" + location.state + "" + location.country;
@@ -395,7 +403,7 @@ public class WebTests {
 	}
 
 	@Test
-	public void updateUserLocationAndCheckCityBasedGroup() {
+	public void updateUserLocationAndCheckCityBasedGroup() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		User user = userRepo.findById(TEST_USER_1_EMAIL).get();
 		assertThat(user.getGroupNames().size()).isGreaterThan(0);
