@@ -234,7 +234,7 @@ public class WebTests {
 		return wasInvited;
 	}
 	*/
-	
+	//
 	/*
 	@Test
 	public void userInteractionTest() throws Exception {
