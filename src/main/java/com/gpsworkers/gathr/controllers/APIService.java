@@ -18,6 +18,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.google.protobuf.Option;
 import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
 import com.gpsworkers.gathr.controllers.responsebodys.UserAccountInformationResponse;
 import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
@@ -36,6 +37,7 @@ import com.gpsworkers.gathr.mongo.communications.Message;
 //import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 //import com.gpsworkers.gathr.mongo.communications.Message;
 import com.gpsworkers.gathr.mongo.groups.Group;
+import com.gpsworkers.gathr.mongo.groups.Group.LOC_SEC_SETTING;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.groups.GroupRepository;
 import com.gpsworkers.gathr.mongo.users.Location;
@@ -92,6 +94,7 @@ public class APIService {
 		userInfo.lat = validUser.getCurrentLocation().getLatitude();
 		userInfo.lon = validUser.getCurrentLocation().getLongitude();
 		userInfo.elev = validUser.getCurrentLocation().getElevation();
+		userInfo.groupNames = validUser.getGroupNames();
 
 		return userInfo;
 	}
@@ -249,8 +252,9 @@ public class APIService {
 						group.get().addUser(targetUser.get());
 						groups.save(group.get());
 						targetUser.get().addGroup(groupId);
+						targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
 						users.save(targetUser.get());
-						System.out.println("HELLO FRIENDS: " + users.findByEmail(targetUserEmail).getGroupNames().size());
+						System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
 					} else {
 						throw new UnauthorizedGroupManagementException();
 					}
@@ -307,7 +311,7 @@ public class APIService {
 			if(group.get().isUserInGroup(email)) {
 				ArrayList<DisplayableMessage> displayableMessages = new ArrayList<DisplayableMessage>();
 				for(Message message : group.get().getGroupCommsNetwork().getAllMessages()) {
-					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate()));
+					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate().toString("s:m:H d/MMMM/yyyy")));
 				}
 				return displayableMessages;
 			} else {
@@ -401,8 +405,39 @@ public class APIService {
 		}
 	}
 	
-	public HashMap<String, GetLocationResponse> getLocationsOfAllAcceptingMembers(){
-		return new HashMap<>();
+	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws GroupDoesntExistException, UserNotFoundException {
+		Optional<User> optUser = users.findById(email);
+		if(optUser.isPresent()) {
+			Optional<Group> optGroup = groups.findById(groupId);
+			if(optGroup.isPresent()) {
+				System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
+				Group group = optGroup.get();
+				HashMap<String, GetLocationResponse> locations = new HashMap<>();
+				for(User refUser : group.getUsers()) {
+					User user = users.findById(refUser.getEmail()).get();
+					System.out.println("USERS FOUND: " + refUser.getEmail());
+					//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
+					locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+					/*
+					if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
+						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+					} else if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP && user.isFriendOf(email)) {
+						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+					} else if (userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP || user.hasBlacklistedUser(email)) {
+						System.out.println("Cannot retrieve for a blacklisted user or an individual that has shut off tracking");
+					} else {
+						System.out.println("VALUE: " + userLocationSharingSecurityForGroup.name());
+						throw new RuntimeException("Cannot add location for some other reasons!!!!!");
+					}
+					*/
+				}
+				return locations;
+			} else {
+				throw new GroupDoesntExistException();
+			}
+		} else {
+			throw new UserNotFoundException();
+		}
 	}
 	
 }

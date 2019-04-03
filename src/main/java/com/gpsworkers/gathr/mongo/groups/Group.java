@@ -31,6 +31,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "groups")
 public class Group {
 
+	public static enum LOC_SEC_SETTING
+    { 
+        GROUP_WIDE, ONLY_FRIENDS_IN_GROUP, OFF
+    } 
+	
 	//API Token used by API requests
   @Id
     private String groupName;

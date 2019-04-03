@@ -343,4 +343,19 @@ public class APIController {
 			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@GetMapping("/api/getLocationsOfGroupMembers")
+	@ResponseBody
+	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws JsonProcessingException {
+		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		HashMap<String, GetLocationResponse> userLocations;
+		try {
+			userLocations = api.getLocationsOfGroupMembers(email, groupId);
+		} catch (GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(GathrJSONUtils.write(userLocations), HttpStatus.OK);
+	}
 }

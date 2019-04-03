@@ -8,6 +8,7 @@ package com.gpsworkers.gathr.mongo.users;
  * in a user document
  */
 public class Location {
+	
 	private String country, state, city;
 	private double longitude, latitude, elevation;
 

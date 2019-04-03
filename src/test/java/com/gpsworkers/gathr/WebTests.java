@@ -234,6 +234,7 @@ public class WebTests {
 		return wasInvited;
 	}
 	*/
+	
 	/*
 	@Test
 	public void userInteractionTest() throws Exception {
@@ -407,6 +408,38 @@ public class WebTests {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		User user = userRepo.findById(TEST_USER_1_EMAIL).get();
 		assertThat(user.getGroupNames().size()).isGreaterThan(0);
+	}
+	
+	@Test
+	public void updateMultipleUsersAndRetrieveTheirLocationsFromGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
+		
+		int i = 0;
+		while(i < 2) {
+			try {
+				System.out.println("Geo Coding Connection: Round 1");
+				api.updateLocation(TEST_GROUP_ADMIN_EMAIL, 47.11625, -88.54010, 0.0);
+				System.out.println("Geo Code Admin!");
+				api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
+				System.out.println("Geo Code User 1!");
+				api.updateLocation(TEST_USER_2_EMAIL, 47.11625, -88.54010, 0.0);
+				System.out.println("Geo Code User 2!");
+			} catch(GeoCodingConnectionFailedException e) {
+				System.out.println("Geo Coding Failed!");
+			}
+			i++;
+			Thread.sleep(2000);
+		}
+		
+		HashMap<String, GetLocationResponse> locationResponses = api.getLocationsOfGroupMembers(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		System.out.print("THE RESPONSE SIZE IS: " + locationResponses.size());
+		if(locationResponses.size() == 3) {
+			assertThat(true).isEqualTo(true);
+		} else {
+			throw new RuntimeException("Location responses size is not 3");
+		}
 	}
 	
 }
