@@ -102,9 +102,21 @@
 				}
 			};
 			
-			//setInterval { function() {
-			//	var thing = $.post("/api/getAllGroupMessages")
-			//}, 5000};
+			setInterval ( function() {
+				$.ajax({
+					url: "/api/getAllGroupMessages",
+					type: "get",
+					data: {
+						"groupId": "test"
+					},
+					success: function(response) {
+						console.log(response);
+					},
+					error: function(xhr) {
+						console.log("big bummer");
+					}
+				});
+			}, 5000);
 			
 		</script>
 		
