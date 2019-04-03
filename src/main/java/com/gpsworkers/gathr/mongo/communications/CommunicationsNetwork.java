@@ -1,8 +1,7 @@
 package com.gpsworkers.gathr.mongo.communications;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
+import java.util.HashMap;import org.hibernate.validator.internal.util.privilegedactions.NewInstance;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.springframework.data.annotation.Id;
@@ -35,14 +34,15 @@ public class CommunicationsNetwork {
 	public void postMesage(User poster, String message) throws MessageUserIdCannotBeEmptyException, EmptyMessageException, Exception {
 		if(message.isEmpty() == false) {
 			if(mutedUsers.indexOf(poster.getEmail()) == -1) {
-				if(messages.size() > 0) {
+				/*if(messages.size() > 0) {
 					int indexOfLastMessage = messages.size() - 1;
 					Message mostRecentMessage = messages.get(indexOfLastMessage);
-					if(mostRecentMessage.getUserId().equals(poster.getEmail())){
+					if(mostRecentMessage.getUserId().equals(poster.getEmail()) && mostRecentMessage.getPostDate().isSe(new DateTime())){
 						mostRecentMessage.appendMessageContent(message);
 						return;
 					}
 				}
+				*/
 				Message messageObject = new Message(message, poster.getEmail());
 				messages.add(messageObject);
 			} else {
