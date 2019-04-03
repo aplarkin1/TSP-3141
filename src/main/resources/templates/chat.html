@@ -55,7 +55,10 @@
           </div>
           
       </nav>
+      	<input name="groupID" type="text" id="groupID" size="63" />
+      	<button onclick="switchGroup() " style="text-align: center">Submit</button>
       	<div class="jumbotron" style="height:400px;overflow:auto;">
+      	
       	<div class="container">
   			<p>Hi!</p>
   			<span class="time-right" >11:00</span>
@@ -75,27 +78,33 @@
 		
 		<script type="text/javascript">
 			var sentmsg;
+			var groupId;
+			function switchGroup() {
+				var groupEntered = document.getElementById("groupID");
+				groupId = groupEntered.value;
+			}
 			function addMsg() {
 				var dt = new Date();
 				var time = dt.getHours() + ":" + dt.getMinutes();
 				sentmsg = document.getElementById("msg");
 				var msg = sentmsg.value;
-				$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
-				//console.log(msg);
-				var response = $.post("/api/postMessageInGroup",
-						{
-						"message": msg,
-						"groupId": "test"
-					});
-				console.log(response);
+				if (groupId == null) {
+					console.log("no group entered");
+				} else {
+					$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
+					//console.log(msg);
+					var response = $.post("/api/postMessageInGroup",
+							{
+							"message": msg,
+							"groupId": groupId
+						});
+					console.log(response);
+				}
 			};
-			//$("#message").submit(function() {
-			//	sentmsg = $( input:first ).val();
-			//	$( ".jumbotron" ).append( <div class="container sender">
-			//  	<p>I got your message!</p>
-			//  	<span class="time-left" style="float:right">11:01</span>
-			//</div>)
-			//});
+			
+			//setInterval { function() {
+			//	var thing = $.post("/api/getAllGroupMessages")
+			//}, 5000};
 			
 		</script>
 		
