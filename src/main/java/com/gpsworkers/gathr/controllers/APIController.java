@@ -306,7 +306,7 @@ public class APIController {
 	
 	@GetMapping("/api/getAllGroupNames")
 	@ResponseBody
-	public ResponseEntity<String> handleGetAllGroupMessages() throws JsonProcessingException {
+	public ResponseEntity<String> handleGetAllGroupNames() throws JsonProcessingException {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		Collection<String> groupNames = api.getGroupNamesOfUser(email);
 		return new ResponseEntity<>(GathrJSONUtils.write(groupNames), HttpStatus.OK);

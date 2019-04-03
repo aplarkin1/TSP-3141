@@ -3,10 +3,6 @@ body{
     background-size: 100%;
 }
 
-h{
-	
-}
-
 .welcome-text{
     font-size: 1.5em;
     text-align: right;
@@ -34,10 +30,10 @@ h{
 }
 
 .container-account {
+
 	background-color: white;
-	margin-left: 10%;
-	margin-right: 10%;
-	margin-top: 10%;
-	margin-bottom: 10%;
-	width: 80%;
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 5%;
+	margin-bottom: 5%;
 }
