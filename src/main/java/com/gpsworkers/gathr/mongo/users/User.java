@@ -5,12 +5,15 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import com.gpsworkers.gathr.controllers.APIController;
 import com.gpsworkers.gathr.exceptions.ChannelDoesntExistException;
 import com.gpsworkers.gathr.mongo.groups.Group;
+import com.gpsworkers.gathr.mongo.groups.Group.LOC_SEC_SETTING;
 import com.gpsworkers.gathr.mongo.groups.GroupInvitation;
 import com.gpsworkers.gathr.mongo.users.FriendInvitation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -33,9 +36,10 @@ public class User {
     private Date dateOfLastInteraction;
 
     private ArrayList<String> blackList;
-	  private ArrayList<GroupInvitation> groupInvitations;
+	private ArrayList<GroupInvitation> groupInvitations;
     private ArrayList<FriendInvitation> friendInvitations;
-
+    private HashMap<String, LOC_SEC_SETTING> groupLocationShareSec = new HashMap<>();
+    
   @Id
     private String email;
 
@@ -60,6 +64,7 @@ public class User {
     	groupNames = new ArrayList<String>();
     	//friends = new ArrayList<String>();
     	friendInvitations = new ArrayList<FriendInvitation>();
+    	username = email.split("@")[0];
         updateLastInteraction();
     }
 
@@ -175,6 +180,7 @@ public class User {
 
 	public void removeGroup ( String groupName ) {
 		groupNames.remove(groupName);
+		groupLocationShareSec.remove(groupName);
 	}
 
   /*
@@ -216,7 +222,7 @@ public class User {
 	}
 
 	public boolean hasBlacklistedUser(String emailToCheck) {
-		if(blackList.indexOf(emailToCheck) != -1) {
+		if(blackList.indexOf(emailToCheck) == -1) {
 			return false;
 		}
 		return true;
@@ -249,5 +255,17 @@ public class User {
   public Collection<String> getGroupNames(){
 	  return groupNames;
   }
+  
+  public LOC_SEC_SETTING getSecuritySettingForGroup(String groupId){
+	  return groupLocationShareSec.get(groupId);
+  }
+  
+  public void setSecuritySettingForGroup(String groupId, LOC_SEC_SETTING setting){
+	  groupLocationShareSec.put(groupId, setting);
+  }
 
+  public boolean isFriendOf(String email) {
+	  return false;
+  }
+  
 }

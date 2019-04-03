@@ -311,4 +311,12 @@ public class APIController {
 		Collection<String> groupNames = api.getGroupNamesOfUser(email);
 		return new ResponseEntity<>(GathrJSONUtils.write(groupNames), HttpStatus.OK);
 	}
+	
+	@GetMapping("/api/getLocationsOfGroupMembers")
+	@ResponseBody
+	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws JsonProcessingException {
+		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+		HashMap<String, GetLocationResponse> userLocations = api.getLocationsOfGroupMembers(email, groupId);
+		return new ResponseEntity<>(GathrJSONUtils.write(userLocations), HttpStatus.OK);
+	}
 }
