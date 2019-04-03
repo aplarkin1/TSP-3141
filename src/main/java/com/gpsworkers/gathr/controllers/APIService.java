@@ -88,12 +88,22 @@ public class APIService {
 		userInfo.lastname = validUser.getLastName();
 		userInfo.email = validUser.getEmail();
 		userInfo.username = validUser.getUsername();
-		userInfo.country = validUser.getCurrentLocation().getCountry();
-		userInfo.state = validUser.getCurrentLocation().getState();
-		userInfo.city = validUser.getCurrentLocation().getCity();
-		userInfo.lat = validUser.getCurrentLocation().getLatitude();
-		userInfo.lon = validUser.getCurrentLocation().getLongitude();
-		userInfo.elev = validUser.getCurrentLocation().getElevation();
+		if(validUser.getCurrentLocation() == null) {
+			userInfo.country = "";
+			userInfo.state = "";
+			userInfo.city = "";
+			userInfo.lat = 0.0;
+			userInfo.lon = 0.0;
+			userInfo.elev = 0.0;
+		} else {
+			userInfo.country = validUser.getCurrentLocation().getCountry();
+			userInfo.state = validUser.getCurrentLocation().getState();
+			userInfo.city = validUser.getCurrentLocation().getCity();
+			userInfo.lat = validUser.getCurrentLocation().getLatitude();
+			userInfo.lon = validUser.getCurrentLocation().getLongitude();
+			userInfo.elev = validUser.getCurrentLocation().getElevation();
+		}
+
 		userInfo.groupNames = validUser.getGroupNames();
 
 		return userInfo;
@@ -311,7 +321,7 @@ public class APIService {
 			if(group.get().isUserInGroup(email)) {
 				ArrayList<DisplayableMessage> displayableMessages = new ArrayList<DisplayableMessage>();
 				for(Message message : group.get().getGroupCommsNetwork().getAllMessages()) {
-					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate().toString("s:m:H d/MMMM/yyyy")));
+					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate().toString("H:m d/MMMM/yyyy")));
 				}
 				return displayableMessages;
 			} else {
