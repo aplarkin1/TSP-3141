@@ -5,6 +5,7 @@ import com.microsoft.applicationinsights.core.dependencies.apachecommons.lang3.R
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 

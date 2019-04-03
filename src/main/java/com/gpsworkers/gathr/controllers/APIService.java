@@ -401,4 +401,8 @@ public class APIService {
 		}
 	}
 	
+	public HashMap<String, GetLocationResponse> getLocationsOfAllAcceptingMembers(){
+		return new HashMap<>();
+	}
+	
 }
