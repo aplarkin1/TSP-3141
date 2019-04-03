@@ -22,11 +22,13 @@ $("document").ready(function() {
 	getGeo();
 	setInterval(function() {
 		getGeo();
-		$.post("/api/updateLocation",
-			{
-			"lon": long,
-			"lat": lat,
-			"elev": 0
-		});
+
+			$.post("/api/updateLocation",
+				{
+				"lon": long,
+				"lat": lat,
+				"elev": 0
+				});
+		
 	}, 5000);
 });
