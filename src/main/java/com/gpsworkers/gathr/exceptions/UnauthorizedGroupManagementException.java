@@ -1,5 +1,5 @@
 package com.gpsworkers.gathr.exceptions;
 
-public class UnauthorizedGroupManagementException extends RuntimeException {
+public class UnauthorizedGroupManagementException extends Exception {
 
 }

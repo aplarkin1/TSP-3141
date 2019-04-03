@@ -54,7 +54,7 @@ public class CommunicationsNetwork {
 	}
 	
 	
-	public void deleteMesage(String deleterEmail, int index, boolean isAdmin) {
+	public void deleteMesage(String deleterEmail, int index, boolean isAdmin) throws UnauthorizedUserInteractionException {
 		if(messages.size() > index && index >= 0) {
 			if(isAdmin) {
 				messages.remove(index);
