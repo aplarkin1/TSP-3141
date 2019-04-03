@@ -43,6 +43,7 @@ public class CommunicationsNetwork {
 					}
 				}
 				*/
+				//
 				Message messageObject = new Message(message, poster.getEmail());
 				messages.add(messageObject);
 			} else {
