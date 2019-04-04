@@ -59,15 +59,7 @@
       	<button onclick="switchGroup() " style="text-align: center">Submit</button>
       	<div class="jumbotron" style="height:400px;overflow:auto;">
       	
-      	<div class="container">
-  			<p>Hi!</p>
-  			<span class="time-right" >11:00</span>
-		</div>
-
-		<div class="container sender">
-		  	<p>I got your message!</p>
-		  	<span class="time-left" style="float:right">11:01</span>
-		</div>
+      	
 		</div>
 		
 		<form name="message" action="" style="text-align: center">
@@ -79,6 +71,7 @@
 		<script type="text/javascript">
 			var sentmsg;
 			var groupId;
+			var oldResponse;
 			function switchGroup() {
 				var groupEntered = document.getElementById("groupID");
 				groupId = groupEntered.value;
@@ -91,20 +84,41 @@
 				if (groupId == null) {
 					console.log("no group entered");
 				} else {
-					$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
+					//$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + msg + "</p><span class='time-left' style='float:right'>" + time + "</span></div>");
 					//console.log(msg);
 					var response = $.post("/api/postMessageInGroup",
 							{
 							"message": msg,
 							"groupId": groupId
 						});
+					//$(".textarea").val("");
 					console.log(response);
 				}
 			};
 			
-			//setInterval { function() {
-			//	var thing = $.post("/api/getAllGroupMessages")
-			//}, 5000};
+			setInterval ( function() {
+				$.ajax({
+					url: "/api/getAllGroupMessages",
+					type: "get",
+					data: {
+						"groupId": groupId
+					},
+					success: function(response) {
+						//console.log(response);
+						if (response != oldResponse){
+						var obj = JSON.parse(response);
+						obj.forEach( function(element) {
+							console.log(element.messageContent);
+							$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
+						});
+						oldResponse = response;
+						}
+					},
+					error: function(xhr) {
+						console.log("big bummer");
+					}
+				});
+			}, 5000);
 			
 		</script>
 		

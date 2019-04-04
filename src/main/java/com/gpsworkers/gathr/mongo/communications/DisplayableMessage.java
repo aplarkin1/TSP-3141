@@ -10,7 +10,7 @@ public class DisplayableMessage {
 	
 	private String messageContent;
 	private String username;
-	private DateTime postDate;
+	private String timestamp;
 	
 	/**
 	 * This constructor allows for the generation of Displayable Message
@@ -18,10 +18,10 @@ public class DisplayableMessage {
 	 * @param username is the current String username of the person that posted the message in the channel.
 	 * @param postDate is the Data that this message was posted
 	 */
-	public DisplayableMessage(String messageContent, String username, DateTime postDate) {
+	public DisplayableMessage(String messageContent, String username, String timeStamp) {
 		this.messageContent = messageContent;
 		this.username = username;
-		this.postDate = postDate;
+		this.timestamp = timeStamp;
 	}
 	
 	/**
@@ -44,8 +44,8 @@ public class DisplayableMessage {
 	 * This returns the post date of this message.
 	 * @return Date of this message's posting
 	 */
-	public DateTime getPostDate() {
-		return postDate;
+	public String getPostDate() {
+		return timestamp;
 	}
 	
 	

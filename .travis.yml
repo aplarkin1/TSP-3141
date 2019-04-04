@@ -16,3 +16,5 @@ deploy:
   space: development
   manifest: manifest.yml
   app_name: GathR
+language: java
+jdk: oraclejdk8
