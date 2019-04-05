@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -44,7 +45,7 @@ public class User {
     private String email;
 
   //@DBRef
-    private Collection<String> groupNames;
+    private ArrayList<String> groupNames;
     //private Collection<User> friends;
 
 
@@ -176,6 +177,7 @@ public class User {
 
 	public void addGroup( String groupName ) {
 		groupNames.add( groupName );
+		groupNames = new ArrayList<String>(new HashSet<>(groupNames));
 	}
 
 	public void removeGroup ( String groupName ) {

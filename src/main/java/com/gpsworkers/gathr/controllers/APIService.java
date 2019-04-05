@@ -143,7 +143,7 @@ public class APIService {
 		if(!sourceUser.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		System.out.println(groupId);
+		System.out.println("CREATING GROUP: " + groupId);
 		if(!groups.findById(groupId).isPresent()) {
 			Group newGroup = new Group(groupId, sourceUser.get());
 			sourceUser.get().addGroup(newGroup.getGroupName());
@@ -160,7 +160,7 @@ public class APIService {
 		if(!sourceUser.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		System.out.println(groupId);
+		//System.out.println(groupId);
 		if(groups.findById(groupId).isPresent()) {
 
 			//MAYBE ADD ADMIN VOTE LOGIC....NOT ESSENTIAL
@@ -247,26 +247,25 @@ public class APIService {
 	}
 
 	public void addUserToGroup(String adderUserEmail, String targetUserEmail, String groupId) throws UnauthorizedGroupManagementException, TargetUserNotFoundException, GroupDoesntExistException, UserNotFoundException {
-		System.out.println("1");
+		//System.out.println("1");
 		Optional<User> adderUser = users.findById(adderUserEmail);
 		if(adderUser.isPresent()) {
-			System.out.println("2");
+			//System.out.println("2");
 			Optional<Group> group = groups.findById(groupId);
 			if(group.isPresent()) {
-				System.out.println("3");
+				//System.out.println("3");
 				Optional<User> targetUser = users.findById(targetUserEmail);
 				if(targetUser.isPresent()) {
-					System.out.println("4");
+					//System.out.println("4");
 					if(group.get().isAdmin(adderUserEmail)) {
-						System.out.println("5");
-						if(!group.get().isUserInGroup(targetUserEmail)) {
-							group.get().addUser(targetUser.get());
-							groups.save(group.get());
-							targetUser.get().addGroup(groupId);
-							targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
-							users.save(targetUser.get());
-							System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
-						}
+						//System.out.println("5");
+						group.get().addUser(targetUser.get());
+						groups.save(group.get());
+						targetUser.get().addGroup(groupId);
+						System.out.println("ADDING TO GROUP: " + groupId);
+						targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
+						users.save(targetUser.get());
+						System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
 					} else {
 						throw new UnauthorizedGroupManagementException();
 					}
@@ -366,11 +365,11 @@ public class APIService {
 			if(group.isPresent()) {
 				try {
 					group.get().deleteUser(targetUserEmail);
-					System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+					//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
 					targetUser.get().removeGroup(groupId);
-					System.out.println("THE USER IS GETTING REMOVED");
+					//System.out.println("THE USER IS GETTING REMOVED");
 					users.save(targetUser.get());
-					System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+					//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
 					groups.save(group.get());
 					if(group.get().getUsers().size() == 0) {
 						systemDeleteGroup(groupId);
@@ -387,7 +386,7 @@ public class APIService {
 	}
 
 	public void systemDeleteGroup(String groupId) {
-		System.out.println(groupId);
+		//System.out.println(groupId);
 		if(groups.findById(groupId).isPresent()) {
 
 			//MAYBE ADD ADMIN VOTE LOGIC....NOT ESSENTIAL
@@ -422,12 +421,12 @@ public class APIService {
 		if(optUser.isPresent()) {
 			Optional<Group> optGroup = groups.findById(groupId);
 			if(optGroup.isPresent()) {
-				System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
+				//System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
 				Group group = optGroup.get();
 				HashMap<String, GetLocationResponse> locations = new HashMap<>();
 				for(User refUser : group.getUsers()) {
 					User user = users.findById(refUser.getEmail()).get();
-					System.out.println("USERS FOUND: " + refUser.getEmail());
+					//System.out.println("USERS FOUND: " + refUser.getEmail());
 					//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
 					locations.put(user.getUsername(), getUserLocation(user.getEmail()));
 					/*

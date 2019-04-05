@@ -216,8 +216,11 @@ public class Group {
       }
 
       public boolean isUserInGroup(String email) {
+    	  System.out.println("MY SOURCE EMAIL:::: " + email);
     	  for(User user : users) {
+    		  System.out.println("CHECKING AGAINST:::: " + user.getEmail());
     		  if(user.getEmail().equals(email)) {
+    			  System.out.println("I AM VALID");
     			  return true;
     		  }
     	  }

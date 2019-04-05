@@ -235,7 +235,7 @@ public class WebTests {
 	}
 	*/
 	//
-	
+	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -264,7 +264,7 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
-	
+	*/
 	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
