@@ -89,15 +89,8 @@
 	  	<hr>
 	  	<h2>Group Names</h2>
 	  	
-	  	<div class="form-group">
-	  		<script th:inline="javascript">
-	  			/*<![CDATA[*/
-
-	  	   	 	var message = /*[[${groupnames}]]*/ 'default';
-	  	   	 	console.log(message);
-
-	  			/*]]>*/
-    		</script>
+	  	<div class="form-group" th:each="groupname : ${groupnames}">
+    		<p th:text="${groupname}"></p>
 	  	</div>
 	  	
   	</div>      
