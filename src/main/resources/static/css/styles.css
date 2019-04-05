@@ -30,10 +30,16 @@ body{
 }
 
 .container-account {
-
+	border-style: solid;
+	border-width: thick;
 	background-color: white;
 	margin-left: 5%;
 	margin-right: 5%;
 	margin-top: 5%;
 	margin-bottom: 5%;
+}
+
+.jumbotron{
+	border-style: solid;
+	border-width: thick;
 }

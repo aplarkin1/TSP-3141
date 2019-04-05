@@ -87,7 +87,18 @@
 	    		<p class="control-label">Elevation: <span th:text="${elev}"></span></p>
 	  	</div>
 	  	<hr>
-	  	<h2>Groups</h2>
+	  	<h2>Group Names</h2>
+	  	
+	  	<div class="form-group">
+	  		<script th:inline="javascript">
+	  			/*<![CDATA[*/
+
+	  	   	 	var message = /*[[${groupnames}]]*/ 'default';
+	  	   	 	console.log(message);
+
+	  			/*]]>*/
+    		</script>
+	  	</div>
 	  	
   	</div>      
 </body>

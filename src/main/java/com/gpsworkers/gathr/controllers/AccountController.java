@@ -30,6 +30,7 @@ public class AccountController {
 		modelAndView.addObject("lon", userInfo.lon);
 		modelAndView.addObject("lat", userInfo.lat);
 		modelAndView.addObject("elev", userInfo.elev);
+		modelAndView.addObject("groupnames", userInfo.groupNames);
 		
 		return modelAndView;
 	}
