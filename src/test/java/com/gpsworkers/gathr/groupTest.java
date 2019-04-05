@@ -1,5 +1,9 @@
 package com.gpsworkers.gathr;
 
+import com.gpsworkers.gathr.exceptions.UserNotFoundException;
+import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
+import com.gpsworkers.gathr.controllers.APIService;
+import org.springframework.boot.test.context.SpringBootTest;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +17,9 @@ import com.gpsworkers.gathr.mongo.users.User;
 import com.gpsworkers.gathr.mongo.groups.Group;
 import org.junit.*;
 
+
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class groupTest {
 
   private static final String user1 = "someBody@gmail.com";
@@ -29,28 +35,21 @@ public class groupTest {
   @Autowired
   GroupRepository groupRepo;
 
+  @Autowired
+  private APIService api;
 
   @BeforeClass
-  public void setup() {
+  public void setup() throws UnauthorizedUserInteractionException, UserNotFoundException {
+    api.systemDeleteUser(user1);
+    api.systemDeleteUser(user2);
+    api.systemDeleteUser(user3);
+    api.systemDeleteGroup(group);
+
     userRepo.insert(new User( "some", "body", "someBody@gmail.com"));
     userRepo.insert(new User( "someone", "else", "someoneElse@gmail.com"));
     userRepo.insert(new User( "somebody", "else", "someBodyElse@gmail.com"));
     groupRepo.insert(new Group( "cool group", userRepo.findByEmail("someBody@gmail.com")));
   }
-
-    // Should rename to @AfterTestMethod
-    //@AfterClass
-    //public void breakDown() {
-    	//if(user != null) {
-    		//userRepo.deleteById(user.getEmail());
-    	//}
-      //if(newUser != null) {
-    		//userRepo.deleteById(newUser.getEmail());
-    	//}
-      //if(group != null) {
-    		//groupRepo.deleteById(group.getGroupName());
-    	//}
-    //}
 
   @Test
   public void getUsers(){
