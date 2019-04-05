@@ -259,12 +259,14 @@ public class APIService {
 					System.out.println("4");
 					if(group.get().isAdmin(adderUserEmail)) {
 						System.out.println("5");
-						group.get().addUser(targetUser.get());
-						groups.save(group.get());
-						targetUser.get().addGroup(groupId);
-						targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
-						users.save(targetUser.get());
-						System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
+						if(!group.get().isUserInGroup(targetUserEmail)) {
+							group.get().addUser(targetUser.get());
+							groups.save(group.get());
+							targetUser.get().addGroup(groupId);
+							targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
+							users.save(targetUser.get());
+							System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
+						}
 					} else {
 						throw new UnauthorizedGroupManagementException();
 					}
