@@ -64,7 +64,7 @@ public class APIController {
 	@PostMapping("/api/updateLocation")
 	@ResponseBody
 	public ResponseEntity<String> handleUpdateLocationRequest(UpdateLocationAPIRequestBody request) {
-		System.out.println("HELLO WORLD!!!");
+		//System.out.println("HELLO WORLD!!!");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String email = extractEmailFromAuth(auth);
 		try {

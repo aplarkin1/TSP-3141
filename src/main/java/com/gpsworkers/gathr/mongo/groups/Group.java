@@ -64,12 +64,7 @@ public class Group {
         this.user = user;
         users.add( user );
         admins.add( user );
-        //System.out.println(users);
-        //System.out.println(admins);
         groupCommsNetwork = new CommunicationsNetwork();
-        System.out.println("I AM HERE: " + groupInvite);
-        System.out.println(hashCode());
-        System.out.println(groupInvite);
 
     }
 
@@ -176,7 +171,6 @@ public class Group {
 
       private String newGroupInvite() {
         String str = RandomStringUtils.randomAlphanumeric(42);
-        System.out.println("YOLOBOI: " + str);
         return str;
       }
 
@@ -216,11 +210,8 @@ public class Group {
       }
 
       public boolean isUserInGroup(String email) {
-    	  System.out.println("MY SOURCE EMAIL:::: " + email);
     	  for(User user : users) {
-    		  System.out.println("CHECKING AGAINST:::: " + user.getEmail());
     		  if(user.getEmail().equals(email)) {
-    			  System.out.println("I AM VALID");
     			  return true;
     		  }
     	  }

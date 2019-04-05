@@ -235,7 +235,7 @@ public class WebTests {
 	}
 	*/
 	//
-	/*
+	
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -264,7 +264,7 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
-	*/
+	
 	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
@@ -323,10 +323,10 @@ public class WebTests {
 		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
 
 		for(String groupName : readingUser.getGroupNames()) {
-			System.out.println("Group!!!!!");
+			//System.out.println("Group!!!!!");
 			if(groupName.equals(TEST_GROUP_ID)) {
 				Group alternateGroupReference = groups.findById(groupName).get();
-				System.out.println("HELLO WORLD !!!!!!!");
+				//System.out.println("HELLO WORLD !!!!!!!");
 				Message message = alternateGroupReference.getGroupCommsNetwork().getLastMessage();
 				assertThat(message.getMessageContent()).isEqualTo("This is my first message to you all!");
 				return;
@@ -399,7 +399,7 @@ public class WebTests {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		GetLocationResponse location = api.getUserLocation(TEST_USER_1_EMAIL);
 		String locationString = "" + location.lat + "" + location.lon + "" + location.city + "" + location.state + "" + location.country;
-		System.out.println(location);
+		//System.out.println(location);
 		assertThat(locationString).isNotEmpty();
 	}
 
@@ -419,13 +419,13 @@ public class WebTests {
 		int i = 0;
 		while(i < 2) {
 			try {
-				System.out.println("Geo Coding Connection: Round 1");
+				//System.out.println("Geo Coding Connection: Round 1");
 				api.updateLocation(TEST_GROUP_ADMIN_EMAIL, 47.11625, -88.54010, 0.0);
-				System.out.println("Geo Code Admin!");
+				//System.out.println("Geo Code Admin!");
 				api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
-				System.out.println("Geo Code User 1!");
+				//System.out.println("Geo Code User 1!");
 				api.updateLocation(TEST_USER_2_EMAIL, 47.11625, -88.54010, 0.0);
-				System.out.println("Geo Code User 2!");
+				//System.out.println("Geo Code User 2!");
 			} catch(GeoCodingConnectionFailedException e) {
 				System.out.println("Geo Coding Failed!");
 			}
@@ -434,7 +434,7 @@ public class WebTests {
 		}
 		
 		HashMap<String, GetLocationResponse> locationResponses = api.getLocationsOfGroupMembers(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
-		System.out.print("THE RESPONSE SIZE IS: " + locationResponses.size());
+		//System.out.print("THE RESPONSE SIZE IS: " + locationResponses.size());
 		if(locationResponses.size() == 3) {
 			assertThat(true).isEqualTo(true);
 		} else {
