@@ -120,12 +120,12 @@ public class APIService {
 			}
 			String fullAddress = results[1].formattedAddress;
 			String[] fullAddressSplit = fullAddress.split(",");
-			System.out.println(fullAddress);
+			//System.out.println(fullAddress);
 			String city = fullAddressSplit[1].split(" ")[1];
 			String state = fullAddressSplit[2].split(" ")[1];
 			String country = fullAddressSplit[3].split(" ")[1];
 
-			System.out.println(country + "->" + state + "->" + city);
+			//System.out.println(country + "->" + state + "->" + city);
 
 			Location newLocation = new Location();
 			newLocation.update(lon, lat, 0, country, state, city);
@@ -143,7 +143,7 @@ public class APIService {
 		if(!sourceUser.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		System.out.println("CREATING GROUP: " + groupId);
+		//System.out.println("CREATING GROUP: " + groupId);
 		if(!groups.findById(groupId).isPresent()) {
 			Group newGroup = new Group(groupId, sourceUser.get());
 			sourceUser.get().addGroup(newGroup.getGroupName());
@@ -262,10 +262,10 @@ public class APIService {
 						group.get().addUser(targetUser.get());
 						groups.save(group.get());
 						targetUser.get().addGroup(groupId);
-						System.out.println("ADDING TO GROUP: " + groupId);
+						//System.out.println("ADDING TO GROUP: " + groupId);
 						targetUser.get().setSecuritySettingForGroup(groupId, LOC_SEC_SETTING.GROUP_WIDE);
 						users.save(targetUser.get());
-						System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
+						//System.out.println("HELLO FRIENDS: " + targetUser.get().getSecuritySettingForGroup(groupId).name());
 					} else {
 						throw new UnauthorizedGroupManagementException();
 					}
@@ -322,7 +322,7 @@ public class APIService {
 			if(group.get().isUserInGroup(email)) {
 				ArrayList<DisplayableMessage> displayableMessages = new ArrayList<DisplayableMessage>();
 				for(Message message : group.get().getGroupCommsNetwork().getAllMessages()) {
-					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate().toString("H:m d/MMMM/yyyy")));
+					displayableMessages.add(new DisplayableMessage(message.getMessageContent(), users.findById(message.getUserId()).get().getUsername(), message.getPostDate().toString("MM/d/yyyy H:m")));
 				}
 				return displayableMessages;
 			} else {
