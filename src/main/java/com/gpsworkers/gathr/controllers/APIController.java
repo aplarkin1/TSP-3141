@@ -60,10 +60,13 @@ public class APIController {
 	 * to see the parameters for this request
 	 * @param request @see com.gpsworkers.gathr.controllers.requestbodys.CreateUserApiRequestBody
 	 * @return a "1" if successful or a JSON string containing an error message
+	 * @throws UnauthorizedUserInteractionException 
+	 * @throws GeoCodingConnectionFailedException 
+	 * @throws EmptyGeocodingResultException 
 	 */
 	@PostMapping("/api/updateLocation")
 	@ResponseBody
-	public ResponseEntity<String> handleUpdateLocationRequest(UpdateLocationAPIRequestBody request) {
+	public ResponseEntity<String> handleUpdateLocationRequest(UpdateLocationAPIRequestBody request) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, UnauthorizedUserInteractionException {
 		//System.out.println("HELLO WORLD!!!");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String email = extractEmailFromAuth(auth);
