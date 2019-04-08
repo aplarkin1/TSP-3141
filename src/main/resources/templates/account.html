@@ -87,7 +87,7 @@
 	  		<p class="control-label">Longitude: <span th:text="${lon}"></span></p>
 	  	</div>
 	  	<div class="form-group">
-	    		<p class="control-label">Elevation: <span th:text="${elev}"></span></p>
+	    	<p class="control-label">Elevation: <span th:text="${elev}"></span></p>
 	  	</div>
 	  	<hr>
 	  	<h2>Group Names</h2>
@@ -95,7 +95,6 @@
 	  	<div class="form-group" th:each="groupname : ${groupnames}">
     		<p th:text="${groupname}"></p>
 	  	</div>
-	  	
   	</div>      
 </body>
 </html>
