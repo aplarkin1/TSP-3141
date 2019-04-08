@@ -370,7 +370,7 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+	//
 	public void removeUserFromGroup(String authorityEmail, String targetUserEmail, String groupId) throws UnauthorizedUserInteractionException, UserNotFoundException {
 		Optional<User> targetUser = users.findById(targetUserEmail);
 		if(targetUser.isPresent()) {
