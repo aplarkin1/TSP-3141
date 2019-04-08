@@ -60,6 +60,7 @@
 	<input name="groupID" type="text" id="groupID" size="63" />
 	<button onclick="getInfo() " style="text-align: center">Submit</button>
 	
+	<br>
 	<h1 style="text-align: left"> Add User to Group! </h1>
 	<p>Group Name</p>
 	<input name="groupID2" type="text" id="groupID2" size="63" />
@@ -67,6 +68,15 @@
 	<p>User Email</p>
 	<input name="userEmail" type="text" id="userEmail" size ="63" />
 	<button onclick="addToGroup() " style="text-align: center">Submit</button>
+	
+	<br>
+	<h1 style="text-align: left"> Remove User From Group! </h1>
+	<p>Group Name</p>
+	<input name="groupID3" type="text" id="groupID3" size="63" />
+	<br>
+	<p>User Email</p>
+	<input name="userEmail2" type="text" id="userEmail2" size ="63" />
+	<button onclick="removeToGroup() " style="text-align: center">Submit</button>
 	
 	<script type="text/javascript">
 		function getInfo() {
@@ -85,6 +95,18 @@
 			var usertxt = document.getElementById("userEmail");
 			var userN = usertxt.value;
 			var answer = $.post("/api/addUserToGroup",
+					{
+						"groupId": groupN,
+						"targetUserEmail": userN
+					});
+			console.log(answer);
+		}
+		function removeToGroup() {
+			var grouptxt = document.getElementById("groupID3");
+			var groupN = grouptxt.value;
+			var usertxt = document.getElementById("userEmail2");
+			var userN = usertxt.value;
+			var answer = $.post("/api/removeUserFromGroup",
 					{
 						"groupId": groupN,
 						"targetUserEmail": userN
