@@ -60,9 +60,10 @@ public class APIService {
 	@Autowired
 	GroupRepository groups;
 
-	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
+	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		User validUser = users.findByEmail(email);
 		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
+		
 		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
 		users.save(validUser);
 		
@@ -333,13 +334,22 @@ public class APIService {
 		}
 	}
 	
-	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) throws GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException {
+	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) throws GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		String groupId = country + "->" + state + "->" + city;
 		if(groups.findById(groupId).isPresent()) {
 			if(groups.findById(groupId).get().isUserInGroup(emailOfUserToAdd)) {
 				return;
 			} else {
-				addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
+				if(users.findById(emailOfUserToAdd).isPresent()) {
+					if(users.findById(emailOfUserToAdd).get().currentLocationGroup.equals("")) {
+						addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
+						users.findById(emailOfUserToAdd).get().currentLocationGroup = groupId;
+					} else if(users.findById(emailOfUserToAdd).get().currentLocationGroup.equals(groupId) == false) {
+						addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
+						removeUserFromGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, users.findById(emailOfUserToAdd).get().currentLocationGroup);
+						users.findById(emailOfUserToAdd).get().currentLocationGroup = groupId;
+					}
+				}
 			}
 		} else {
 			Group group = new Group(groupId, users.findById(GLOBAL_ADMIN_EMAIL).get());
@@ -347,7 +357,7 @@ public class APIService {
 			addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
 		}
 	}
-	
+	//
 	public Collection<String> getGroupNamesOfUser(String email) throws UserNotFoundException {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {

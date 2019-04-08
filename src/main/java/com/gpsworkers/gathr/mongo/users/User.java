@@ -40,6 +40,7 @@ public class User {
 	private ArrayList<GroupInvitation> groupInvitations;
     private ArrayList<FriendInvitation> friendInvitations;
     private HashMap<String, LOC_SEC_SETTING> groupLocationShareSec = new HashMap<>();
+    public String currentLocationGroup = "";
     
   @Id
     private String email;
