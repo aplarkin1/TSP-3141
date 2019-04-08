@@ -357,7 +357,7 @@ public class APIService {
 			addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
 		}
 	}
-	
+	//
 	public Collection<String> getGroupNamesOfUser(String email) throws UserNotFoundException {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
