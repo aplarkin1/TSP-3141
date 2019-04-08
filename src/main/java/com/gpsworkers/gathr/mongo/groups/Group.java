@@ -32,10 +32,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Group {
 
 	public static enum LOC_SEC_SETTING
-    { 
+    {
         GROUP_WIDE, ONLY_FRIENDS_IN_GROUP, OFF
-    } 
-	
+    }
+
 	//API Token used by API requests
   @Id
     private String groupName;
@@ -125,9 +125,9 @@ public class Group {
       public void removeUser ( User user, User removedUser ) throws NotAdminException {
         if ( user == removedUser ) {
           users.remove( removedUser );
-        } else if(isAdmin(user.getEmail())) {
-          admins.remove(removedUser);
-          users.remove( user );
+        } else if( isAdmin( user.getEmail() )) {
+          admins.remove( removedUser );
+          users.remove( removedUser );
         } else {
           throw new NotAdminException( "user is not an admin");
         }
@@ -217,7 +217,7 @@ public class Group {
     	  }
     	  return false;
       }
-      
+
       /**
        * removes a user from group
        * @param email of user to be removed
@@ -231,7 +231,7 @@ public class Group {
     			  }
     			  return;
     		  }
-    		  
+
     	  }
       }
 
