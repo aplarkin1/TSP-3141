@@ -235,7 +235,7 @@ public class WebTests {
 	}
 	*/
 	//
-	
+	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -264,7 +264,7 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
-	
+	*/
 	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
@@ -439,6 +439,23 @@ public class WebTests {
 			assertThat(true).isEqualTo(true);
 		} else {
 			throw new RuntimeException("Location responses size is not 3");
+		}
+	}
+	
+	@Test
+	public void addUserToGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		assertThat(api.getGroupNamesOfUser(TEST_USER_1_EMAIL));
+	}
+	
+	@Test
+	public void removeUserFromGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UnauthorizedUserInteractionException {
+		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+		if(api.getGroupNamesOfUser(TEST_USER_1_EMAIL).contains(TEST_GROUP_ID)) {
+			api.removeUserFromGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
+			assertThat(api.getGroupNamesOfUser(TEST_USER_1_EMAIL).contains(TEST_GROUP_ID));	
 		}
 	}
 	
