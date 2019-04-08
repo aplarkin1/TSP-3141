@@ -55,9 +55,10 @@
           </div>
           
       </nav>
+      	<h3>Current Group</h3>
       	<input name="groupID" type="text" id="groupID" size="63" />
       	<button onclick="switchGroup() " style="text-align: center">Submit</button>
-      	<div class="jumbotron" style="height:400px;overflow:auto;">
+      	<div class="jumbotron" id="chatlog" style="height:400px;overflow:auto;">
       	
       	
 		</div>
@@ -106,12 +107,13 @@
 					success: function(response) {
 						//console.log(response);
 						if (response != oldResponse){
-						var obj = JSON.parse(response);
-						obj.forEach( function(element) {
-							console.log(element.messageContent);
-							$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
-						});
-						oldResponse = response;
+							$("#chatlog").empty();
+							var obj = JSON.parse(response);
+							obj.forEach( function(element) {
+								console.log(element.messageContent);
+								$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
+							});
+							oldResponse = response;
 						}
 					},
 					error: function(xhr) {
@@ -120,10 +122,7 @@
 				});
 			}, 5000);
 			
-		</script>
-		
-
-		      
+		</script>	      
       
 </body>
 </html>
