@@ -341,14 +341,14 @@ public class APIService {
 				return;
 			} else {
 				if(users.findById(emailOfUserToAdd).isPresent()) {
-					if(users.findById(emailOfUserToAdd).get().currentLocationGroup.equals("")) {
-						addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
-						users.findById(emailOfUserToAdd).get().currentLocationGroup = groupId;
-					} else if(users.findById(emailOfUserToAdd).get().currentLocationGroup.equals(groupId) == false) {
-						addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
+					
+					System.out.println("OLD CITY GROUP: " + users.findById(emailOfUserToAdd).get().currentLocationGroup);
+					System.out.println("TRYING TO ADD USER TO CITY GROUP: " + groupId);
+					
+					if(users.findById(emailOfUserToAdd).get().currentLocationGroup.isEmpty() == false && users.findById(emailOfUserToAdd).get().currentLocationGroup.equals(groupId) == false) {
 						removeUserFromGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, users.findById(emailOfUserToAdd).get().currentLocationGroup);
-						users.findById(emailOfUserToAdd).get().currentLocationGroup = groupId;
 					}
+					addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
 				}
 			}
 		} else {
@@ -356,6 +356,9 @@ public class APIService {
 			groups.save(group);
 			addUserToGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, groupId);
 		}
+		User user = users.findById(emailOfUserToAdd).get();
+		user.currentLocationGroup = groupId;
+		users.save(user);
 	}
 	//
 	public Collection<String> getGroupNamesOfUser(String email) throws UserNotFoundException {
