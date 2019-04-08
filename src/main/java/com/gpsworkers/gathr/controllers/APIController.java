@@ -332,10 +332,24 @@ public class APIController {
 	
 	@PostMapping("/api/addUserToGroup")
 	@ResponseBody
-	public ResponseEntity<String> handlePostAddUser(String groupId, String targetUserEmail) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+	public ResponseEntity<String> handlePostAddUserToGroup(String groupId, String targetUserEmail) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
 		try {
 			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 			api.addUserToGroup(sourceEmail, targetUserEmail, groupId);
+			return new ResponseEntity<>("1", HttpStatus.OK);
+		} catch (UserNotFoundException e){
+			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch(GroupDoesntExistException e) {
+			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PostMapping("/api/removeUserFromGroup")
+	@ResponseBody
+	public ResponseEntity<String> handlePostRemoveUserFromGroup(String groupId, String targetUserEmail) throws MessageUserIdCannotBeEmptyException, ChannelDoesntExistException, Exception {
+		try {
+			String sourceEmail = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
+			api.removeUserFromGroup(sourceEmail, targetUserEmail, groupId);
 			return new ResponseEntity<>("1", HttpStatus.OK);
 		} catch (UserNotFoundException e){
 			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
