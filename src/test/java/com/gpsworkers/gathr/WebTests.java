@@ -61,8 +61,8 @@ public class WebTests {
 
 	private static final String TEST_GROUP_ID = "THE TESTING GROUP!";
 	private static final String TEST_WEB_GROUP_ID = "WEB TESTING GROUP!";
-	
-	
+
+
 
 	@LocalServerPort
 	private int port;
@@ -88,20 +88,20 @@ public class WebTests {
 		api.systemDeleteUser(TEST_USER_1_EMAIL);
 		api.systemDeleteUser(TEST_USER_2_EMAIL);
 		api.systemDeleteUser(TEST_GROUP_ADMIN_EMAIL);
-		
-		
+
+
 		userRepo.insert(new User("ADMIN", "Test", TEST_GROUP_ADMIN_EMAIL));
 		userRepo.insert(new User("USER1", "Test", TEST_USER_1_EMAIL));
 		userRepo.insert(new User("USER2", "Test", TEST_USER_2_EMAIL));
-		
+
 		if(userRepo.findById(APIService.GLOBAL_ADMIN_EMAIL).isPresent() == false) {
 			userRepo.save(new User("Admin", "Global", APIService.GLOBAL_ADMIN_EMAIL));
 		}
-		
+
 		api.systemDeleteGroup(TEST_WEB_GROUP_ID);
 		api.systemDeleteGroup("USA->MI->Houghton");
-		
-		
+
+
 	}
 
 	@After
@@ -109,7 +109,7 @@ public class WebTests {
 
 	}
 
-	@Test
+	/* @Test
 	public void getInfoRedirectsToLoginPageWithoutAuthTest() throws Exception {
 		gathr = new SeleniumAPI();
 		gathr.getInfo();
@@ -143,7 +143,7 @@ public class WebTests {
 		String title = gathr.getTitle();
 		gathr.closeBrowser();
 		assertThat(title).isEqualTo("Login");
-	}
+	} */
 
 	public boolean updateLocationValidTest() throws Exception {
 		gathr.getHome();
@@ -318,7 +318,7 @@ public class WebTests {
 
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
-		
+
 		api.postMessageInGroup("This is my first message to you all!", TEST_GROUP_ID, TEST_USER_1_EMAIL);
 		User readingUser = userRepo.findById(TEST_USER_2_EMAIL).get();
 
@@ -334,7 +334,7 @@ public class WebTests {
 		}
 		throw new RuntimeException("Alternate Group Reference Test Failed!");
 	}
-	
+
 	@Test
 	public void groupCommunicationNetworkAdminDeletePostedMessage() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
@@ -351,7 +351,7 @@ public class WebTests {
 			throw new RuntimeException("Message was never posted!");
 		}
 	}
-	
+
 	@Test
 	public void groupCommunicationNetworkDeletePostedMessageBySelfTest() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
@@ -375,11 +375,11 @@ public class WebTests {
 
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
-		
+
 		api.deleteGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		assertThat(groups.findById(TEST_GROUP_ID).isPresent()).isEqualTo(false);
 	}
-	
+
 	@Test
 	public void groupSummaryTest() throws EmptyMessageException, MessageUserIdCannotBeEmptyException, Exception {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
@@ -387,13 +387,13 @@ public class WebTests {
 
 		assertThat(api.getGroupSummary(TEST_GROUP_ID).size()).isGreaterThan(0);
 	}
-	
+
 	@Test
 	public void getUserAccountInfoTest() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		assertThat(api.getAccountInformation(TEST_USER_1_EMAIL)).isNotNull();
 	}
-	
+
 	@Test
 	public void updateUserLocationAndAgetUserLocationTest() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
@@ -409,13 +409,13 @@ public class WebTests {
 		User user = userRepo.findById(TEST_USER_1_EMAIL).get();
 		assertThat(user.getGroupNames().size()).isGreaterThan(0);
 	}
-	
+
 	@Test
 	public void updateMultipleUsersAndRetrieveTheirLocationsFromGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, EmptyGeocodingResultException, UnauthorizedUserInteractionException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
-		
+
 		int i = 0;
 		while(i < 2) {
 			try {
@@ -432,7 +432,7 @@ public class WebTests {
 			i++;
 			Thread.sleep(2000);
 		}
-		
+
 		HashMap<String, GetLocationResponse> locationResponses = api.getLocationsOfGroupMembers(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		//System.out.print("THE RESPONSE SIZE IS: " + locationResponses.size());
 		if(locationResponses.size() == 3) {
@@ -441,22 +441,22 @@ public class WebTests {
 			throw new RuntimeException("Location responses size is not 3");
 		}
 	}
-	
+
 	@Test
 	public void addUserToGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		assertThat(api.getGroupNamesOfUser(TEST_USER_1_EMAIL));
 	}
-	
+
 	@Test
 	public void removeUserFromGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UnauthorizedUserInteractionException {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		if(api.getGroupNamesOfUser(TEST_USER_1_EMAIL).contains(TEST_GROUP_ID)) {
 			api.removeUserFromGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
-			assertThat(api.getGroupNamesOfUser(TEST_USER_1_EMAIL).contains(TEST_GROUP_ID));	
+			assertThat(api.getGroupNamesOfUser(TEST_USER_1_EMAIL).contains(TEST_GROUP_ID));
 		}
 	}
-	
+
 }
