@@ -35,15 +35,12 @@ public class groupTest {
   @Autowired
   GroupRepository groupRepo;
 
-  @Autowired
-  private APIService api;
-
   @Before
   public void setup() throws UnauthorizedUserInteractionException, UserNotFoundException {
-    api.systemDeleteUser(user1);
-    api.systemDeleteUser(user2);
-    api.systemDeleteUser(user3);
-    api.systemDeleteGroup(group);
+    userRepo.deleteById( user1 );
+    userRepo.deleteById( user2 );
+    userRepo.deleteById( user3 );
+    groupRepo.deleteById( group );
 
     userRepo.insert(new User( "some", "body", "someBody@gmail.com"));
     userRepo.insert(new User( "someone", "else", "someoneElse@gmail.com"));
