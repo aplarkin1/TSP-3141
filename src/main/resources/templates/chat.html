@@ -49,14 +49,14 @@
 						Us</a></li>
             </ul>
           </div>
-          
+        
           <div class="my-2 my-lg-0">
           	<a class="nav-link" href="/account">Account</a>
           </div>
           
       </nav>
+      	<div class="container jumbotron">
       	<h3>Current Group</h3>
-      	<br>
       	<div class="form-group">
 	      <label for="groupsel">Group select</label>
 	      <select class="form-control" id="groupsel">
@@ -70,7 +70,7 @@
 		
 		<textarea rows="3" cols="50" id="msg"></textarea>
 		<button onclick="addMsg() " >Submit</button>
-		
+		</div>
 		
 		<script type="text/javascript">
 			var sentmsg;
@@ -131,7 +131,7 @@
 							var obj = JSON.parse(response);
 							obj.forEach( function(element) {
 								console.log(element.messageContent);
-								$(".jumbotron").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
+								$("#chatlog").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
 							});
 							oldResponse = response;
 						}
