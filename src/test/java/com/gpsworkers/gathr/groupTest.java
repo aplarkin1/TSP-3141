@@ -55,7 +55,7 @@ public class groupTest {
   @Test
   public void addUser() {
     Group group1 = groupRepo.findByGroupName( group );
-    group1.addUser( userRepo.findByEmail( user2 ) );
+    group1.addUser( userRepo.findByEmail( user2 ));
     Collection<User> coll = group1.getUsers();
     assertThat( coll.contains( userRepo.findByEmail( user2 ))).isEqualTo( true );
   }
