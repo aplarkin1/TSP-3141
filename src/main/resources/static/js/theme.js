@@ -11,13 +11,17 @@ function changeTheme(){
 	 } else if(theme == "dark"){
 		 $("#cssTheme").remove();
 		 $("#enhancedStyles").remove();
-		 $("head").append('<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-mtS696VnV9qeIoC8w/PrPoRzJ5gwydRVn0oQ9b+RJOPxE1Z1jXuuJcyeNxvNZhdx" crossorigin="anonymous">'); 
+		 $("head").append('<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/slate/bootstrap.min.css" rel="stylesheet" integrity="sha384-FBPbZPVh+7ks5JJ70RJmIaqyGnvMbeJ5JQfEbW0Ac6ErfvEg9yG56JQJuMNptWsH" crossorigin="anonymous">'); 
 	 } else if(theme == "enhanced"){
 		 $("#cssTheme").remove();
 		 $("#enhancedStyles").remove();
-		 $("head").append('<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cosmo/bootstrap.min.css" rel="stylesheet" integrity="sha384-uhut8PejFZO8994oEgm/ZfAv0mW1/b83nczZzSwElbeILxwkN491YQXsCFTE6+nx" crossorigin="anonymous">'); 
+		 $("head").append('<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf" crossorigin="anonymous">'); 
 		 $("head").append('<link id="enhancedStyles" rel="stylesheet" type="text/css" href="/css/enhanced.css">')
 	 } else {
 		 Cookies.set('theme', 'enhanced');
+		 $("#cssTheme").remove();
+		 $("#enhancedStyles").remove();
+		 $("head").append('<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf" crossorigin="anonymous">'); 
+		 $("head").append('<link id="enhancedStyles" rel="stylesheet" type="text/css" href="/css/enhanced.css">')
 	 }
 }
