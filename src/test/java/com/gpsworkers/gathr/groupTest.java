@@ -52,15 +52,15 @@ public class groupTest {
     groupRepo.insert(new Group( "cool group", userRepo.findByEmail("someBody@gmail.com")));
   }
 
-  @Test
+  /*@Test
   public void addUser() {
     Group group1 = groupRepo.findByGroupName( group );
     group1.addUser( userRepo.findByEmail( user2 ));
     Collection<User> coll = group1.getUsers();
     assertThat( coll.contains( userRepo.findByEmail( user2 ))).isEqualTo( true );
-  }
+  }*/
 
-  /*@Test
+  @Test
   public void makeAdmin() {
     try {
       Group group1 = groupRepo.findByGroupName( group );
@@ -107,5 +107,5 @@ public class groupTest {
     group1.removeUser( userRepo.findByEmail( user3 ), userRepo.findByEmail( user2 ));
     Collection<User> coll = group1.getUsers();
     assertThat( coll.contains( userRepo.findByEmail( user2 ))).isEqualTo( true );
-  } */
+  } 
 }
