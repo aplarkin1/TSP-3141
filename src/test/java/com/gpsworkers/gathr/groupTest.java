@@ -19,7 +19,7 @@ import org.junit.*;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class groupTest {
 
   private static final String user1 = "someBody@gmail.com";
