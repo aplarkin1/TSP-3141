@@ -1,8 +1,11 @@
 package com.gpsworkers.gathr;
 
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.web.WebAppConfiguration;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
-import com.gpsworkers.gathr.controllers.APIService;
+// import com.gpsworkers.gathr.controllers.APIService;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.gpsworkers.gathr.exceptions.NotAdminException;
 import java.util.Collection;
@@ -19,7 +22,8 @@ import org.junit.*;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class groupTest {
 
   private static final String user1 = "someBody@gmail.com";
