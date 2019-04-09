@@ -15,19 +15,16 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
-<link
-	href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf"
-	crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.js"></script>
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
 <link rel="stylesheet" type="text/css" th:href="@{/static/css/styles.css}">
 <script type="text/javascript" th:src="@{/js/loginCheck.js}"></script>
 <script type="text/javascript" th:src="@{/js/global.js}"></script>
+<script type="text/javascript" th:src="@{/js/theme.js}"></script>
 <title>Home</title>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<a class="navbar-brand" href="#">Gathr</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarColor01" aria-controls="navbarColor01"
@@ -49,21 +46,19 @@
 				<li class="nav-item"><a class="nav-link" href="/contactus">Contact
 						Us</a></li>
 			</ul>
-			<div class="my-2 my-lg-0">
-				<a class="nav-link" id="nav-link" href="/account">Account</a>
-			</div>
+          <form class="form-inline my-2 my-lg-0">
+		  	<a class="nav-link" href="/account">Account</a>
+		  </form>
 		</div>
 	</nav>
 	
-	<section class="container-primary">
+	<div class="container jumbotron">
 		<div class="welcome-container">
 			<img src="images/logo2.png" class="welcome-logo" alt="Gathr Logo">
 			<h1 class="welcome-text"> Welcome to Gathr!</h1>
 			<p class="welcome-text"> Gathr is a web service that allows users to broadcast messages to people in their area.<br> In addition Gathr allows users to share their location with other users or groups so that people can stick together.</p>
 		</div>
-	</section>
-	
-	
+	</div>
 
 </body>
 </html>

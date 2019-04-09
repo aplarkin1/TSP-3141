@@ -1,6 +1,9 @@
 $("document").ready(function() {
+	changeTheme()
 	var long = 0;
 	var lat = 0;
+	
+	
 
 	function getGeo() {
 		function success(position) {
@@ -31,4 +34,7 @@ $("document").ready(function() {
 				});
 		
 	}, 5000);
+	
+	
+	
 });

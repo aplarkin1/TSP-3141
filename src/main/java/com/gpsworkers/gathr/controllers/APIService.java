@@ -100,6 +100,7 @@ public class APIService {
 			userInfo.country = validUser.getCurrentLocation().getCountry();
 			userInfo.state = validUser.getCurrentLocation().getState();
 			userInfo.city = validUser.getCurrentLocation().getCity();
+			userInfo.location =  userInfo.country + " " + userInfo.state + " " + userInfo.city;
 			userInfo.lat = validUser.getCurrentLocation().getLatitude();
 			userInfo.lon = validUser.getCurrentLocation().getLongitude();
 			userInfo.elev = validUser.getCurrentLocation().getElevation();
@@ -121,10 +122,10 @@ public class APIService {
 			}
 			String fullAddress = results[1].formattedAddress;
 			String[] fullAddressSplit = fullAddress.split(",");
-			//System.out.println(fullAddress);
-			String city = fullAddressSplit[1].split(" ")[1];
-			String state = fullAddressSplit[2].split(" ")[1];
-			String country = fullAddressSplit[3].split(" ")[1];
+			System.out.println(fullAddress);
+			String city = fullAddressSplit[fullAddressSplit.length-3].split(" ")[1];
+			String state = fullAddressSplit[fullAddressSplit.length-2].split(" ")[1];
+			String country = fullAddressSplit[fullAddressSplit.length-1].split(" ")[1];
 
 			//System.out.println(country + "->" + state + "->" + city);
 
@@ -376,18 +377,23 @@ public class APIService {
 		if(targetUser.isPresent()) {
 			Optional<Group> group = groups.findById(groupId);
 			if(group.isPresent()) {
-				try {
-					group.get().deleteUser(targetUserEmail);
-					//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
-					targetUser.get().removeGroup(groupId);
-					//System.out.println("THE USER IS GETTING REMOVED");
-					users.save(targetUser.get());
-					//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
-					groups.save(group.get());
-					if(group.get().getUsers().size() == 0) {
-						systemDeleteGroup(groupId);
-					}
-				} catch (NotAdminException e) {
+				
+				if(group.get().isAdmin(authorityEmail) || authorityEmail.equals(targetUserEmail)) {
+					try {
+						group.get().deleteUser(targetUserEmail);
+						//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+						targetUser.get().removeGroup(groupId);
+						//System.out.println("THE USER IS GETTING REMOVED");
+						users.save(targetUser.get());
+						//System.out.println("THE USER IS GETTING REMOVED : " + targetUser.get().getGroupNames().size());
+						groups.save(group.get());
+						if(group.get().getUsers().size() == 0) {
+							systemDeleteGroup(groupId);
+						}
+					} catch (NotAdminException e) {
+						throw new UnauthorizedUserInteractionException();
+					}	
+				} else {
 					throw new UnauthorizedUserInteractionException();
 				}
 			} else {

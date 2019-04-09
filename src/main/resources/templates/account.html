@@ -15,17 +15,17 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
-<link
-	href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf"
-	crossorigin="anonymous">
+	
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.js"></script>
+	
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
 <script type="text/javascript" th:src="@{/js/userInfo.js}"></script>
+<script type="text/javascript" th:src="@{/js/theme.js}"></script>
 <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+<title>Account</title>
 </head>
-<body class="body-account">
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body class="body">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="#">Gathr</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -48,12 +48,11 @@
 						Us</a></li>
             </ul>
           </div>
-          
-          <div class="my-2 my-lg-0">
-          	<a class="nav-link" href="/account">Account</a>
-          </div> 
+          <form class="form-inline my-2 my-lg-0">
+		  	<a class="nav-link" href="/account">Account</a>
+		  </form>
 	</nav>
-	<div class="container-account">
+	<div class="container jumbotron">
 	    <h1>Account Info</h1>
 	    <hr>
 	    <h2>Personal Information</h2>
@@ -95,6 +94,52 @@
 	  	<div class="form-group" th:each="groupname : ${groupnames}">
     		<p th:text="${groupname}"></p>
 	  	</div>
+	  	
+	  	<form>
+		  <div class="form-group">
+		    <label for="usernameIn">Username</label>
+		    <input type="text" class="form-control" id="usernameIn" th:attr="placeholder=${username}">
+		  </div>
+		  <div class="form-group">
+		    <label for="emailIn">Email</label>
+		    <input type="text" class="form-control" id="emailIn" th:attr="placeholder=${email}">
+		  </div>
+		  <div class="form-group">
+		    <label for="firstNameIn">First Name</label>
+		    <input type="text" class="form-control" id="firstNameIn" th:attr="placeholder=${firstname}">
+		  </div>
+		  <div class="form-group">
+		    <label for="firstNameIn">Last Name</label>
+		    <input type="text" class="form-control" id="lastNameIn" th:attr="placeholder=${lastname}">
+		  </div>
+		  
+		  <div class="form-group">
+		  	<ol class="breadcrumb">
+			  <li class="breadcrumb-item" th:text="${country}"></li>
+			  <li class="breadcrumb-item" th:text="${state}"></li>
+			  <li class="breadcrumb-item active" th:text="${city}"></li>
+			</ol>
+		  </div>
+		  <div class="form-group">
+		    <label for="latLng">Lat/Lng</label>
+		    <input type="text" class="form-control" id="latLng" th:attr="placeholder=${coords}">
+		  </div>
+		  <div class="form-group" th:each="groupname : ${groupnames}">
+		  	<label for="groupDisplay">Groups</label>
+			<select id="groupDisplay" class="custom-select" th:each="groupname : ${groupnames}">
+				<option th:text="${groupname}"></option>
+			</select>
+		  </div>
+		  
+		  <div class="form-group">
+		  	<label for="appThemeSelector">App Style</label>
+			<select id="appThemeSelector" class="custom-select">
+				<option value="default" th:text="Default"></option>
+				<option value="dark" th:text="Dark"></option>
+				<option value="enhanced" th:text="Enhanced"></option>
+			</select>
+		  </div>
+		</form>
   	</div>      
 </body>
 </html>

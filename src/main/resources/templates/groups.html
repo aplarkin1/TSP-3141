@@ -15,19 +15,16 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
-<link
-	href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-T5jhQKMh96HMkXwqVMSjF3CmLcL1nT9//tCqu9By5XSdj7CwR0r+F3LTzUdfkkQf"
-	crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.js"></script>
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
 <link rel="stylesheet" type="text/css" th:href="@{/static/css/styles.css}">
 <script type="text/javascript" th:src="@{/js/loginCheck.js}"></script>
 <script type="text/javascript" th:src="@{/js/global.js}"></script>
+<script type="text/javascript" th:src="@{/js/theme.js}"></script>
 <title>Home</title>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<a class="navbar-brand" href="#">Gathr</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarColor01" aria-controls="navbarColor01"
@@ -49,34 +46,37 @@
 				<li class="nav-item"><a class="nav-link" href="/contactus">Contact
 						Us</a></li>
 			</ul>
-			<div class="my-2 my-lg-0">
-				<a class="nav-link" id="nav-link" href="/account">Account</a>
-			</div>
+          <form class="form-inline my-2 my-lg-0">
+		  	<a class="nav-link" href="/account">Account</a>
+		  </form>
 		</div>
 	</nav>
 	
-	<h1 style="text-align: left"> Create New Group! </h1>
-	
-	<input name="groupID" type="text" id="groupID" size="63" />
-	<button onclick="getInfo() " style="text-align: center">Submit</button>
-	
-	<br>
-	<h1 style="text-align: left"> Add User to Group! </h1>
-	<p>Group Name</p>
-	<input name="groupID2" type="text" id="groupID2" size="63" />
-	<br>
-	<p>User Email</p>
-	<input name="userEmail" type="text" id="userEmail" size ="63" />
-	<button onclick="addToGroup() " style="text-align: center">Submit</button>
-	
-	<br>
-	<h1 style="text-align: left"> Remove User From Group! </h1>
-	<p>Group Name</p>
-	<input name="groupID3" type="text" id="groupID3" size="63" />
-	<br>
-	<p>User Email</p>
-	<input name="userEmail2" type="text" id="userEmail2" size ="63" />
-	<button onclick="removeToGroup() " style="text-align: center">Submit</button>
+	<div class="container jumbotron">
+		<div class="form-group">
+			<h5>Create new group</h5>
+			<input type="text" class="form-control" name="groupID" id="groupID" size ="63" placeholder="New Group Name"/>
+		  	<button onclick="getInfo() " style="text-align: center" type="button" class="btn btn-lg btn-block btn-primary">Create Group</button>
+		</div>
+		
+		
+		<div class="form-group">
+			<h5>Add user to group</h5>
+			<input type="text" class="form-control" id="groupID2" name="groupID2" size="63" placeholder="Group to add user to"/>
+			<br>
+		  	<input type="text" class="form-control" name="userEmail" id="userEmail" size ="63" placeholder="User email to add"/>
+		  	<button onclick="addToGroup() " style="text-align: center" type="button" class="btn btn-lg btn-block btn-success">Add</button>
+		</div>
+
+		<div class="form-group">
+			<h5>Remove user from group</h5>
+			<input type="text" class="form-control" name="groupID3" id="userEmail2" size ="63" placeholder="Group to remove user from"/>
+			<br>
+		  	<input type="text" class="form-control" name="userEmail2" id="userEmail2" size ="63" placeholder="User email to remove"/>
+		  	<button onclick="removeToGroup() " style="text-align: center" type="button" class="btn btn-lg btn-block btn-danger">Remove</button>
+		</div>
+		
+	</div>
 	
 	<script type="text/javascript">
 		function getInfo() {
@@ -104,7 +104,6 @@
 		function removeToGroup() {
 			var grouptxt = document.getElementById("groupID3");
 			var groupN = grouptxt.value;
-			//$("#groupID3").empty
 			var usertxt = document.getElementById("userEmail2");
 			var userN = usertxt.value;
 			var answer = $.post("/api/removeUserFromGroup",
