@@ -19,7 +19,7 @@ import org.junit.*;
 
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest
+@SpringBootTest
 public class groupTest {
 
   private static final String user1 = "someBody@gmail.com";
@@ -38,7 +38,7 @@ public class groupTest {
   @Autowired
   private APIService api;
 
-  @BeforeClass
+  @Before
   public void setup() throws UnauthorizedUserInteractionException, UserNotFoundException {
     api.systemDeleteUser(user1);
     api.systemDeleteUser(user2);
