@@ -2,7 +2,7 @@ package com.gpsworkers.gathr;
 
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.junit.runners.MethodSorters;
-import org.springframework.test.context.web.WebAppConfiguration;
+//import org.springframework.test.context.web.WebAppConfiguration;
 import com.gpsworkers.gathr.exceptions.UserNotFoundException;
 import com.gpsworkers.gathr.exceptions.UnauthorizedUserInteractionException;
 // import com.gpsworkers.gathr.controllers.APIService;
@@ -52,20 +52,13 @@ public class groupTest {
     groupRepo.insert(new Group( "cool group", userRepo.findByEmail("someBody@gmail.com")));
   }
 
-  @Test
-  public void getUsers(){
-    Collection<User> col = groupRepo.findByGroupName( group ).getUsers();
-    assertThat( col.contains( userRepo.findByEmail( user1) ) ).isEqualTo( true );
-
-  }
-
-  @Test
+  /*@Test
   public void addUser() {
-      Group group1 = groupRepo.findByGroupName( group );
-      group1.addUser( userRepo.findByEmail( user2 ) );
-      Collection<User> coll = group1.getUsers();
-      assertThat( coll.contains( userRepo.findByEmail( user2) ) ).isEqualTo( true );
-  }
+    Group group1 = groupRepo.findByGroupName( group );
+    group1.addUser( userRepo.findByEmail( user2 ));
+    Collection<User> coll = group1.getUsers();
+    assertThat( coll.contains( userRepo.findByEmail( user2 ))).isEqualTo( true );
+  }*/
 
   @Test
   public void makeAdmin() {
@@ -107,16 +100,12 @@ public class groupTest {
   }
 
   @Test( expected = NotAdminException.class )
-  public void notAdminNotUserRemoveUser() {
+  public void notAdminNotUserRemoveUser() throws NotAdminException {
     Group group1 = groupRepo.findByGroupName( group );
     group1.addUser( userRepo.findByEmail( user2 ) );
     group1.addUser( userRepo.findByEmail( user3 ) );
-    try {
-      group1.removeUser( userRepo.findByEmail( user3 ), userRepo.findByEmail( user2 ));
-    } catch ( NotAdminException e ) {
-        e.getMessage();
-    }
+    group1.removeUser( userRepo.findByEmail( user3 ), userRepo.findByEmail( user2 ));
     Collection<User> coll = group1.getUsers();
-    assertThat( coll.contains( userRepo.findByEmail( user2) )).isEqualTo( true );
-  }
+    assertThat( coll.contains( userRepo.findByEmail( user2 ))).isEqualTo( true );
+  } 
 }
