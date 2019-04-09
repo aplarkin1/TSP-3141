@@ -56,8 +56,13 @@
           
       </nav>
       	<h3>Current Group</h3>
-      	<input name="groupID" type="text" id="groupID" size="63" />
-      	<button onclick="switchGroup() " style="text-align: center">Submit</button>
+      	<br>
+      	<div class="form-group">
+	      <label for="groupsel">Group select</label>
+	      <select class="form-control" id="groupsel">
+	      </select>
+	    </div>
+      	
       	<div class="jumbotron" id="chatlog" style="height:400px;overflow:auto;">
       	
       	
@@ -71,15 +76,31 @@
 			var sentmsg;
 			var groupId;
 			var oldResponse;
-			function switchGroup() {
-				var groupEntered = document.getElementById("groupID");
-				groupId = groupEntered.value;
-			}
+			//function switchGroup() {
+			//	var groupEntered = document.getElementById("groupID");
+			//	groupId = groupEntered.value;
+			//}
+			$("document").ready(function() {
+				$.ajax({
+					url: "/api/getAllGroupNames",
+					type: "get",
+					success: function(response) {
+						var g = JSON.parse(response);
+						g.forEach(function(element) {
+							$("#groupsel").append("<option>" + element + "</option>");
+						})
+					},
+					error: function(xhr) {
+						console.log("couldn't get groups");
+					}
+				});
+			});
 			function addMsg() {
 				var dt = new Date();
 				var time = dt.getHours() + ":" + dt.getMinutes();
 				sentmsg = document.getElementById("msg");
 				var msg = sentmsg.value;
+				groupId = $('#groupsel :selected').text();
 				if (groupId == null) {
 					console.log("no group entered");
 				} else {
@@ -96,6 +117,7 @@
 			};
 			
 			setInterval ( function() {
+				groupId = $('#groupsel :selected').text();
 				$.ajax({
 					url: "/api/getAllGroupMessages",
 					type: "get",
@@ -118,7 +140,7 @@
 						console.log("big bummer");
 					}
 				});
-			}, 5000);
+			}, 1000);
 			
 		</script>	      
       

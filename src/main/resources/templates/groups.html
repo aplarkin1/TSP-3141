@@ -104,6 +104,7 @@
 		function removeToGroup() {
 			var grouptxt = document.getElementById("groupID3");
 			var groupN = grouptxt.value;
+			//$("#groupID3").empty
 			var usertxt = document.getElementById("userEmail2");
 			var userN = usertxt.value;
 			var answer = $.post("/api/removeUserFromGroup",
