@@ -136,6 +136,7 @@
 								$("#chatlog").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
 							});
 							oldResponse = response;
+							$('#msg').val('');
 						}
 					},
 					error: function(xhr) {

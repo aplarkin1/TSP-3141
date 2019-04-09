@@ -87,7 +87,7 @@
 					{
 					"groupId": deciphered
 				});
-			$('#shares').val('');
+			$('#groupID').val('');
 			//console.log(response);
 		}
 		function addToGroup() {
@@ -101,6 +101,8 @@
 						"targetUserEmail": userN
 					});
 			console.log(answer);
+			$('#groupID2').val('');
+			$('#userEmail').val('');
 		}
 		function removeToGroup() {
 			var grouptxt = document.getElementById("groupID3");
@@ -113,6 +115,8 @@
 						"targetUserEmail": userN
 					});
 			console.log(answer);
+			$('#groupID3').val('');
+			$('#userEmail2').val('');
 		}
 	</script>
 
