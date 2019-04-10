@@ -436,33 +436,37 @@ public class APIService {
 		}
 	}
 	
-	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws GroupDoesntExistException, UserNotFoundException {
+	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws GroupDoesntExistException, UserNotFoundException, UnauthorizedUserInteractionException {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			Optional<Group> optGroup = groups.findById(groupId);
 			if(optGroup.isPresent()) {
-				//System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
-				Group group = optGroup.get();
-				HashMap<String, GetLocationResponse> locations = new HashMap<>();
-				for(User refUser : group.getUsers()) {
-					User user = users.findById(refUser.getEmail()).get();
-					//System.out.println("USERS FOUND: " + refUser.getEmail());
-					//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
-					locations.put(user.getUsername(), getUserLocation(user.getEmail()));
-					/*
-					if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
+				if(optGroup.get().isUserInGroup(email)) {
+					//System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
+					Group group = optGroup.get();
+					HashMap<String, GetLocationResponse> locations = new HashMap<>();
+					for(User refUser : group.getUsers()) {
+						User user = users.findById(refUser.getEmail()).get();
+						//System.out.println("USERS FOUND: " + refUser.getEmail());
+						//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
 						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
-					} else if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP && user.isFriendOf(email)) {
-						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
-					} else if (userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP || user.hasBlacklistedUser(email)) {
-						System.out.println("Cannot retrieve for a blacklisted user or an individual that has shut off tracking");
-					} else {
-						System.out.println("VALUE: " + userLocationSharingSecurityForGroup.name());
-						throw new RuntimeException("Cannot add location for some other reasons!!!!!");
+						/*
+						if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
+							locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+						} else if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP && user.isFriendOf(email)) {
+							locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+						} else if (userLocationSharingSecurityForGroup == LOC_SEC_SETTING.ONLY_FRIENDS_IN_GROUP || user.hasBlacklistedUser(email)) {
+							System.out.println("Cannot retrieve for a blacklisted user or an individual that has shut off tracking");
+						} else {
+							System.out.println("VALUE: " + userLocationSharingSecurityForGroup.name());
+							throw new RuntimeException("Cannot add location for some other reasons!!!!!");
+						}
+						*/
 					}
-					*/
+					return locations;
+				} else {
+					throw new UnauthorizedUserInteractionException();
 				}
-				return locations;
 			} else {
 				throw new GroupDoesntExistException();
 			}

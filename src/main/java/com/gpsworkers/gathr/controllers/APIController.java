@@ -372,6 +372,8 @@ public class APIController {
 			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
 		} catch (UserNotFoundException e) {
 			return new ResponseEntity<>("-1", HttpStatus.NOT_FOUND);
+		} catch (UnauthorizedUserInteractionException e) {
+			return new ResponseEntity<>("-1", HttpStatus.UNAUTHORIZED);
 		}
 		return new ResponseEntity<>(GathrJSONUtils.write(userLocations), HttpStatus.OK);
 	}
