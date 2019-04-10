@@ -360,7 +360,7 @@ public class APIController {
 			return new ResponseEntity<>("-2", HttpStatus.NOT_FOUND);
 		}
 	}
-
+//
 	@GetMapping("/api/getLocationsOfGroupMembers")
 	@ResponseBody
 	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws JsonProcessingException {
