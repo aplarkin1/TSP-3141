@@ -96,6 +96,7 @@
 	  	</div>
 	  	
 	  	<form>
+	  	<fieldset disabled="disabled">
 		  <div class="form-group">
 		    <label for="usernameIn">Username</label>
 		    <input type="text" class="form-control" id="usernameIn" th:attr="placeholder=${username}">
@@ -135,11 +136,12 @@
 		  <div class="form-group">
 		  	<label for="appThemeSelector">App Style</label>
 			<select id="appThemeSelector" class="custom-select">
-				<option value="default" th:text="Default"></option>
+				<option value="light" th:text="Light"></option>
 				<option value="dark" th:text="Dark"></option>
 				<option value="enhanced" th:text="Enhanced"></option>
 			</select>
 		  </div>
+		  </fieldset>
 		</form>
   	</div>      
 </body>

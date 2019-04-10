@@ -18,7 +18,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import com.google.protobuf.Option;
+//import com.google.protobuf.Option;
 import com.gpsworkers.gathr.controllers.responsebodys.GetLocationResponse;
 import com.gpsworkers.gathr.controllers.responsebodys.UserAccountInformationResponse;
 import com.gpsworkers.gathr.exceptions.EmptyGeocodingResultException;
@@ -53,7 +53,7 @@ public class APIService {
 	public static int ERR_MISSING_FIELD_IN_REQUEST = -3;
 
 	public static final String GLOBAL_ADMIN_EMAIL = "globalgathradmin@gmail.com";
-	
+
 	@Autowired
 	UserRepository users;
 
@@ -63,17 +63,17 @@ public class APIService {
 	public boolean updateLocation(String email, double lat, double lon, double elev) throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		User validUser = users.findByEmail(email);
 		Location currentLocation = getLocationGeoCodeInformation(lat, lon);
-		
+
 		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
 		users.save(validUser);
-		
+
 		currentLocation = validUser.getCurrentLocation();
 		updateUserCityBasedGroup(email, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
-		
+
 		return true;
 	}
-	
-	
+
+
 	public UserAccountInformationResponse getAccountInformation(String email){
 		/*
 		ArrayList<String> accountInformation = new ArrayList<>();
@@ -299,7 +299,7 @@ public class APIService {
 			throw new GroupDoesntExistException();
 		}
 	}
-	
+
 	public GetLocationResponse getUserLocation(String email) throws UserNotFoundException{
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
@@ -316,11 +316,11 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 	public ArrayList<DisplayableMessage> getAllGroupMessages(String email, String groupId) throws UnauthorizedUserInteractionException, GroupDoesntExistException{
 		Optional<Group> group = groups.findById(groupId);
 		if(group.isPresent()) {
-			
+
 			if(group.get().isUserInGroup(email)) {
 				ArrayList<DisplayableMessage> displayableMessages = new ArrayList<DisplayableMessage>();
 				for(Message message : group.get().getGroupCommsNetwork().getAllMessages()) {
@@ -334,7 +334,7 @@ public class APIService {
 			throw new GroupDoesntExistException();
 		}
 	}
-	
+
 	public void updateUserCityBasedGroup(String emailOfUserToAdd, String country, String state, String city) throws GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
 		String groupId = country + "->" + state + "->" + city;
 		if(groups.findById(groupId).isPresent()) {
@@ -342,10 +342,10 @@ public class APIService {
 				return;
 			} else {
 				if(users.findById(emailOfUserToAdd).isPresent()) {
-					
+
 					System.out.println("OLD CITY GROUP: " + users.findById(emailOfUserToAdd).get().currentLocationGroup);
 					System.out.println("TRYING TO ADD USER TO CITY GROUP: " + groupId);
-					
+
 					if(users.findById(emailOfUserToAdd).get().currentLocationGroup.isEmpty() == false && users.findById(emailOfUserToAdd).get().currentLocationGroup.equals(groupId) == false) {
 						removeUserFromGroup(GLOBAL_ADMIN_EMAIL, emailOfUserToAdd, users.findById(emailOfUserToAdd).get().currentLocationGroup);
 					}
@@ -378,7 +378,7 @@ public class APIService {
 		if(targetUser.isPresent()) {
 			Optional<Group> group = groups.findById(groupId);
 			if(group.isPresent()) {
-				
+
 				if(group.get().isAdmin(authorityEmail) || authorityEmail.equals(targetUserEmail)) {
 					try {
 						group.get().deleteUser(targetUserEmail);
@@ -393,7 +393,7 @@ public class APIService {
 						}
 					} catch (NotAdminException e) {
 						throw new UnauthorizedUserInteractionException();
-					}	
+					}
 				} else {
 					throw new UnauthorizedUserInteractionException();
 				}
@@ -416,13 +416,13 @@ public class APIService {
 					if(user != null) {
 						user.removeGroup(groupId);
 					}
-					
+
 				}
 				groups.deleteById(groupId);
 			}
 		}
 	}
-	
+
 	public void systemDeleteUser(String targetUserEmail) throws UnauthorizedUserInteractionException, UserNotFoundException {
 		Optional<User> targetUser = users.findById(targetUserEmail);
 		if(targetUser.isPresent()) {
@@ -435,7 +435,7 @@ public class APIService {
 			users.deleteById(targetUserEmail);
 		}
 	}
-	
+
 	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws GroupDoesntExistException, UserNotFoundException {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
@@ -448,7 +448,7 @@ public class APIService {
 					User user = users.findById(refUser.getEmail()).get();
 					//System.out.println("USERS FOUND: " + refUser.getEmail());
 					//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
-					locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+					locations.put(user.getEmail(), getUserLocation(user.getEmail()));
 					/*
 					if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
 						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
@@ -470,5 +470,5 @@ public class APIService {
 			throw new UserNotFoundException();
 		}
 	}
-	
+
 }
