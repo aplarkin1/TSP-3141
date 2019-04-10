@@ -62,7 +62,8 @@
   		// The map, centered at your location
   			var map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: start});
   			var test = 1;
-
+  			var username = document.getElementById('username');
+  			
   	        if (navigator.geolocation) {
   	        	navigator.geolocation.getCurrentPosition(function(position) {
   	        		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
