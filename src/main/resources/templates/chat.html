@@ -25,8 +25,15 @@
 <link rel="stylesheet" type="text/css" th:href="@{/css/chatwin.css}">
 <script type="text/javascript" th:src="@{/js/theme.js}"></script>
 <script type="text/javascript" th:src="@{/js/global.js}"></script>
+<script type="text/javascript" th:src="@{/js/geolocation.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.js"></script>
 <title>Chat</title>
+<style>
+	#map {
+		height: 400px;
+		width: 100%;
+	}
+</style>
 </head>
 <body>
  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -59,7 +66,13 @@
           </div>
           
       </nav>
+      <div class= "row">
+      	<div class= "col-10">
       	<div class="container jumbotron" style="margin: auto">
+      	
+      	<div id="map" class="container h-100 w-100 jumbotron">
+      	</div>
+      	
       	<h3>Current Group</h3>
       	<div class="form-group">
 	      <label for="groupsel">Group select</label>
@@ -74,6 +87,8 @@
 		<textarea rows="3" cols="50" id="msg"></textarea>
 		<button onclick="addMsg() " >Submit</button>
 		</div>
+		</div>
+		<div class="col"></div>
 		
 		<script type="text/javascript">
 			var sentmsg;
@@ -146,7 +161,36 @@
 				});
 			}, 1000);
 			
-		</script>	      
+		</script>	 
+		<script type="text/javascript">
+      	var infoWindow;
+		// Initialize and add the map
+		function initMap() {
+			var start = geoloc();
+  		// The map, centered at your location
+  			var map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: start});
+  			var test = 1;
+
+  	        if (navigator.geolocation) {
+  	        	navigator.geolocation.getCurrentPosition(function(position) {
+  	        		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
+  	        		map.setCenter(pos);
+  	        		var marker = new google.maps.Marker({position: pos, map: map});
+  	        	}, function() {
+  	        		handleLocationError(true);
+  	        	});
+  	        } else {
+  	        	handleLocationError(false);
+  	        }
+		}
+
+		function handleLocationError(browser) {
+			console.log(browser ? 'Location failed' : 'browser error');
+		}
+    </script>
+		<script async defer
+    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO1F_FVQT42wzr2cTWB0hWW0z0p4Yh8f4&callback=initMap">
+      	</script>     
       
 </body>
 </html>
