@@ -2,6 +2,7 @@ package com.gpsworkers.gathr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 //import java.util.Optional;
 //import java.util.concurrent.TimeUnit;
@@ -433,7 +434,7 @@ public class WebTests {
 			Thread.sleep(2000);
 		}
 
-		HashMap<String, GetLocationResponse> locationResponses = api.getLocationsOfGroupMembers(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
+		ArrayList<GetLocationResponse> locationResponses = api.getLocationsOfGroupMembers(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		//System.out.print("THE RESPONSE SIZE IS: " + locationResponses.size());
 		if(locationResponses.size() == 3) {
 			assertThat(true).isEqualTo(true);

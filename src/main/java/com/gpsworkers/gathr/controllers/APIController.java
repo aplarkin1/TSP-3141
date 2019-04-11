@@ -365,7 +365,7 @@ public class APIController {
 	@ResponseBody
 	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws Exception {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
-		HashMap<String, GetLocationResponse> userLocations;
+		ArrayList<GetLocationResponse> userLocations;
 		try {
 			userLocations = api.getLocationsOfGroupMembers(email, groupId);
 		} catch (GroupDoesntExistException e) {
