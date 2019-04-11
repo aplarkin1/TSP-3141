@@ -363,7 +363,7 @@ public class APIController {
 //
 	@GetMapping("/api/getLocationsOfGroupMembers")
 	@ResponseBody
-	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws JsonProcessingException {
+	public ResponseEntity<String> handleGetLocationsOfGroupMembers(String groupId) throws Exception {
 		String email = APIController.extractEmailFromAuth(SecurityContextHolder.getContext().getAuthentication());
 		HashMap<String, GetLocationResponse> userLocations;
 		try {

@@ -300,18 +300,27 @@ public class APIService {
 		}
 	}
 	
-	public GetLocationResponse getUserLocation(String email) throws UserNotFoundException{
+	public GetLocationResponse getUserLocation(String email) throws Exception{
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			User user = optUser.get();
 			GetLocationResponse response = new GetLocationResponse();
-			response.country = user.getCurrentLocation().getCountry();
-			response.state = user.getCurrentLocation().getState();
-			response.city = user.getCurrentLocation().getCity();
-			response.lat = user.getCurrentLocation().getLatitude();
-			response.lon = user.getCurrentLocation().getLongitude();
-			response.elev = user.getCurrentLocation().getElevation();
-			return response;
+			System.out.println(user.getEmail());
+			if(user.getCurrentLocation() != null) {
+				response.country = user.getCurrentLocation().getCountry();
+				response.state = user.getCurrentLocation().getState();
+				response.city = user.getCurrentLocation().getCity();
+				response.lat = user.getCurrentLocation().getLatitude();
+				response.lon = user.getCurrentLocation().getLongitude();
+				response.elev = user.getCurrentLocation().getElevation();
+				return response;
+			} else if(GLOBAL_ADMIN_EMAIL.equals(email)){
+				throw new RuntimeException("Cannot retrieve location of GATHR ADMIN");
+			} else {
+				throw new Exception("Location of user is null!");
+			}
+			
+
 		} else {
 			throw new UserNotFoundException();
 		}
@@ -436,7 +445,7 @@ public class APIService {
 		}
 	}
 	
-	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws GroupDoesntExistException, UserNotFoundException, UnauthorizedUserInteractionException {
+	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws Exception {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			Optional<Group> optGroup = groups.findById(groupId);
@@ -449,7 +458,9 @@ public class APIService {
 						User user = users.findById(refUser.getEmail()).get();
 						//System.out.println("USERS FOUND: " + refUser.getEmail());
 						//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
-						locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+						if(!user.getEmail().equals(GLOBAL_ADMIN_EMAIL)) {
+							locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+						}
 						/*
 						if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
 							locations.put(user.getUsername(), getUserLocation(user.getEmail()));

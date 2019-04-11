@@ -395,7 +395,7 @@ public class WebTests {
 	}
 
 	@Test
-	public void updateUserLocationAndAgetUserLocationTest() throws EmptyGeocodingResultException, GeoCodingConnectionFailedException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, UserNotFoundException, UnauthorizedUserInteractionException {
+	public void updateUserLocationAndAgetUserLocationTest() throws Exception {
 		api.updateLocation(TEST_USER_1_EMAIL, 47.11625, -88.54010, 0.0);
 		GetLocationResponse location = api.getUserLocation(TEST_USER_1_EMAIL);
 		String locationString = "" + location.lat + "" + location.lon + "" + location.city + "" + location.state + "" + location.country;
@@ -411,7 +411,7 @@ public class WebTests {
 	}
 
 	@Test
-	public void updateMultipleUsersAndRetrieveTheirLocationsFromGroupTest() throws InterruptedException, GroupIdAlreadyInUseException, UserNotFoundException, GroupDoesntExistException, UnauthorizedGroupManagementException, TargetUserNotFoundException, EmptyGeocodingResultException, UnauthorizedUserInteractionException {
+	public void updateMultipleUsersAndRetrieveTheirLocationsFromGroupTest() throws Exception {
 		api.createGroup(TEST_GROUP_ADMIN_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_1_EMAIL, TEST_GROUP_ID);
 		api.addUserToGroup(TEST_GROUP_ADMIN_EMAIL, TEST_USER_2_EMAIL, TEST_GROUP_ID);
