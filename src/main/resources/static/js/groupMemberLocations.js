@@ -26,5 +26,5 @@ function getLocationsOfGroupMembers(groupId){
 		updateMap(data);
 	}).fail(function() {
 		alert( "error" );
-	})
+	}) 
 }
