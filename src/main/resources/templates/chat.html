@@ -135,6 +135,14 @@
 				}
 			};
 		
+			function updateMap(data) {
+				var obj = JSON.parse(data);
+				obj.forEach( function(element) {
+					
+				});
+			}
+			
+			var locations
 			setInterval ( function() {
 				groupId = $('#groupsel :selected').text();
 				$.ajax({

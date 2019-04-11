@@ -22,7 +22,7 @@ function getLocationsOfGroupMembers(groupId){
 				"groupId" : groupId 
 			}).done(function(data) {
 		alert( "Got the locations of group members" );
-		return JSON.parse(data);
+		updateMap(data);
 	}).fail(function() {
 		alert( "error" );
 	})
