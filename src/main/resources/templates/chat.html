@@ -82,12 +82,12 @@
       	
       	
       	
-      	<div class="jumbotron" id="chatlog" style="height:400px;overflow:auto;">
+      	<div class="jumbotron" id="chatlog" style="height:400px;overflow:auto; padding-bottom:0px;">
       	
 		</div>
 		
-		<textarea rows="3" cols="50" id="msg"></textarea>
-		<button onclick="addMsg() " >Submit</button>
+		<textarea rows="3" cols="50" id="msg" style="width: 100%;"></textarea>
+		<button onclick="addMsg() " style="text-align: center" type="button" class="btn btn-lg btn-block btn-success">SEND</button>
 		</div>
 		
 		
@@ -150,7 +150,7 @@
 							var obj = JSON.parse(response);
 							obj.forEach( function(element) {
 								//console.log(element.messageContent);
-								$("#chatlog").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'>" + element.username + ": " + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
+								$("#chatlog").append("<div class='container sender' style='word-wrap:break-word;'> <p style='word-wrap:break-word;'><b>" + element.username + ": </b>" + element.messageContent + "</p><span class='time-left' style='float:right'>" + element.postDate +  "</span></div>");
 							});
 							oldResponse = response;
 							$('#msg').val('');
