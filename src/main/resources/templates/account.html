@@ -91,8 +91,8 @@
 	  	  <h2>Group Names</h2>
 		  <div class="form-group">
 		  	<label for="groupDisplay">Groups</label>
-			<select id="groupDisplay" class="custom-select" th:each="groupname : ${groupnames}" disabled>
-				<option th:text="${groupname}"></option>
+			<select id="groupDisplay" class="custom-select">
+				<option th:each="groupname : ${groupnames}" th:text="${groupname}"></option>
 			</select>
 		  </div>
 		  
