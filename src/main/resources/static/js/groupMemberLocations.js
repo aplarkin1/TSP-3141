@@ -21,6 +21,7 @@ function getLocationsOfGroupMembers(groupId){
 			{
 				"groupId" : groupId 
 			}).done(function(data) {
+				console.log(JSON.parse(data))
 		alert( "Got the locations of group members" );
 		return JSON.parse(data);
 	}).fail(function() {

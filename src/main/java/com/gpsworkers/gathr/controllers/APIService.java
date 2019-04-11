@@ -445,7 +445,7 @@ public class APIService {
 		}
 	}
 	
-	public HashMap<String, GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws Exception {
+	public ArrayList<GetLocationResponse> getLocationsOfGroupMembers(String email, String groupId) throws Exception {
 		Optional<User> optUser = users.findById(email);
 		if(optUser.isPresent()) {
 			Optional<Group> optGroup = groups.findById(groupId);
@@ -453,13 +453,15 @@ public class APIService {
 				if(optGroup.get().isUserInGroup(email)) {
 					//System.out.println("GROUPO NAME FKADSFLDSALF: " + groupId);
 					Group group = optGroup.get();
-					HashMap<String, GetLocationResponse> locations = new HashMap<>();
+					ArrayList<GetLocationResponse> memberLocations = new ArrayList<GetLocationResponse>();
 					for(User refUser : group.getUsers()) {
 						User user = users.findById(refUser.getEmail()).get();
 						//System.out.println("USERS FOUND: " + refUser.getEmail());
 						//LOC_SEC_SETTING userLocationSharingSecurityForGroup = user.getSecuritySettingForGroup(groupId);
 						if(!user.getEmail().equals(GLOBAL_ADMIN_EMAIL)) {
-							locations.put(user.getUsername(), getUserLocation(user.getEmail()));
+							GetLocationResponse resp = getUserLocation(user.getEmail());
+							resp.username = user.getUsername();
+							memberLocations.add(resp);
 						}
 						/*
 						if(userLocationSharingSecurityForGroup == LOC_SEC_SETTING.GROUP_WIDE) {
@@ -474,7 +476,7 @@ public class APIService {
 						}
 						*/
 					}
-					return locations;
+					return memberLocations;
 				} else {
 					throw new UnauthorizedUserInteractionException();
 				}
