@@ -10,6 +10,7 @@
 		<script type="text/javascript" th:src="@{/js/geolocation.js}"></script>
 		<script type="text/javascript" src="scripts.js"></script>
 		<script type="text/javascript" th:src="@{/js/theme.js}"></script>
+		<script type="text/javascript" th:src="@{/js/userInfo.js}"></script>
 
 		<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
 		<title>Location</title>
@@ -62,7 +63,7 @@
   		// The map, centered at your location
   			var map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: start});
   			var test = 1;
-  			var username = document.getElementById('username');
+  			
   			
   	        if (navigator.geolocation) {
   	        	navigator.geolocation.getCurrentPosition(function(position) {
@@ -80,7 +81,17 @@
 		function updateMap(data) {
 			var obj = JSON.parse(data);
 			obj.forEach( function(element) {
-				
+				if (navigator.geolocation) {
+	  	        	navigator.geolocation.getCurrentPosition(function(position) {
+	  	        		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
+	  	        		map.setCenter(pos);
+	  	        		var marker = new google.maps.Marker({position: pos, map: map});
+	  	        	}, function() {
+	  	        		handleLocationError(true);
+	  	        	});
+	  	        } else {
+	  	        	handleLocationError(false);
+	  	        }
 			});
 		}
 		function handleLocationError(browser) {
