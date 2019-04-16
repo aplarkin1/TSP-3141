@@ -138,13 +138,30 @@
 			function updateMap(data) {
 				var obj = JSON.parse(data);
 				obj.forEach( function(element) {
-					
+					var latitude = element.lat;
+					var longitude = element.lon;
+					var pos = new google.maps.LatLng(longitude, latitude);
+					console.log(latitude, longitude);
+					var marker = new google.maps.Marker({position: pos, map: map});
+  	        		console.log(marker);
+  	        		//marker.setMap(map);
+  	        		//addMarker(posi, map);
 				});
+				
 			}
-			
+			 function addMarker(location, map) {
+			        // Add the marker at the clicked location, and add the next-available label
+			        // from the array of alphabetical characters.
+			        var marker = new google.maps.Marker({
+			          position: location,
+			          map: map
+			        });
+			      }
+			 
 			var locations
 			setInterval ( function() {
 				groupId = $('#groupsel :selected').text();
+				getLocationsOfGroupMembers(groupId);
 				$.ajax({
 					url: "/api/getAllGroupMessages",
 					type: "get",
@@ -172,19 +189,22 @@
 			
 		</script>	 
 		<script type="text/javascript">
+		var map;
       	var infoWindow;
 		// Initialize and add the map
 		function initMap() {
 			var start = geoloc();
   		// The map, centered at your location
-  			var map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: start});
+  			map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: start});
   			var test = 1;
-
+			
+  			//getLocationsOfGroupMembers("checking");
   	        if (navigator.geolocation) {
   	        	navigator.geolocation.getCurrentPosition(function(position) {
   	        		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
   	        		map.setCenter(pos);
   	        		var marker = new google.maps.Marker({position: pos, map: map});
+  	        		console.log(marker);
   	        	}, function() {
   	        		handleLocationError(true);
   	        	});
