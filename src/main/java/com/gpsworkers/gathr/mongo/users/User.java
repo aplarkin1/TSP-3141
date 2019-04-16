@@ -153,11 +153,11 @@ public class User {
 	 * @param region is the region(state) name where the user is currently located
 	 * @param city is the city name where the user is currently located
 	 */
-    public void updateLocation(double longitude, double latitude, double elevation, String country, String state, String city) {
+    public void updateLocation(double latitude, double longitude, double elevation, String country, String state, String city) {
     	if(currentLocation == null) {
     		currentLocation = new Location();
     	}
-    	currentLocation.update(longitude, latitude, elevation, country, state, city);
+    	currentLocation.update(latitude, longitude, elevation, country, state, city);
     }
 
     /**
