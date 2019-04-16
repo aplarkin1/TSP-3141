@@ -17,6 +17,3 @@ server:
     key-store: src/main/resources/keystore/keystoreAE.p12
     key-store-password: T3amS0ftwar3!
     key-alias: keystoreAE
-    trust-store: src/main/resources/keystore/keystoreAE.p12
-    trust-store-password: T3amS0ftwar3!
-    
