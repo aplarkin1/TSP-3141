@@ -10,15 +10,14 @@ spring:
     mongodb:
       uri: mongodb+srv://m001-student:T3amS0ftwar3!@team-software-5cubw.azure.mongodb.net/test?retryWrites=true
       database: GathR
-server:
-  tomcat:
-    remote-ip-header: x-forwarded-for
-    protocol-header: x-forwarded-proto
-    port-header:
-  ssl:
-    key-store-type: PKCS12
-    key-store: keystore/gathrKeystore.p12
-    key-store-password: T3amS0ftwar3!
-    key-alias: baeldung
-    trust-store: classpath:keystore/gathrKeystore.p12
-    trust-store-password: T3amS0ftwar3!
+#server:
+  #tomcat:
+    #remote-ip-header: x-forwarded-for
+    #protocol-header: x-forwarded-proto
+  #ssl:
+    #key-store-type: PKCS12
+    #key-store: keystore/gathrKeystore.p12
+    #key-store-password: T3amS0ftwar3!
+    #key-alias: baeldung
+    #trust-store: classpath:keystore/gathrKeystore.p12
+    #trust-store-password: T3amS0ftwar3!
