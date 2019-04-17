@@ -8,7 +8,7 @@ import com.gpsworkers.gathr.gathrutils.GathrJSONUtils;
 public class SeleniumAPI {
 	
 	SeleniumConfig config;
-	private String baseUri = "http://localhost:8080/";
+	private String baseUri = "https://localhost:8443/";
 	private String rootUri = "";
 	private String loginUri = "login";
 	private String infoUri = "info";

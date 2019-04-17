@@ -10,14 +10,10 @@ spring:
     mongodb:
       uri: mongodb+srv://m001-student:T3amS0ftwar3!@team-software-5cubw.azure.mongodb.net/test?retryWrites=true
       database: GathR
-#server:
-  #port: 8443
-  #ssl:
-    #key-store-type: PKCS12
-    #key-store: src/main/resources/keystore/keystoreAE.p12
-    #key-store-password: T3amS0ftwar3!
-    #key-alias: keystoreAE
-
-#trust:
-  #store: src/main/resources/keystore/keystoreAE.p12
-  #password: T3amS0ftwar3!
+server:
+  port: 8443
+  ssl:
+    key-store-type: PKCS12
+    key-store: src/main/resources/keystore/keystoreAE.p12
+    key-store-password: T3amS0ftwar3!
+    key-alias: keystoreAE
