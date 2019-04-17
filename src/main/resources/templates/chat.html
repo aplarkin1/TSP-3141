@@ -147,7 +147,7 @@
 					var pos = new google.maps.LatLng(latitude, longitude);
 					console.log(latitude, longitude);
 					var infowindow = new google.maps.InfoWindow({
-				          
+				          content: element.username
 				        });
 					var marker = new google.maps.Marker({position: pos, map: map, title: element.username});
 					markersArray.push(marker);
