@@ -66,7 +66,6 @@ public class APIService {
 		
 		validUser.updateLocation(lat, lon, elev, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
 		users.save(validUser);
-		
 		currentLocation = validUser.getCurrentLocation();
 		updateUserCityBasedGroup(email, currentLocation.getCountry(), currentLocation.getState(), currentLocation.getCity());
 		

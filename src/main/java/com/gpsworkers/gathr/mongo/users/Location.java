@@ -86,7 +86,7 @@ public class Location {
 	 * @param region is the region(state) name where the user is currently located
 	 * @param city is the city name where the user is currently located
 	 */
-	public void update(double longitude, double latitude, double elevation, String country, String state, String city) {
+	public void update(double latitude, double longitude, double elevation, String country, String state, String city) {
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.elevation = elevation;
