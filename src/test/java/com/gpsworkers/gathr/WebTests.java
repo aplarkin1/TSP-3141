@@ -204,7 +204,7 @@ public class WebTests {
 		Thread.sleep(3000);
 		return groupFound;
 	}
-
+	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -234,7 +234,7 @@ public class WebTests {
 		assertThat(results).isEqualTo(true);
 	}
 	
-	//
+	*/
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
 		FirefoxDriver driver = gathr.getConfig().getDriver();
