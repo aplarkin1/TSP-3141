@@ -135,9 +135,12 @@
 				}
 			};
 		
+			var markersArray = [];
 			function updateMap(data) {
 				var obj = JSON.parse(data);
+				clearMarkers();
 				obj.forEach( function(element) {
+					
 					var latitude = element.lat;
 					var longitude = element.lon;
 
@@ -147,6 +150,7 @@
 				          
 				        });
 					var marker = new google.maps.Marker({position: pos, map: map, title: element.username});
+					markersArray.push(marker);
 					marker.addListener('click', function() {
 				          infowindow.open(map, marker);
 				        });
@@ -154,19 +158,23 @@
 				});
 				
 			}
-			 function addMarker(location, map) {
-			        // Add the marker at the clicked location, and add the next-available label
-			        // from the array of alphabetical characters.
-			        var marker = new google.maps.Marker({
-			          position: location,
-			          map: map
-			        });
-			      }
+			
+			function clearMarkers() {
+				for (var i = 0; i < markersArray.length; i++ ) {
+					markersArray[i].setMap(null);
+				}
+				markersArray.length = 0;
+			}
+
 			 
-			var locations
+			var locations;
+			var oldGID;
 			setInterval ( function() {
 				groupId = $('#groupsel :selected').text();
-				getLocationsOfGroupMembers(groupId);
+				if (groupId != oldGID) {
+					getLocationsOfGroupMembers(groupId);
+					oldGID = groupId;
+				}
 				$.ajax({
 					url: "/api/getAllGroupMessages",
 					type: "get",
