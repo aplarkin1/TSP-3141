@@ -72,7 +72,6 @@ public class APIController {
 		String email = extractEmailFromAuth(auth);
 		try {
 			api.updateLocation(email, request.lat, request.lon, request.elev);
-			
 		} catch (GroupDoesntExistException e) {
 			return new ResponseEntity<>("-3", HttpStatus.NOT_FOUND);
 		} catch (UnauthorizedGroupManagementException e) {

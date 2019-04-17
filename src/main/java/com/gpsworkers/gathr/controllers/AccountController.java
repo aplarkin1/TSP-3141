@@ -35,5 +35,5 @@ public class AccountController {
 		modelAndView.addObject("coords", userInfo.lat + "/" + userInfo.lon);
 		return modelAndView;
 	}
-	
+		
 }

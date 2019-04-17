@@ -140,10 +140,17 @@
 				obj.forEach( function(element) {
 					var latitude = element.lat;
 					var longitude = element.lon;
-					var pos = new google.maps.LatLng(longitude, latitude);
-					//console.log(latitude, longitude);
-					var marker = new google.maps.Marker({position: pos, map: map, label: element.username});
-  	        		//console.log(marker);
+
+					var pos = new google.maps.LatLng(latitude, longitude);
+					console.log(latitude, longitude);
+					var infowindow = new google.maps.InfoWindow({
+				          
+				        });
+					var marker = new google.maps.Marker({position: pos, map: map, title: element.username});
+					marker.addListener('click', function() {
+				          infowindow.open(map, marker);
+				        });
+  	        		console.log(marker);
 				});
 				
 			}
