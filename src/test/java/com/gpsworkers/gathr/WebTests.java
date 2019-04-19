@@ -205,38 +205,6 @@ public class WebTests {
 		return groupFound;
 	}
 	/*
-	public boolean groupInvitationGenerationTest() throws Exception {
-		String url = "/api/createGroup";
-		HashMap<String, Object> keyValuePairs = new HashMap<String, Object>();
-		String response = "";
-
-		url = "/api/inviteUserToGroup";
-		keyValuePairs = new HashMap<String, Object>();
-		keyValuePairs.put("groupId", "TESTING123");
-		keyValuePairs.put("userEmail", "lolme@gmail.com");
-		keyValuePairs.put("invitationMessage", "You want to join our group?");
-		Optional<User> invitedUserPreInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
-		boolean wasInvited = false;
-
-		response = gathr.executePost(url, keyValuePairs);
-		Thread.sleep(10000);
-
-		Optional<User> invitedUserPostInvitationState = userRepo.findById((String)keyValuePairs.get("userEmail"));
-
-		if(invitedUserPostInvitationState.get().getGroupInvites().size() == invitedUserPreInvitationState.get().getGroupInvites().size() + 1) {
-			System.out.println("User " + invitedUserPreInvitationState.get().getEmail() + "was invited");
-			invitedUserPostInvitationState.get().getGroupInvites().remove(invitedUserPostInvitationState.get().getGroupInvites().size() - 1);
-			userRepo.save(invitedUserPostInvitationState.get());
-			wasInvited = true;
-		} else {
-			System.out.println("User " + invitedUserPreInvitationState.get().getEmail() + "was not invited");
-		}
-
-		return wasInvited;
-	}
-	*/
-	//
-	/*
 	@Test
 	public void userInteractionTest() throws Exception {
 
@@ -265,8 +233,8 @@ public class WebTests {
 
 		assertThat(results).isEqualTo(true);
 	}
+	
 	*/
-	//
 	public void login(SeleniumAPI gathr) throws InterruptedException {
 		gathr.getRoot();
 		FirefoxDriver driver = gathr.getConfig().getDriver();
